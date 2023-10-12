@@ -1,0 +1,5 @@
+:root {
+  --selected: rgb(201, 61, 40, 0.2);
+  --submit: rgb(201, 61, 40, 0.7);
+  --submit-hover: rgb(201, 61, 40, 1);
+}
