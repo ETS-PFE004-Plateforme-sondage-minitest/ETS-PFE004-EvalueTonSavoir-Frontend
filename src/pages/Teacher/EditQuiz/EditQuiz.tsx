@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
+import Modal from '../../../components/Modal/Modal';
 import { useParams, useNavigate } from 'react-router-dom';
+import { parse as GIFTParse } from 'gift-pegjs';
 
 import Editor from '../../../components/EditorPreview/Editor';
 import Preview from '../../../components/EditorPreview/Preview';
@@ -21,7 +22,8 @@ interface EditQuizParams {
 const EditQuiz: React.FC = () => {
   const { id } = useParams<EditQuizParams>();
   const [value, setValue] = useState('');
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [previewValue, setPreviewValue] = useState('');
+  const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const navigate = useNavigate();
@@ -33,26 +35,44 @@ const EditQuiz: React.FC = () => {
     if (quizToEdit) {
       setQuiz(quizToEdit);
       setValue(quizToEdit.questions);
+      setPreviewValue(quizToEdit.questions);
       setQuizTitle(quizToEdit.title);
     }
   }, [id]);
 
-  const handleUpdatePreview = (newValue: string) => {
-    setValue(newValue);
-    // setParsedValue(parse(newValue));
-  };
+  function handleEditorChange(value: string) {
+    setValue(value);
+  }
+
+  function handleUpdatePreview() {
+    setPreviewValue(value);
+  }
 
   const handleSaveQuiz = () => {
-    setModalIsOpen(true);
-  };
-  
-  const handleModalClose = () => {
-    setModalIsOpen(false);
-    setQuizTitle('');
+    setQuizToSave(true);
   };
   
   const handleQuizTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuizTitle(event.target.value);
+  };
+
+  const handleParse = () => {
+    try {
+      const parsedValue = GIFTParse(value);
+      alert(JSON.stringify(parsedValue, null, 2));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+      else {
+        alert('Unknown error');
+      }
+    }
+  };
+
+  const handleModalClose = () => {
+    setQuizToSave(false);
+    setQuizTitle('');
   };
   
   const handleQuizSave = () => {
@@ -74,17 +94,30 @@ const EditQuiz: React.FC = () => {
   }
 
   return (
-    <div id='editor-preview-container' className="container">
-      <Editor initialValue={quiz.questions} onUpdatedPreview={handleUpdatePreview} />
-      <Preview questions={value} />
-      <button onClick={handleSaveQuiz}>Save Quiz</button>
-      <Modal isOpen={modalIsOpen} onRequestClose={handleModalClose}>
-        <h2>Save Quiz</h2>
-        <p>Please enter a title for your quiz:</p>
-        <input type="text" value={quizTitle} onChange={handleQuizTitleChange} />
-        <button onClick={handleQuizSave}>Save</button>
-        <button onClick={handleModalClose}>Cancel</button>
-      </Modal>
+    <div>
+      <div id='editor-preview-container' className="container">
+        <div className='editor-column'>
+          <Editor initialValue={quiz.questions} onEditorChange={handleEditorChange} />
+          <div className='quiz-action-buttons'>
+            <a onClick={handleUpdatePreview}>Prévisualisation</a>
+            <a onClick={handleParse}>Parse</a>
+            <a onClick={handleSaveQuiz}>Enregistrer</a>
+          </div>
+        </div>
+        <div className='preview-column'>
+          <Preview questions={previewValue} />
+        </div>
+      </div>
+      {quizToSave && (
+        <Modal
+          title='Sauvegarder le questionnaire' 
+          message='Entrez un titre pour votre questionnaire:' 
+          optionalInput 
+          onOptionalInputChange={handleQuizTitleChange} 
+          onConfirm={handleQuizSave} 
+          onCancel={handleModalClose} 
+        />
+      )}
     </div>
   );
 };

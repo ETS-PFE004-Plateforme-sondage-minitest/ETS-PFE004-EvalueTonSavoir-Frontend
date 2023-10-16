@@ -1,8 +1,11 @@
 // Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Modal from '../../../components/Modal/Modal';
 import { v4 as uuidv4 } from 'uuid';
 import './dashboard.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faTrashCan, faClone, faPencil, faPlay } from '@fortawesome/free-solid-svg-icons';
 
 interface Quiz {
     id: string;
@@ -13,6 +16,7 @@ interface Quiz {
 const Dashboard: React.FC = () => {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [quizToRemove, setQuizToRemove] = useState<Quiz | null>(null);
 
   useEffect(() => {
     // Fetch quizzes from local storage
@@ -24,16 +28,32 @@ const Dashboard: React.FC = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleRemoveQuiz = (id: string) => {
-    const updatedQuizzes = quizzes.filter((quiz: Quiz) => quiz.id !== id);
+  const handleRemoveQuiz = (quiz: Quiz) => {
+    setQuizToRemove(quiz);
+  };
+
+  const handleConfirmRemoveQuiz = () => {
+    const updatedQuizzes = quizzes.filter((quiz: Quiz) => quiz.id !== quizToRemove?.id);
     localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
     setQuizzes(updatedQuizzes);
+    setQuizToRemove(null);
+  };
+
+  const handleCancelRemoveQuiz = () => {
+    setQuizToRemove(null);
   };
 
   const handleDuplicateQuiz = (id: string) => {
     const quizToDuplicate = quizzes.find((quiz: Quiz) => quiz.id === id);
     if (!quizToDuplicate) return;
-    const duplicatedQuiz: Quiz = { ...quizToDuplicate, id: uuidv4(), title: quizToDuplicate.title || 'Untitled Quiz' };
+
+    const existingQuizzesWithTitle = Object.values(quizzes).filter(
+      (quiz: Quiz) => quiz.title === quizToDuplicate.title || quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
+    );
+    const titleSuffix = existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
+
+    
+    const duplicatedQuiz: Quiz = { ...quizToDuplicate, id: uuidv4(), title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz' };
     const updatedQuizzes: Quiz[] = [...quizzes, duplicatedQuiz];
     localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
     setQuizzes(updatedQuizzes);
@@ -45,24 +65,42 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="wrapper">
-        <div>
+      <div>
         <h2>Quiz Dashboard</h2>
-        <div>
+        <div className='search-bar'>
             <input type="text" placeholder="Search quizzes" value={searchTerm} onChange={handleSearch} />
-            <Link to="/teacher/create-quiz">Create Quiz</Link>
+            <Link to="/teacher/create-quiz">
+              <FontAwesomeIcon icon={faPlus} />
+            </Link>
         </div>
         <ul>
             {filteredQuizzes.map((quiz: Quiz) => (
             <li key={quiz.id}>
                 <h3>{quiz.title}</h3>
-                <button onClick={() => handleRemoveQuiz(quiz.id)}>Remove</button>
-                <button onClick={() => handleDuplicateQuiz(quiz.id)}>Duplicate</button>
-                <Link to={`/teacher/edit-quiz/${quiz.id}`}>Edit Quiz</Link>
-                <Link to={`/quiz/${quiz.id}`}>Start Quiz</Link>
+                  <a className='red-btn' onClick={() => handleRemoveQuiz(quiz)} title="Supprimer">
+                    <FontAwesomeIcon icon={faTrashCan} />
+                  </a>
+                  <a className='blue-btn' onClick={() => handleDuplicateQuiz(quiz.id)} title="Dupliquer">
+                    <FontAwesomeIcon icon={faClone} />
+                  </a>
+                  <Link className='blue-btn' to={`/teacher/edit-quiz/${quiz.id}`} title="Modifier">
+                    <FontAwesomeIcon icon={faPencil} />
+                  </Link>
+                  <Link className='green-btn' to={`/quiz/${quiz.id}`} title="Démarrer">
+                    <FontAwesomeIcon icon={faPlay} />
+                  </Link>
             </li>
             ))}
         </ul>
-        </div>
+      </div>
+      {quizToRemove && (
+        <Modal
+          title="Confirmation"
+          message={`Êtes-vous sûr de vouloir supprimer le quiz "${quizToRemove.title}" ?`}
+          onConfirm={handleConfirmRemoveQuiz}
+          onCancel={handleCancelRemoveQuiz}
+        />
+      )}
     </div>
   );
 };

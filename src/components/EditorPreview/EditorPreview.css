@@ -4,6 +4,30 @@
     width: 100%;
 }
 
+#editor-preview-container > div {
+    display: block;
+    width: 45%;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.quiz-action-buttons {
+    margin-top: 20px;
+}
+
+/* .quill {
+    height: 250px;
+    min-height: 250px;
+} */
+
+.editor-column {
+    width: 100%;
+}
+
+.preview-column {
+    width: 100%;
+}
+
 #editor-container {
     width: 40%;
 }
