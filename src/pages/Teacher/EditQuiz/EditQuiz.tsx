@@ -111,8 +111,9 @@ const EditQuiz: React.FC = () => {
       {quizToSave && (
         <Modal
           title='Sauvegarder le questionnaire' 
-          message='Entrez un titre pour votre questionnaire:' 
-          optionalInput 
+          message='Entrez un titre pour votre questionnaire:'
+          hasOptionalInput 
+          optionalInputValue={quizTitle}
           onOptionalInputChange={handleQuizTitleChange} 
           onConfirm={handleQuizSave} 
           onCancel={handleModalClose} 

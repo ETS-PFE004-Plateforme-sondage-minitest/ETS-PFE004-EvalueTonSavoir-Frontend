@@ -81,7 +81,8 @@ const CreateQuiz: React.FC = () => {
         <Modal
           title='Sauvegarder le questionnaire' 
           message='Entrez un titre pour votre questionnaire:' 
-          optionalInput 
+          hasOptionalInput
+          optionalInputValue={quizTitle}
           onOptionalInputChange={handleQuizTitleChange} 
           onConfirm={handleQuizSave} 
           onCancel={handleModalClose} 

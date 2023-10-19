@@ -51,7 +51,6 @@ const Dashboard: React.FC = () => {
       (quiz: Quiz) => quiz.title === quizToDuplicate.title || quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
     );
     const titleSuffix = existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
-
     
     const duplicatedQuiz: Quiz = { ...quizToDuplicate, id: uuidv4(), title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz' };
     const updatedQuizzes: Quiz[] = [...quizzes, duplicatedQuiz];

@@ -6,20 +6,19 @@ type ModalProps = {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
-  optionalInput?: boolean;
+  hasOptionalInput?: boolean;
   optionalInputValue?: string;
   onOptionalInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const Modal: React.FC<ModalProps> = ({ title, message, onConfirm, onCancel, optionalInput, optionalInputValue, onOptionalInputChange }) => {
+const Modal: React.FC<ModalProps> = ({ title, message, onConfirm, onCancel, hasOptionalInput, optionalInputValue, onOptionalInputChange }) => {
   return (
     <div className="modal">
       <div className="modal-content">
         <h2>{title}</h2>
         <p>{message}</p>
-        {optionalInput && (
+        {hasOptionalInput && (
           <div className="modal-optional-input">
-            <label htmlFor="optional-input">{optionalInput}</label>
             <input type="text" id="optional-input" value={optionalInputValue || ''} onChange={onOptionalInputChange} />
           </div>
         )}
