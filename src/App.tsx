@@ -24,7 +24,7 @@ function App() {
 
                         {/* Pages espace enseignant */}
                         <Route path="/teacher/dashboard" element={<Dashboard />} />
-                        <Route path="/teacher/create-room" element={<CreateRoom />} />
+                        <Route path="/teacher/create-room/:id" element={<CreateRoom />} />
                         <Route path="/teacher/room/:id" element={<TeacherRoom />} />
                         <Route path="/teacher/create-quiz" element={<CreateQuiz />} />
                         <Route path="/teacher/edit-quiz/:id" element={<EditQuiz />} />
