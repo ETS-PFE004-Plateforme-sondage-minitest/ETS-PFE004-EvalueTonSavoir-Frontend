@@ -1,4 +1,4 @@
-import marked from "marked";
+import { marked } from "marked";
 import katex from "katex";
 import { TemplateOptions, TextFormat } from "./types";
 
