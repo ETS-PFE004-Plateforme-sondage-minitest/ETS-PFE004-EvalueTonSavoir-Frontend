@@ -13,7 +13,6 @@ const CreateRoom: React.FC = () => {
     const password = generatePassword();
     
     useEffect(() => {
-        // Send password to backend on component mount
         fetch('http://localhost:4400/set-room-password', {
             method: 'POST',
             headers: {
