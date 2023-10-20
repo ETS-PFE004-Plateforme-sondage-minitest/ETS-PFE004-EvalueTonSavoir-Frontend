@@ -1,0 +1,69 @@
+/* :root {
+  --correct: hsla(134, 31%, 32%, 1);
+  --correct-light: hsla(134, 68%, 95%, 1);
+
+  --light-gray: rgb(202, 202, 202);
+  --moodle-blue-lighter: hsla(194, 55%, 98%, 1);
+  --moodle-blue-light: hsla(194, 60%, 96%, 1);
+  --moodle-blue: #def2f8;
+  --moodle-blue-dark: #c7e4e4;
+  --moodle-blue-darker: #81b1b1;
+  --moodle-blue-darkest: rgb(87, 119, 119);
+  --moodle-alt-light: #fff8e2;
+  --moodle-alt: #fcefdc;
+  --moodle-alt-dark: #b8945e;
+  --moodle-alt-darker: #7d5a29;
+  --moodle-alt-darkest: #2b2101;
+  --moodle-error-light: #fff0f0;
+  --moodle-error: #f3d8d8;
+  --default-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  --form-input-color: rgb(74, 85, 104);
+} */
+
+body {
+    background-color: #121212;
+  }
+  
+  /* :root {
+    --correct: hsla(134, 31%, 32%, 1);
+    --correct-light: hsla(134, 68%, 95%, 1);
+  
+    --light-gray: rgb(202, 202, 202);
+    --moodle-blue-lighter: hsla(194, 55%, 98%, 1);
+    --moodle-blue-light: hsla(194, 60%, 96%, 1);
+    --moodle-blue: #def2f8;
+    --moodle-blue-dark: #c7e4e4;
+    --moodle-blue-darker: #81b1b1;
+    --moodle-blue-darkest: rgb(87, 119, 119);
+    --moodle-alt-light: #fff8e2;
+    --moodle-alt: #fcefdc;
+    --moodle-alt-dark: #b8945e;
+    --moodle-alt-darker: #7d5a29;
+    --moodle-alt-darkest: #2b2101;
+    --moodle-error-light: #fff0f0;
+    --moodle-error: #f3d8d8;
+    --default-box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+    --form-input-color: rgb(74, 85, 104);
+  } */
+  
+  * {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+      Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji,
+      Segoe UI Symbol;
+    line-height: 1.5rem;
+  }
+  /* 
+  .gift-textarea::-webkit-input-placeholder {
+    color: #999;
+  }
+  .gift-textarea::-moz-placeholder {
+    color: #999;
+  }
+  .gift-textarea:-ms-input-placeholder {
+    color: #999;
+  }
+  .gift-textarea:-moz-placeholder {
+    color: #999;
+  } */
+  
