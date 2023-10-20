@@ -4,9 +4,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { parse as GIFTParse } from 'gift-pegjs';
 
 import Editor from '../../../components/EditorPreview/Editor';
-import Preview from '../../../components/EditorPreview/Preview';
+import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
 import '../../../components/EditorPreview/EditorPreview.css';
+import { GIFTQuestion } from '../../../components/GiftTemplate/templates/types';
 
 interface Quiz {
   id: string;
@@ -22,7 +23,7 @@ interface EditQuizParams {
 const EditQuiz: React.FC = () => {
   const { id } = useParams<EditQuizParams>();
   const [value, setValue] = useState('');
-  const [previewValue, setPreviewValue] = useState('');
+  const [parsedValue, setParsedValue] = useState<GIFTQuestion[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
   const [quiz, setQuiz] = useState<Quiz | null>(null);
@@ -35,7 +36,7 @@ const EditQuiz: React.FC = () => {
     if (quizToEdit) {
       setQuiz(quizToEdit);
       setValue(quizToEdit.questions);
-      setPreviewValue(quizToEdit.questions);
+      setParsedValue(GIFTParse(quizToEdit.questions));
       setQuizTitle(quizToEdit.title);
     }
   }, [id]);
@@ -45,7 +46,7 @@ const EditQuiz: React.FC = () => {
   }
 
   function handleUpdatePreview() {
-    setPreviewValue(value);
+    setParsedValue(GIFTParse(value));
   }
 
   const handleSaveQuiz = () => {
@@ -105,7 +106,7 @@ const EditQuiz: React.FC = () => {
           </div>
         </div>
         <div className='preview-column'>
-          <Preview questions={previewValue} />
+          <GIFTTemplatePreview questions={parsedValue} />
         </div>
       </div>
       {quizToSave && (

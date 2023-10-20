@@ -4,10 +4,8 @@ import Modal from '../../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { parse as GIFTParse, GIFTQuestion } from 'gift-pegjs';
-// import { GIFTQuestion } from '../../../components/GiftTemplate/templates/types';
 
 import Editor from '../../../components/EditorPreview/Editor';
-import Preview from '../../../components/EditorPreview/Preview';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
 import '../../../components/EditorPreview/EditorPreview.css';
@@ -15,7 +13,6 @@ import '../../../components/EditorPreview/EditorPreview.css';
 
 const CreateQuiz: React.FC = () => {
   const [value, setValue] = useState('');
-  const [previewValue, setPreviewValue] = useState('');
   const [parsedValue, setParsedValue] = useState<GIFTQuestion[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
@@ -26,7 +23,6 @@ const CreateQuiz: React.FC = () => {
   }
 
   function handleUpdatePreview() {
-    setPreviewValue(value);
     setParsedValue(GIFTParse(value));
   }
 
@@ -78,7 +74,6 @@ const CreateQuiz: React.FC = () => {
           </div>
         </div>
         <div className='preview-column'>
-          {/* <Preview questions={previewValue} /> */}
           <GIFTTemplatePreview questions={parsedValue} />
         </div>
       </div>

@@ -31,8 +31,6 @@ In order to reuse the code, we had to install the following NPM packages:
 - Error.ts: changed 2 let `document` and `newText` into const. (es-lint)
 - GlobalFeedback.ts: removed unused import of `TextFormat`. (es-lint)
 - Matching.ts: removed unused import of `Match`. (es-lint)
-- TextType.ts: replaced the `marked` call by `marked.parse`.
+- TextType.ts: replaced the `marked` call by `marked.parse` and fixed SyntaxError: ambiguous indirect export: default for `{ marked }`.
 
 - Put `Template` and `ErrorTemplate` functions apart from index.ts to dedicated `.ts` files.
-
-- Moved the `state` variable declaration from `index.ts` to application pages which needs it.
