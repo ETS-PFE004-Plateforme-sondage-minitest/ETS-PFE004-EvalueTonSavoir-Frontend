@@ -6,7 +6,7 @@ const JoinRoom: React.FC = () => {
 
     const handleJoin = () => {
 
-        const socket = io('http://localhost:4400', {
+        const socket = io(`${import.meta.env.VITE_BACKEND_URL}`, {
             transports: ['websocket'],
             reconnectionAttempts: 1
         });

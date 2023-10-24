@@ -13,7 +13,7 @@ const CreateRoom: React.FC = () => {
     const password = generatePassword();
     
     useEffect(() => {
-        fetch('http://localhost:4400/set-room-password', {
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/set-room-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
