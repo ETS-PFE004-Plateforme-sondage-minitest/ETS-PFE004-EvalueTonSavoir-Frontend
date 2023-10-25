@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import io from 'socket.io-client';
 
 const JoinRoom: React.FC = () => {
-    const [password, setPassword] = useState('');
+    const [roomName, setRoomName] = useState('');
+    const [username, setUsername] = useState('');
 
     const handleJoin = () => {
 
@@ -11,7 +12,7 @@ const JoinRoom: React.FC = () => {
             reconnectionAttempts: 1
         });
         socket.on('connect', () => {
-            socket.emit('join-room', password);
+            socket.emit('join-room', { enteredRoomName: roomName, username: username });
         });
 
         socket.on('join-success', () => {
@@ -28,11 +29,15 @@ const JoinRoom: React.FC = () => {
 
     return (
         <div>
-            hello world
             <input 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter room password"
+                value={username}  
+                onChange={(e) => setUsername(e.target.value)} 
+                placeholder="Enter username" />
+        
+            <input 
+                value={roomName} 
+                onChange={(e) => setRoomName(e.target.value)}
+                placeholder="Enter room name"
             />
             <button onClick={handleJoin}>Join</button>
         </div>

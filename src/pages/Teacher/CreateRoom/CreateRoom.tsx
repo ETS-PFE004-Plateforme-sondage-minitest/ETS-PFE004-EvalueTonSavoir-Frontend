@@ -1,37 +1,63 @@
 // CreateRoom.tsx
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import {io, Socket} from 'socket.io-client';
+
 
 const CreateRoom: React.FC = () => {
-    const generatePassword = (length = 6) => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-        return result;
-    };
-    const password = generatePassword();
-    
-    useEffect(() => {
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/set-room-password`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ password })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Response from server:", data.message);
-        })
-        .catch(error => console.error('Error sending password:', error));
-    }, [password]);
+    const [roomName, setRoomName] = useState<string>('');
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [users, setUsers] = useState<string[]>([]);
+    const quiz = useParams<{ id: string }>();
 
+    const disconnectWebSocket = () => {
+        if (socket) {
+            socket.disconnect();
+            setSocket(null);
+        }
+    };
+
+    const createWebSocketRoom = () => {
+            const socket = io(`${import.meta.env.VITE_BACKEND_URL}`, {
+                transports: ['websocket'],
+                reconnectionAttempts: 1
+            });
+            socket.on('connect', () => {
+                socket.emit('create-room');
+            });
+            socket.on('create-success', (roomName: string ) => {
+                setRoomName(roomName);
+            });
+            socket.on('user-joined', (username: string) => {
+                setUsers(prevUsers => [...prevUsers, username]);
+            });
+            setSocket(socket);
+    };
+
+    const launchQuiz = () => {
+        console.log(`go to room : /teacher/teacherRoom/${roomName}:quiz-id=${quiz.id}`);
+    }
     
     return (
         <div>
-            <h1>Pawword</h1>
-            <span>{password}</span>
+            <h1>Room name</h1>
+            <span>{roomName}</span>
+            {roomName 
+                ? <div>
+                        <button onClick={launchQuiz}>Launch Quiz</button> 
+                    </div>
+                :<button onClick={createWebSocketRoom}>Create Room</button>
+            }
+
+            <button onClick={disconnectWebSocket}>Quit</button>
+
+            <div>
+                <h2>Users:</h2>
+                {users.map(user => (
+                    <span key={user}>{user}</span>
+                ))}
+            </div>
+
         </div>
     );
 };
