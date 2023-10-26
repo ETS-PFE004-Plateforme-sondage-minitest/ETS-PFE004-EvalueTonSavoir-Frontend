@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { parse } from 'gift-pegjs';
+import { GIFTQuestion, parse } from 'gift-pegjs';
 import giftPreviewHTML from './giftPreview.js';
 import './giftPreview.css';
 
 interface PreviewProps {
   questions: string;
+  showAnswers?: boolean;
+  giftQuestions?: GIFTQuestion[];
 }
 
-const Preview: React.FC<PreviewProps> = ({ questions }) => {
+const Preview: React.FC<PreviewProps> = ({ questions, showAnswers, giftQuestions }) => {
   const [theDiv, setTheDiv] = useState(document.createElement('div'));
   const [error, setError] = useState('');
   const [isPreviewReady, setIsPreviewReady] = useState(false);
@@ -15,14 +17,14 @@ const Preview: React.FC<PreviewProps> = ({ questions }) => {
   useEffect(() => {
     try {
       const newDiv = document.createElement('div');
-      giftPreviewHTML(parse(questions), newDiv);
+      giftPreviewHTML(giftQuestions ? giftQuestions : parse(questions), newDiv, showAnswers);
       setTheDiv(newDiv);
       setIsPreviewReady(true);
       setError('');
     } catch (error: any) {
       setError('An error occurred while generating the preview.');
     }
-  }, [questions]);
+  }, [questions, giftQuestions]);
 
   const PreviewComponent = () => (
     <React.Fragment>

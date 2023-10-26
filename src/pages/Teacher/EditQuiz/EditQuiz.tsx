@@ -8,12 +8,8 @@ import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePr
 
 import '../../../components/EditorPreview/EditorPreview.css';
 import { GIFTQuestion } from '../../../components/GiftTemplate/templates/types';
-
-interface Quiz {
-  id: string;
-  title: string;
-  questions: string;
-}
+import { QuizType } from '../../../Types/QuizType';
+import { QuizService } from '../../../services/QuizService';
 
 interface EditQuizParams {
   id: string;
@@ -26,13 +22,12 @@ const EditQuiz: React.FC = () => {
   const [parsedValue, setParsedValue] = useState<GIFTQuestion[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [quiz, setQuiz] = useState<QuizType | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch quiz from local storage
-    const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-    const quizToEdit = storedQuizzes.find((q: Quiz) => q.id === id);
+    const quizToEdit = QuizService.getQuizById(id);
     if (quizToEdit) {
       setQuiz(quizToEdit);
       setValue(quizToEdit.questions);
@@ -78,7 +73,7 @@ const EditQuiz: React.FC = () => {
   
   const handleQuizSave = () => {
     const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-    const updatedQuizzes = storedQuizzes.map((q: Quiz) => {
+    const updatedQuizzes = storedQuizzes.map((q: QuizType) => {
       if (q.id === id) {
         return { ...q, title: quizTitle, questions: value };
       }

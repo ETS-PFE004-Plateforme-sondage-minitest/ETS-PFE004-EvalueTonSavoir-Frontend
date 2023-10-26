@@ -1,6 +1,6 @@
 var converter;
 
-function giftPreviewHTML(qArray, theDiv) {
+function giftPreviewHTML(qArray, theDiv, showAnswers=true) {
     var html = "";
     var q;
     console.log(qArray);
@@ -18,14 +18,14 @@ function giftPreviewHTML(qArray, theDiv) {
             case "MC":
                 html += makeTitle("Multiple choice", q.title);
                 html +="<p>" + applyFormat(q.stem) + "</p>";
-                html += formatAnswers(q.choices);
+                html += formatAnswers(q.choices, showAnswers);
                 html += formatFeedback(q.globalFeedback) + "</div>";
                 theDiv.innerHTML+=html; html = "";
                 break;
             case "Short":
                 html += makeTitle("Short answer", q.title);
                 html +="<p>" + applyFormat(q.stem) + "</p>";
-                html += formatAnswers(q.choices);
+                html += formatAnswers(q.choices, showAnswers);
                 html += formatFeedback(q.globalFeedback) + "</div>";
                 theDiv.innerHTML+=html; html = "";
                 break;
@@ -37,7 +37,7 @@ function giftPreviewHTML(qArray, theDiv) {
                 break;
            case "TF":
                 html += makeTitle("True/False", q.title);
-                html +="<p><em>(" + (q.isTrue ? "True" : "False") + ")</em> " + applyFormat(q.stem) + "</p>";
+                html +=(showAnswers ? "<p><em>(" + (q.isTrue ? "True" : "False") + ")</em> " : "<p>") + applyFormat(q.stem) + "</p>";
                 html += formatFeedback(q.globalFeedback) + "</div>";
                 theDiv.innerHTML+=html; html = "";
                 break;
@@ -66,14 +66,14 @@ function makeTitle(type, title) {
     return "<b>" + type + (title !== null ? ' "' + title + '"' : "" ) + "</b>";
 }
 
-function formatAnswers(choices) {
+function formatAnswers(choices, showAnswers=true) {
     var html = '<ul class="mc">';
     shuffle(choices);
 
     for (var a=0; a<choices.length; a++) {
         var answer = choices[a];
         html += '<li class="' +
-          ((answer.isCorrect || answer.weight > 0) ? 'rightAnswer' : 'wrongAnswer') +
+          (showAnswers ? ((answer.isCorrect || answer.weight > 0) ? 'rightAnswer' : 'wrongAnswer') : '') +
           '">' + (answer.weight !== null ? "<em>(" + answer.weight + "%)</em> " : '') +
           applyFormat(answer.text) + 
           (answer.feedback !== null ? " [" + applyFormat(answer.feedback) + "]" : '') +
