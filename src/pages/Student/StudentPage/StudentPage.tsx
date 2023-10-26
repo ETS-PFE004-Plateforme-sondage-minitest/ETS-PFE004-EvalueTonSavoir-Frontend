@@ -1,8 +1,8 @@
 import { GIFTQuestion, parse } from 'gift-pegjs'
-import TrueFalseQuestion from './components/Questions/TrueFalseQuestion'
-import MultipleChoiceQuestion from './components/Questions/MultipleChoiceQuestion'
-import NumericalQuestion from './components/Questions/NumericalQuestion'
-import ShortAnswerQuestion from './components/Questions/ShortAnswerQuestion'
+import TrueFalseQuestion from '../../../components/Questions/TrueFalseQuestion'
+import MultipleChoiceQuestion from '../../../components/Questions/MultipleChoiceQuestion'
+import NumericalQuestion from '../../../components/Questions/NumericalQuestion'
+import ShortAnswerQuestion from '../../../components/Questions/ShortAnswerQuestion'
 import { useMemo, useState } from 'react'
 
 const App = () => {
