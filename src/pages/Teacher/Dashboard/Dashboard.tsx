@@ -85,7 +85,7 @@ const Dashboard: React.FC = () => {
                   <Link className='blue-btn' to={`/teacher/edit-quiz/${quiz.id}`} title="Modifier">
                     <FontAwesomeIcon icon={faPencil} />
                   </Link>
-                  <Link className='green-btn' to={`/teacher/create-room/${quiz.id}`} title="Démarrer">
+                  <Link className='green-btn' to={`/teacher/manage-room/${quiz.id}`} title="Démarrer">
                     <FontAwesomeIcon icon={faPlay} />
                   </Link>
             </li>

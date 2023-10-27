@@ -55,8 +55,6 @@ const ManageRoom: React.FC = () => {
 
     const nextQuestion = () => {
        if(socket && roomName){
-            
-
             if(!quizQuestions){
                 let quizQuestionString = quiz?.questions;
                 if(!quizQuestionString) return;
