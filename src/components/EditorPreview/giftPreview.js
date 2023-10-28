@@ -3,7 +3,7 @@ var converter;
 function giftPreviewHTML(qArray, theDiv, showAnswers=true) {
     var html = "";
     var q;
-    console.log(qArray);
+    //console.log(qArray);
     for (var i=0; i<qArray.length; i++) {
         // console.log("i = " + i + " and qArray[i] is '" + qArray[i] );
         q = qArray[i];
