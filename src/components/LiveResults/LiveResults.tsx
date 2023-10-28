@@ -16,10 +16,7 @@ interface Answer {
 const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
     const [userAnswers, setUserAnswers] = useState<Record<string, (string | number | boolean)[]>>({});
     const [hideUsernames, setHideUsernames] = useState<boolean>(false);
-    
-    console.log('les questions')
-    console.log(questions)
-    console.log(userAnswers)
+
     useEffect(() => {
         if (socket) {
             socket.on('submit-answer', ({ username, answer }: Answer) => {
@@ -77,7 +74,6 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                                             isCorrect = true;
                                         }
                                     } else if (question.type === 'TF') {
-                                        console.log(answer)
                                         isCorrect = (question.isTrue && answer.toString() === "true") || (!question.isTrue && answer.toString() === "false");
                                     }
 
