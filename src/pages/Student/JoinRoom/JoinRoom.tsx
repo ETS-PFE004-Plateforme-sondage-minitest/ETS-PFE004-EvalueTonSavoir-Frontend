@@ -1,13 +1,14 @@
-import { Question } from 'gift-pegjs';
+import { GIFTQuestion, Question } from 'gift-pegjs';
 import React, { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
+import QuestionComponent from '../../../components/Questions/Question';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
     const [username, setUsername] = useState('');
     const [socket , setSocket] = useState<Socket | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [question, setQuestion] = useState<Question>();
+    const [question, setQuestion] = useState<GIFTQuestion>();
 
     useEffect(() => {
     },[question,isLoading]);
@@ -34,7 +35,7 @@ const JoinRoom: React.FC = () => {
                 setIsLoading(true);
                 console.log('Successfully joined the room.');
             });
-            socket.on('next-question', (question: Question) => {
+            socket.on('next-question', (question: GIFTQuestion) => {
                 console.log(question)
                 setIsLoading(false);
                 setQuestion(question);
@@ -65,7 +66,7 @@ const JoinRoom: React.FC = () => {
                 <div>
                     { question ? 
                         <div>
-                            {question.stem.text}
+                            <QuestionComponent socket={socket} question={question} roomName={roomName} username={username} />
                         </div> 
                     :
                         <div>

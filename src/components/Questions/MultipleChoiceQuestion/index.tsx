@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import SubmitButton from '../../SubmitButton'
-import '../style.css'
+import '../questionStyle.css'
 
 type Choices = {
   feedback: { format: string; text: string } | null
