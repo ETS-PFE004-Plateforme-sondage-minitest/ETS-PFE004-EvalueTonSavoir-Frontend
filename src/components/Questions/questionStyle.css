@@ -23,6 +23,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color:black;
 }
 
 .circle.selected {
@@ -46,6 +47,7 @@
   padding: 0.25rem;
   text-align: left;
   width: 20rem;
+  color: black
 }
 
 .answer-text.selected {

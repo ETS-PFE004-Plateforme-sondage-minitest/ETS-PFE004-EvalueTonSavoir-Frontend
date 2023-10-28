@@ -94,7 +94,7 @@ const ManageRoom: React.FC = () => {
             {quizQuestions ? 
                 <div>
                     <PreviewComponent questions={"none"}  showAnswers={false} giftQuestions={presentQuestion}></PreviewComponent>
-                    <LiveResultsComponent socket={socket}></LiveResultsComponent>
+                    <LiveResultsComponent socket={socket} questions={quizQuestions}></LiveResultsComponent>
                     <button onClick={nextQuestion}>{isLastQuestion ? "End Quiz" : "NextQuestion"}</button>
                 </div>
             :

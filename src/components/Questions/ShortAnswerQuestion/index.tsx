@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import '../style.css'
+import '../questionStyle.css'
 import SubmitButton from '../../SubmitButton'
 
 type Choices = {
