@@ -1,6 +1,6 @@
 import { GIFTQuestion } from 'gift-pegjs';
 import React, { useEffect, useState } from 'react';
-import io, { Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 import QuestionComponent from '../../../components/Questions/Question';
 import webSocketService from '../../../services/WebsocketService';
 
