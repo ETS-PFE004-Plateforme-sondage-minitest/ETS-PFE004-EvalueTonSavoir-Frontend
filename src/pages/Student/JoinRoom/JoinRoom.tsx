@@ -1,7 +1,8 @@
-import { GIFTQuestion, Question } from 'gift-pegjs';
+import { GIFTQuestion } from 'gift-pegjs';
 import React, { useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import QuestionComponent from '../../../components/Questions/Question';
+import webSocketService from '../../../services/WebsocketService';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
@@ -11,7 +12,31 @@ const JoinRoom: React.FC = () => {
     const [question, setQuestion] = useState<GIFTQuestion>();
 
     useEffect(() => {
-    },[question,isLoading]);
+        const socket = webSocketService.connect();
+        socket.on('join-success', () => {
+            setIsLoading(true);
+            console.log('Successfully joined the room.');
+        });
+        socket.on('next-question', (question: GIFTQuestion) => {
+            setIsLoading(false);
+            setQuestion(question);
+        });
+        socket.on('end-quiz', () => {
+            console.log('end-quiz.');
+            //socket.disconnect();
+            disconnect()
+        });
+        socket.on('join-failure', () => {
+            console.log('Failed to join the room.');
+        });
+        socket.on('connect_error', (error) => {
+            console.log("Connection Error:", error);
+        });
+        setSocket(socket);
+        return () => { 
+            webSocketService.disconnect();
+        };
+    },[]);
 
     const disconnect= () => {
         setSocket(null);
@@ -24,34 +49,12 @@ const JoinRoom: React.FC = () => {
 
     const handleSocket = () => {
         if(!socket){
-            const socket = io(`${import.meta.env.VITE_BACKEND_URL}`, {
-                transports: ['websocket'],
-                reconnectionAttempts: 1
-            });
-            socket.on('connect', () => {
-                socket.emit('join-room', { enteredRoomName: roomName, username: username });
-            });
-            socket.on('join-success', () => {
-                setIsLoading(true);
-                console.log('Successfully joined the room.');
-            });
-            socket.on('next-question', (question: GIFTQuestion) => {
-                console.log(question)
-                setIsLoading(false);
-                setQuestion(question);
-            });
-            socket.on('end-quiz', () => {
-                console.log('end-quiz.');
-                socket.disconnect();
-                disconnect()
-            });
-            socket.on('join-failure', () => {
-                console.log('Failed to join the room.');
-            });
-            socket.on('connect_error', (error) => {
-                console.log("Connection Error:", error);
-            });
+            const socket = webSocketService.connect();  
             setSocket(socket); 
+        }
+        
+        if (username && roomName) {
+            webSocketService.joinRoom(roomName, username);
         }
     };
 

@@ -7,7 +7,7 @@ import { QuizType } from '../../../Types/QuizType';
 import { GIFTQuestion, parse } from 'gift-pegjs'
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
 import PreviewComponent from '../../../components/EditorPreview/Preview';
-
+import webSocketService from '../../../services/WebsocketService';
 
 const ManageRoom: React.FC = () => {
     const [roomName, setRoomName] = useState<string>('');
@@ -21,36 +21,38 @@ const ManageRoom: React.FC = () => {
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
+
+        return () => {
+            webSocketService.disconnect();
+        };
     }, [quizId.id]);
 
 
     const disconnectWebSocket = () => {
         if (socket) {
-            socket.disconnect();
+            webSocketService.disconnect();
             setSocket(null);
             setPresentQuestion(undefined);
             setQuizQuestions(undefined);
             setIsLastQuestion(false);
             setUsers([]);
             setRoomName('');
+            webSocketService.endQuiz(roomName);
         }
     };
 
     const createWebSocketRoom = () => {
-            const socket = io(`${import.meta.env.VITE_BACKEND_URL}`, {
-                transports: ['websocket'],
-                reconnectionAttempts: 1
-            });
-            socket.on('connect', () => {
-                socket.emit('create-room');
-            });
-            socket.on('create-success', (roomName: string ) => {
-                setRoomName(roomName);
-            });
-            socket.on('user-joined', (username: string) => {
-                setUsers(prevUsers => [...prevUsers, username]);
-            });
-            setSocket(socket);
+        const socket = webSocketService.connect();
+        socket.on('connect', () => {
+            webSocketService.createRoom();
+        });
+        socket.on('create-success', (roomName: string) => {
+            setRoomName(roomName);
+        });
+        socket.on('user-joined', (username: string) => {
+            setUsers(prevUsers => [...prevUsers, username]);
+        });
+        setSocket(socket);
     };
 
     const nextQuestion = () => {
@@ -64,24 +66,22 @@ const ManageRoom: React.FC = () => {
                 });
                 setQuizQuestions(questions);
                 setPresentQuestion([questions[0]]); 
-                socket.emit('next-question', {roomName : roomName, question : questions[0]});
+                webSocketService.nextQuestion(roomName, questions[0]);
             }
             else{
-                console.log(quizQuestions)
                 if(!presentQuestion) return;
                 let index = quizQuestions?.indexOf(presentQuestion[0] as GIFTQuestion);
                 if(index !== undefined && quizQuestions){
                     if(index < quizQuestions.length - 1){
                         setPresentQuestion([quizQuestions[index + 1]]);
-                        socket.emit('next-question', {roomName: roomName, question : quizQuestions[index + 1]});
+                        webSocketService.nextQuestion(roomName, quizQuestions[index + 1]);
 
                         if(index === quizQuestions.length - 2){
                             setIsLastQuestion(true);
                         }
                     }
                     else{
-                        console.log('end quiz');
-                        socket.emit('end-quiz', {roomName: roomName});
+                        webSocketService.endQuiz(roomName);
                         disconnectWebSocket ();
                     }
                 }
