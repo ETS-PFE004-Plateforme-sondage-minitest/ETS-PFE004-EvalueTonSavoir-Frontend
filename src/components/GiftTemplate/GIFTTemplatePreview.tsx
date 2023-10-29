@@ -1,28 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import Template, { ErrorTemplate } from "./templates";
-import { GIFTQuestion } from "./templates/types";
+import { parse } from "gift-pegjs";
 import "./styles.css";
 
 interface GIFTTemplatePreviewProps {
-  questions: GIFTQuestion[];
+  // questions: GIFTQuestion[];
+  questions: string[];
 }
   
 const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({ questions }) => {
   const [error, setError] = useState('');
   const [isPreviewReady, setIsPreviewReady] = useState(false);
   const [items, setItems] = useState('');
-  const [errorItem, setErrorItem] = useState('');
-
-  // const state: DisplayOptions = { preview: true, theme: "light" };
+  // const [errorItem, setErrorItem] = useState('');
 
   useEffect(() => {
     try {
-      setItems(questions
-          .map((item) => Template(item, { preview: true, theme: "light" }))
-          .join("")
-      );
-      setErrorItem(ErrorTemplate("Hello"));
+      let previewHTML = '';
+      questions.forEach(item => {
+        try {
+          const parsedItem = parse(item);
+          previewHTML += Template(parsedItem[0], { preview: true, theme: "light" })
+        } catch (error) {
+          if (error instanceof Error) {
+            previewHTML += ErrorTemplate(item + '\n' + error.message)
+          }
+          else {
+            previewHTML += ErrorTemplate(item + '\n' + 'Unknown error')
+          }
+        }
+        previewHTML += '';
+      });
 
+      setItems(previewHTML);
       setIsPreviewReady(true);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -41,7 +51,7 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({ questions }) 
       ) : isPreviewReady ? (
         <div
           className="preview-container"
-          dangerouslySetInnerHTML={{ __html: items + errorItem }}
+          dangerouslySetInnerHTML={{ __html: items }}
         ></div>
       ) : (
         <div className="loading">Loading preview...</div>
