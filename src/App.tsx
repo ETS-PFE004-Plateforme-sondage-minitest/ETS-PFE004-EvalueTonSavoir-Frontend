@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route } from "react-router-dom";
 
 // Pages
@@ -10,8 +9,7 @@ import TeacherRoom from './pages/Teacher/TeacherRoom/TeacherRoom';
 import CreateQuiz from './pages/Teacher/CreateQuiz/CreateQuiz';
 import EditQuiz from './pages/Teacher/EditQuiz/EditQuiz';
 // Pages espace étudiant
-import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
-import StudentPage from './pages/Student/StudentPage/StudentPage';
+import StudentPage from './pages/Student/StudentPage';
 
 
 function App() {
@@ -29,8 +27,7 @@ function App() {
                         <Route path="/teacher/manage-room/:id" element={<ManageRoom />} />
                         <Route path="/teacher/room/:room/:id" element={<TeacherRoom />} />
                         {/* Pages espace étudiant */}
-                        <Route path="/student/join-room" element={<JoinRoom />} />
-                        <Route path="/student/mock-quiz" element={<StudentPage />} />
+                        <Route path="/student/student-page" element={<StudentPage />} />
                     </Routes>
                 </main>
             </div>

@@ -12,8 +12,9 @@ interface QuestionsProps {
     question: GIFTQuestion;
     roomName: string;
     username: string;
+    disconnect: () => void;
 }
-const Questions : React.FC<QuestionsProps> = ({socket, question, roomName, username}) => {
+const Questions : React.FC<QuestionsProps> = ({socket, question, roomName, username, disconnect}) => {
 
     const  [answersIsSubmitted, setAnswersIsSubmitted] = useState(false);
     
@@ -74,6 +75,7 @@ const Questions : React.FC<QuestionsProps> = ({socket, question, roomName, usern
 
     return (
         <div>
+            <button className='disconnect-btn' onClick={disconnect}>Disconnect</button>
             {answersIsSubmitted ? <div>waiting for the next question...</div> : renderedQuestion}
         </div>
     );

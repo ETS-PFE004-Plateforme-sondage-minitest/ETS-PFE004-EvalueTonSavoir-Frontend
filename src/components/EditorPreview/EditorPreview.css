@@ -15,10 +15,11 @@
     margin-top: 20px;
 }
 
-/* .quill {
-    height: 250px;
-    min-height: 250px;
-} */
+.quill {
+    /*height: 250px;
+    min-height: 250px;*/
+    background-color: white;
+} 
 
 .editor-column {
     width: 100%;

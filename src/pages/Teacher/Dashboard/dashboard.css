@@ -38,3 +38,7 @@ h2, h3, .search-bar {
 .green-btn {
   background-color: #28a745;
 }
+
+.quiz-card {
+  background-color: white;
+}

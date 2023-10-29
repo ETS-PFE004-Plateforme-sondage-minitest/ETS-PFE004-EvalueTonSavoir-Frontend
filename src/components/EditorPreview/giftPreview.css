@@ -19,6 +19,9 @@ ul.mc li.wrongAnswer:before {
     color: #aa0000;
 }
 
+li {
+	background-color: white;
+}
 @media print {
 	#output [id^="question_"] > b {
 		display:block;

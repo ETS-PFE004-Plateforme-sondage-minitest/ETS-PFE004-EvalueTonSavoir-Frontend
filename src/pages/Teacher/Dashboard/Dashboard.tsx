@@ -74,7 +74,7 @@ const Dashboard: React.FC = () => {
         </div>
         <ul>
             {filteredQuizzes.map((quiz: Quiz) => (
-            <li key={quiz.id}>
+            <li key={quiz.id} className='quiz-card'>
                 <h3>{quiz.title}</h3>
                   <a className='red-btn' onClick={() => handleRemoveQuiz(quiz)} title="Supprimer">
                     <FontAwesomeIcon icon={faTrashCan} />

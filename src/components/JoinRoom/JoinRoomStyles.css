@@ -1,0 +1,34 @@
+/* LoginRoomStyles.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+input {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #c4c4c4;
+    width: 250px;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.joinBtn:hover {
+    background-color: #0056b3;
+}
+
+.logo, .title {
+    margin-bottom: 20px;
+}

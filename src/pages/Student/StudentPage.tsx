@@ -1,10 +1,11 @@
 import { GIFTQuestion } from 'gift-pegjs';
 import React, { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
-import QuestionComponent from '../../../components/Questions/Question';
-import webSocketService from '../../../services/WebsocketService';
+import QuestionComponent from '../../components/Questions/Question';
+import webSocketService from '../../services/WebsocketService';
+import JoinRoomComponent from '../../components/JoinRoom/JoinRoom';
 
-const JoinRoom: React.FC = () => {
+const StudentPage: React.FC = () => {
     const [roomName, setRoomName] = useState('');
     const [username, setUsername] = useState('');
     const [socket , setSocket] = useState<Socket | null>(null);
@@ -23,7 +24,6 @@ const JoinRoom: React.FC = () => {
         });
         socket.on('end-quiz', () => {
             console.log('end-quiz.');
-            //socket.disconnect();
             disconnect()
         });
         socket.on('join-failure', () => {
@@ -44,18 +44,7 @@ const JoinRoom: React.FC = () => {
         setIsLoading(false);
         setRoomName('');
         setUsername('');
-    };
-
-
-    const handleSocket = () => {
-        if(!socket){
-            const socket = webSocketService.connect();  
-            setSocket(socket); 
-        }
-        
-        if (username && roomName) {
-            webSocketService.joinRoom(roomName, username);
-        }
+        setSocket(null);
     };
 
     return (
@@ -68,23 +57,16 @@ const JoinRoom: React.FC = () => {
             :
                 <div>
                     { question ? 
-                        <div>
-                            <QuestionComponent socket={socket} question={question} roomName={roomName} username={username} />
-                        </div> 
+                        <QuestionComponent socket={socket} question={question} roomName={roomName} username={username} disconnect={disconnect} />
                     :
-                        <div>
-                            <input 
-                            value={username}  
-                            onChange={(e) => setUsername(e.target.value)} 
-                            placeholder="Enter username" />
-                    
-                            <input 
-                                value={roomName} 
-                                onChange={(e) => setRoomName(e.target.value)}
-                                placeholder="Enter room name"
-                            />
-                            <button onClick={handleSocket}>Join</button>
-                        </div>
+                        <JoinRoomComponent 
+                            socket={socket} 
+                            username={username}
+                            setUsername={setUsername}
+                            roomName={roomName}
+                            setRoomName={setRoomName}
+                            setSocket={setSocket}
+                        />
                     }
                 </div>
             }
@@ -92,4 +74,4 @@ const JoinRoom: React.FC = () => {
     );
 };
 
-export default JoinRoom;
+export default StudentPage;

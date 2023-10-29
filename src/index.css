@@ -40,3 +40,7 @@ a, button {
   justify-content: center;
   align-items: center;
 }
+
+body {
+  background-color: #c7d9fd;
+}
