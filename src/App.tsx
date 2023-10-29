@@ -9,6 +9,7 @@ import CreateRoom from './pages/Teacher/CreateRoom/CreateRoom';
 import TeacherRoom from './pages/Teacher/TeacherRoom/TeacherRoom';
 import CreateQuiz from './pages/Teacher/CreateQuiz/CreateQuiz';
 import EditQuiz from './pages/Teacher/EditQuiz/EditQuiz';
+import QuizForm from './pages/Teacher/EditorQuiz/EditorQuiz';
 // Pages espace étudiant
 import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
 import StudentPage from './pages/Student/StudentPage/StudentPage';
@@ -28,6 +29,7 @@ function App() {
                         <Route path="/teacher/room/:id" element={<TeacherRoom />} />
                         <Route path="/teacher/create-quiz" element={<CreateQuiz />} />
                         <Route path="/teacher/edit-quiz/:id" element={<EditQuiz />} />
+                        <Route path="/teacher/quiz-form/:id" element={<QuizForm />} />
 
                         {/* Pages espace étudiant */}
                         <Route path="/student/join-room" element={<JoinRoom />} />

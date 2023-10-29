@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../../components/Modal/Modal';
 import { useParams, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import Editor from '../../../components/EditorPreview/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
@@ -18,11 +19,10 @@ interface EditQuizParams {
   [key: string]: string | undefined;
 }
 
-const EditQuiz: React.FC = () => {
+const QuizForm: React.FC = () => {
   const { id } = useParams<EditQuizParams>();
   const [value, setValue] = useState('');
   const [filteredValue, setFilteredValue] = useState<string[]>([]);
-  // const [parsedValue, setParsedValue] = useState<GIFTQuestion[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
   const [quiz, setQuiz] = useState<Quiz | null>(null);
@@ -65,21 +65,13 @@ const EditQuiz: React.FC = () => {
   
   const handleQuizSave = () => {
     const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-    const updatedQuizzes = storedQuizzes.map((q: Quiz) => {
-      if (q.id === id) {
-        return { ...q, title: quizTitle, questions: filteredValue };
-      }
-      return q;
-    });
+    const newQuiz = { id: uuidv4(), title: quizTitle || 'Untitled quiz', questions: filteredValue };
+    const updatedQuizzes = id ? storedQuizzes.map((q: Quiz) => q.id === id ? { ...q, title: quizTitle, questions: filteredValue } : q) : [...storedQuizzes, newQuiz];
     localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
     alert('Quiz saved!');
     handleModalClose();
     navigate('/teacher/dashboard');
   };
-
-  if (!quiz) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -110,4 +102,4 @@ const EditQuiz: React.FC = () => {
   );
 };
 
-export default EditQuiz;
+export default QuizForm;

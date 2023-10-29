@@ -55,6 +55,9 @@
 input {
   width: 22rem;
 }
+input[type="radio"] {
+  width: 10%;
+}
 
 .correct-answer-text {
   color: green;
@@ -69,5 +72,8 @@ input {
   }
   input {
     width: 99.2%;
+  }
+  input[type="radio"] {
+    width: 10%;
   }
 }

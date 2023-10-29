@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Modal from '../../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { parse as GIFTParse, GIFTQuestion } from 'gift-pegjs';
+// import { parse, GIFTQuestion } from 'gift-pegjs';
 
 import Editor from '../../../components/EditorPreview/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
@@ -13,7 +13,7 @@ import '../../../components/EditorPreview/EditorPreview.css';
 
 const CreateQuiz: React.FC = () => {
   const [value, setValue] = useState('');
-  const [parsedValue, setParsedValue] = useState<GIFTQuestion[]>([]);
+  const [filteredValue, setFilteredValue] = useState<string[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
   const navigate = useNavigate();
@@ -23,7 +23,9 @@ const CreateQuiz: React.FC = () => {
   }
 
   function handleUpdatePreview() {
-    setParsedValue(GIFTParse(value));
+    const linesArray = value.split(/(?<=\}.*)[\n]+/); // Split at next line breaks after closing curly brace
+    if(linesArray[linesArray.length - 1] === '') linesArray.pop(); // Remove last empty line
+    setFilteredValue(linesArray);
   }
 
   const handleSaveQuiz = () => {
@@ -34,20 +36,6 @@ const CreateQuiz: React.FC = () => {
     setQuizTitle(event.target.value);
   };
 
-  const handleParse = () => {
-    try {
-      const parsedValue = GIFTParse(value);
-      alert(JSON.stringify(parsedValue, null, 2));
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-      else {
-        alert('Unknown error');
-      }
-    }
-  };
-
   const handleModalClose = () => {
     setQuizToSave(false);
     setQuizTitle('');
@@ -55,7 +43,7 @@ const CreateQuiz: React.FC = () => {
   
   const handleQuizSave = () => {
     const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-    const newQuiz = { id: uuidv4(), title: quizTitle || 'Untitled quiz', questions: value };
+    const newQuiz = { id: uuidv4(), title: quizTitle || 'Untitled quiz', questions: filteredValue };
     const updatedQuizzes = [...storedQuizzes, newQuiz];
     localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
     handleModalClose();
@@ -69,12 +57,11 @@ const CreateQuiz: React.FC = () => {
           <Editor initialValue='' onEditorChange={handleEditorChange} />
           <div className='quiz-action-buttons'>
             <a onClick={handleUpdatePreview}>Prévisualisation</a>
-            <a onClick={handleParse}>Parse</a>
             <a onClick={handleSaveQuiz}>Enregistrer</a>
           </div>
         </div>
         <div className='preview-column'>
-          <GIFTTemplatePreview questions={parsedValue} />
+          <GIFTTemplatePreview questions={filteredValue} />
         </div>
       </div>
       {quizToSave && (
