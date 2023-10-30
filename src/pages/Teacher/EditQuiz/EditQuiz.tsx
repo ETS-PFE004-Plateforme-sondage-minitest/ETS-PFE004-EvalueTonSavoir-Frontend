@@ -57,7 +57,7 @@ const EditQuiz: React.FC = () => {
     setQuizTitle('');
   };
   
-  const handleQuizSave = () => {
+  const confirmQuizEdit = () => {
     const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
     const updatedQuizzes = storedQuizzes.map((q: QuizType) => {
       if (q.id === id) {
@@ -96,7 +96,7 @@ const EditQuiz: React.FC = () => {
           hasOptionalInput 
           optionalInputValue={quizTitle}
           onOptionalInputChange={handleQuizTitleChange} 
-          onConfirm={handleQuizSave} 
+          onConfirm={confirmQuizEdit} 
           onCancel={handleModalClose} 
         />
       )}
