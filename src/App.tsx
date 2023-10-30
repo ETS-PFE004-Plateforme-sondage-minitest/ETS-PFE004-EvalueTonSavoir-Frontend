@@ -8,6 +8,7 @@ import ManageRoom from './pages/Teacher/ManageRoom/ManageRoom';
 import TeacherRoom from './pages/Teacher/TeacherRoom/TeacherRoom';
 import CreateQuiz from './pages/Teacher/CreateQuiz/CreateQuiz';
 import EditQuiz from './pages/Teacher/EditQuiz/EditQuiz';
+import QuizForm from './pages/Teacher/EditorQuiz/EditorQuiz';
 // Pages espace étudiant
 import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
 import StudentPage from './pages/Student/StudentPage/StudentPage';
