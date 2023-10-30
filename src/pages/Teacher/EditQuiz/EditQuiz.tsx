@@ -18,7 +18,6 @@ const EditQuiz: React.FC = () => {
   const { id } = useParams<EditQuizParams>();
   const [value, setValue] = useState('');
   const [filteredValue, setFilteredValue] = useState<string[]>([]);
-  // const [parsedValue, setParsedValue] = useState<GIFTQuestion[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
   const [quiz, setQuiz] = useState<QuizType | null>(null);

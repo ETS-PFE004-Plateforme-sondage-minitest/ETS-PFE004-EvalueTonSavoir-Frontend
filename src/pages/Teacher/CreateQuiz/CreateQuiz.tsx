@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Modal from '../../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-// import { parse, GIFTQuestion } from 'gift-pegjs';
 
 import Editor from '../../../components/EditorPreview/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';

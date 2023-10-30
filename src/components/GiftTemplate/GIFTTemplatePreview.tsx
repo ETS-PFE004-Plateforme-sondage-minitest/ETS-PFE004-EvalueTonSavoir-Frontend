@@ -4,7 +4,6 @@ import { parse } from "gift-pegjs";
 import "./styles.css";
 
 interface GIFTTemplatePreviewProps {
-  // questions: GIFTQuestion[];
   questions: string[];
 }
   
@@ -12,7 +11,6 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({ questions }) 
   const [error, setError] = useState('');
   const [isPreviewReady, setIsPreviewReady] = useState(false);
   const [items, setItems] = useState('');
-  // const [errorItem, setErrorItem] = useState('');
 
   useEffect(() => {
     try {
