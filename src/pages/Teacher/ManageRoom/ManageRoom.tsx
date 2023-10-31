@@ -58,19 +58,23 @@ const ManageRoom: React.FC = () => {
     const nextQuestion = () => {
        if(socket && roomName){
             if(!quizQuestions){
-                let quizQuestionString = quiz?.questions;
-                if(!quizQuestionString) return;
-                let questions = parse(quizQuestionString); //TODO - move the logic in the editor (we should just get the right info from the cookie)
-                questions?.forEach((question, index) => {
-                    question.id = (index + 1).toString();
+                const quizQuestionArray = quiz?.questions;
+                if(!quizQuestionArray) return;
+
+                const parsedQuestions = [] as GIFTQuestion[];
+                quizQuestionArray.forEach((question, index) => {
+                    parsedQuestions.push(parse(question)[0]);
+                    parsedQuestions[index].id = (index + 1).toString();
                 });
-                setQuizQuestions(questions);
-                setPresentQuestion([questions[0]]); 
-                webSocketService.nextQuestion(roomName, questions[0]);
+                if(parsedQuestions.length === 0) return;
+
+                setQuizQuestions(parsedQuestions);
+                setPresentQuestion([parsedQuestions[0]]); 
+                webSocketService.nextQuestion(roomName, parsedQuestions[0]);
             }
             else{
                 if(!presentQuestion) return;
-                let index = quizQuestions?.indexOf(presentQuestion[0] as GIFTQuestion);
+                const index = quizQuestions?.indexOf(presentQuestion[0] as GIFTQuestion);
                 if(index !== undefined && quizQuestions){
                     if(index < quizQuestions.length - 1){
                         setPresentQuestion([quizQuestions[index + 1]]);

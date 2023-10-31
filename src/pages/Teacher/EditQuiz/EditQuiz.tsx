@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../../components/Modal/Modal';
 import { useParams, useNavigate } from 'react-router-dom';
-import { parse as GIFTParse } from 'gift-pegjs';
 
 import Editor from '../../../components/EditorPreview/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
 import '../../../components/EditorPreview/EditorPreview.css';
-import { GIFTQuestion } from '../../../components/GiftTemplate/templates/types';
 import { QuizType } from '../../../Types/QuizType';
 import { QuizService } from '../../../services/QuizService';
 
@@ -19,7 +17,7 @@ interface EditQuizParams {
 const EditQuiz: React.FC = () => {
   const { id } = useParams<EditQuizParams>();
   const [value, setValue] = useState('');
-  const [parsedValue, setParsedValue] = useState<GIFTQuestion[]>([]);
+  const [filteredValue, setFilteredValue] = useState<string[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
   const [quiz, setQuiz] = useState<QuizType | null>(null);
@@ -30,8 +28,8 @@ const EditQuiz: React.FC = () => {
     const quizToEdit = QuizService.getQuizById(id);
     if (quizToEdit) {
       setQuiz(quizToEdit);
-      setValue(quizToEdit.questions);
-      setParsedValue(GIFTParse(quizToEdit.questions));
+      setFilteredValue(quizToEdit.questions);
+      setValue(quizToEdit.questions.join('\n\n'));
       setQuizTitle(quizToEdit.title);
     }
   }, [id]);
@@ -41,7 +39,9 @@ const EditQuiz: React.FC = () => {
   }
 
   function handleUpdatePreview() {
-    setParsedValue(GIFTParse(value));
+    const linesArray = value.split(/(?<=\}.*)[\n]+/); // Split at next line breaks after closing curly brace
+    if(linesArray[linesArray.length - 1] === '') linesArray.pop(); // Remove last empty line
+    setFilteredValue(linesArray);
   }
 
   const handleSaveQuiz = () => {
@@ -52,30 +52,16 @@ const EditQuiz: React.FC = () => {
     setQuizTitle(event.target.value);
   };
 
-  const handleParse = () => {
-    try {
-      const parsedValue = GIFTParse(value);
-      alert(JSON.stringify(parsedValue, null, 2));
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-      else {
-        alert('Unknown error');
-      }
-    }
-  };
-
   const handleModalClose = () => {
     setQuizToSave(false);
     setQuizTitle('');
   };
   
-  const handleQuizSave = () => {
+  const confirmQuizEdit = () => {
     const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
     const updatedQuizzes = storedQuizzes.map((q: QuizType) => {
       if (q.id === id) {
-        return { ...q, title: quizTitle, questions: value };
+        return { ...q, title: quizTitle, questions: filteredValue };
       }
       return q;
     });
@@ -93,15 +79,14 @@ const EditQuiz: React.FC = () => {
     <div>
       <div id='editor-preview-container' className="container">
         <div className='editor-column'>
-          <Editor initialValue={quiz.questions} onEditorChange={handleEditorChange} />
+          <Editor initialValue={value} onEditorChange={handleEditorChange} />
           <div className='quiz-action-buttons'>
             <a onClick={handleUpdatePreview}>Prévisualisation</a>
-            <a onClick={handleParse}>Parse</a>
             <a onClick={handleSaveQuiz}>Enregistrer</a>
           </div>
         </div>
         <div className='preview-column'>
-          <GIFTTemplatePreview questions={parsedValue} />
+          <GIFTTemplatePreview questions={filteredValue} />
         </div>
       </div>
       {quizToSave && (
@@ -111,7 +96,7 @@ const EditQuiz: React.FC = () => {
           hasOptionalInput 
           optionalInputValue={quizTitle}
           onOptionalInputChange={handleQuizTitleChange} 
-          onConfirm={handleQuizSave} 
+          onConfirm={confirmQuizEdit} 
           onCancel={handleModalClose} 
         />
       )}

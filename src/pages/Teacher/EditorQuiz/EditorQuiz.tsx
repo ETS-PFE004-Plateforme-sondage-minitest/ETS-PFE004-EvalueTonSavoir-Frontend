@@ -1,7 +1,6 @@
-// CreateQuiz.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../../components/Modal/Modal';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import Editor from '../../../components/EditorPreview/Editor';
@@ -9,13 +8,37 @@ import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePr
 
 import '../../../components/EditorPreview/EditorPreview.css';
 
+interface Quiz {
+  id: string;
+  title: string;
+  questions: string[];
+}
 
-const CreateQuiz: React.FC = () => {
+interface EditQuizParams {
+  id: string;
+  [key: string]: string | undefined;
+}
+
+const QuizForm: React.FC = () => {
+  const { id } = useParams<EditQuizParams>();
   const [value, setValue] = useState('');
   const [filteredValue, setFilteredValue] = useState<string[]>([]);
   const [quizToSave, setQuizToSave] = useState(false);
   const [quizTitle, setQuizTitle] = useState('');
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch quiz from local storage
+    const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
+    const quizToEdit = storedQuizzes.find((q: Quiz) => q.id === id);
+    if (quizToEdit) {
+      setQuiz(quizToEdit);
+      setFilteredValue(quizToEdit.questions);
+      setValue(quizToEdit.questions.join('\n\n'));
+      setQuizTitle(quizToEdit.title);
+    }
+  }, [id]);
 
   function handleEditorChange(value: string) {
     setValue(value);
@@ -30,7 +53,7 @@ const CreateQuiz: React.FC = () => {
   const handleSaveQuiz = () => {
     setQuizToSave(true);
   };
-
+  
   const handleQuizTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuizTitle(event.target.value);
   };
@@ -43,8 +66,9 @@ const CreateQuiz: React.FC = () => {
   const handleQuizSave = () => {
     const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
     const newQuiz = { id: uuidv4(), title: quizTitle || 'Untitled quiz', questions: filteredValue };
-    const updatedQuizzes = [...storedQuizzes, newQuiz];
+    const updatedQuizzes = id ? storedQuizzes.map((q: Quiz) => q.id === id ? { ...q, title: quizTitle, questions: filteredValue } : q) : [...storedQuizzes, newQuiz];
     localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+    alert('Quiz saved!');
     handleModalClose();
     navigate('/teacher/dashboard');
   };
@@ -53,7 +77,7 @@ const CreateQuiz: React.FC = () => {
     <div>
       <div id='editor-preview-container' className="container">
         <div className='editor-column'>
-          <Editor initialValue='' onEditorChange={handleEditorChange} />
+          <Editor initialValue={value} onEditorChange={handleEditorChange} />
           <div className='quiz-action-buttons'>
             <a onClick={handleUpdatePreview}>Prévisualisation</a>
             <a onClick={handleSaveQuiz}>Enregistrer</a>
@@ -66,8 +90,8 @@ const CreateQuiz: React.FC = () => {
       {quizToSave && (
         <Modal
           title='Sauvegarder le questionnaire' 
-          message='Entrez un titre pour votre questionnaire:' 
-          hasOptionalInput
+          message='Entrez un titre pour votre questionnaire:'
+          hasOptionalInput 
           optionalInputValue={quizTitle}
           onOptionalInputChange={handleQuizTitleChange} 
           onConfirm={handleQuizSave} 
@@ -78,4 +102,4 @@ const CreateQuiz: React.FC = () => {
   );
 };
 
-export default CreateQuiz;
+export default QuizForm;
