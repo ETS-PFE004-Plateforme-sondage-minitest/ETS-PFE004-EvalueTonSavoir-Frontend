@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from 'react-router-dom';
 
 // Pages
 import Home from './pages/Home/Home';
@@ -11,7 +11,6 @@ import EditQuiz from './pages/Teacher/EditQuiz/EditQuiz';
 // Pages espace étudiant
 import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
 import StudentPage from './pages/Student/StudentPage/StudentPage';
-
 
 function App() {
     return (

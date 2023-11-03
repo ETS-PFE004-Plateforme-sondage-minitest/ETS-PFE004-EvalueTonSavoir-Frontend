@@ -14,13 +14,15 @@ interface Answer {
 }
 
 const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
-    const [userAnswers, setUserAnswers] = useState<Record<string, (string | number | boolean)[]>>({});
+    const [userAnswers, setUserAnswers] = useState<Record<string, (string | number | boolean)[]>>(
+        {}
+    );
     const [hideUsernames, setHideUsernames] = useState<boolean>(false);
 
     useEffect(() => {
         if (socket) {
             socket.on('submit-answer', ({ username, answer }: Answer) => {
-                setUserAnswers(prevUserAnswers => {
+                setUserAnswers((prevUserAnswers) => {
                     const prevAnswers = prevUserAnswers[username] || [];
                     return {
                         ...prevUserAnswers,
@@ -35,21 +37,23 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
         }
     }, [socket]);
 
-    const maxQuestions = Object.values(userAnswers).reduce((max, answers) => Math.max(max, answers.length), 0);
+    const maxQuestions = Object.values(userAnswers).reduce(
+        (max, answers) => Math.max(max, answers.length),
+        0
+    );
 
     return (
         <div>
             <h2>Live results of the quiz</h2>
             <label>
                 Hide usernames:
-                <input 
+                <input
                     type="checkbox"
                     checked={hideUsernames}
-                    onChange={() => setHideUsernames(prev => !prev)}
+                    onChange={() => setHideUsernames((prev) => !prev)}
                 />
             </label>
             {Object.keys(userAnswers).length > 0 ? (
-
                 <table className="table-bordered">
                     <thead>
                         <tr>
@@ -69,16 +73,25 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
 
                                     // Check if the answer is correct
                                     if (question.type === 'MC') {
-                                        const correctChoice = question.choices.find(choice => choice.isCorrect);
+                                        const correctChoice = question.choices.find(
+                                            (choice) => choice.isCorrect
+                                        );
                                         if (correctChoice && correctChoice.text.text === answer) {
                                             isCorrect = true;
                                         }
                                     } else if (question.type === 'TF') {
-                                        isCorrect = (question.isTrue && answer.toString() === "true") || (!question.isTrue && answer.toString() === "false");
+                                        isCorrect =
+                                            (question.isTrue && answer.toString() === 'true') ||
+                                            (!question.isTrue && answer.toString() === 'false');
                                     }
 
                                     return (
-                                        <td key={idx} className={isCorrect ? 'correct-answer' : 'incorrect-answer'}>
+                                        <td
+                                            key={idx}
+                                            className={
+                                                isCorrect ? 'correct-answer' : 'incorrect-answer'
+                                            }
+                                        >
                                             {answer.toString()}
                                         </td>
                                     );
@@ -92,6 +105,6 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
             )}
         </div>
     );
-}
+};
 
 export default LiveResults;

@@ -2,7 +2,8 @@
     border-collapse: collapse;
 }
 
-.table-bordered th, .table-bordered td {
+.table-bordered th,
+.table-bordered td {
     border: 1px solid black;
     padding: 8px; /* pour un peu d'espacement */
 }
@@ -14,4 +15,3 @@
 .incorrect-answer {
     background-color: lightcoral;
 }
-
