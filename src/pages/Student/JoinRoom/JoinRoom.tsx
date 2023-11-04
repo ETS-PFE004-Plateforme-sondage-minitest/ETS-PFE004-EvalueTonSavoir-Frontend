@@ -23,7 +23,6 @@ const JoinRoom: React.FC = () => {
         });
         socket.on('end-quiz', () => {
             console.log('end-quiz.');
-            //socket.disconnect();
             disconnect();
         });
         socket.on('join-failure', () => {

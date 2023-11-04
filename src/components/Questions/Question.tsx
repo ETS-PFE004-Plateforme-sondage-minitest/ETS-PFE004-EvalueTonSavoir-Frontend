@@ -18,7 +18,12 @@ const Questions: React.FC<QuestionsProps> = ({ socket, question, roomName, usern
 
     const handleOnSubmitAnswer = (answer: string | number | boolean) => {
         console.log(`Sending answer to teacher server: ${answer}`);
-        socket?.emit('submit-answer', { answer: answer, roomName: roomName, username: username });
+        socket?.emit('submit-answer', {
+            answer: answer,
+            roomName: roomName,
+            username: username,
+            idQuestion: question.id
+        });
         setAnswersIsSubmitted(true);
     };
 
