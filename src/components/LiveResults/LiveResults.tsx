@@ -20,7 +20,7 @@ interface StudentResult {
 
 const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
     const [hideUsernames, setHideUsernames] = useState<boolean>(false);
-    const [hideCorrectAnswers, setHideCorrectAnswers] = useState<boolean>(false);
+    const [ShowCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
 
     useEffect(() => {
@@ -51,19 +51,27 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
 
     return (
         <div>
-            <h2>Live results of the quiz</h2>
+            <h2>Résultats du quiz</h2>
             <label>
-                Hide usernames:
+                Cacher les noms d'utilisateurs:
                 <input
                     type="checkbox"
                     checked={hideUsernames}
                     onChange={() => setHideUsernames((prev) => !prev)}
                 />
             </label>
+            <label>
+                Montrer les réponses correctes:
+                <input
+                    type="checkbox"
+                    checked={ShowCorrectAnswers}
+                    onChange={() => setShowCorrectAnswers((prev) => !prev)}
+                />
+            </label>
             <table className="table-bordered">
                 <thead>
                     <tr>
-                        <th>Username</th>
+                        <th>Nom d'utilisateur</th>
                         {Array.from({ length: maxQuestions }, (_, index) => (
                             <th key={index}>{`Q${index + 1}`}</th>
                         ))}
@@ -100,7 +108,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                                         }
                                     }
                                 }
-                                if (!hideCorrectAnswers) {
+                                if (ShowCorrectAnswers) {
                                     return (
                                         <td
                                             key={index}
@@ -115,7 +123,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                                             {answerText}
                                         </td>
                                     );
-                                } else if (!hideCorrectAnswers) {
+                                } else if (!ShowCorrectAnswers) {
                                     return <td key={index}>{answerText}</td>;
                                 }
                             })}
