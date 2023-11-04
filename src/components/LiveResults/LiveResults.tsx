@@ -105,6 +105,44 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                                                     choice.isCorrect &&
                                                     choice.text.text === answerText
                                             );
+                                        } else if (question.type === 'Numerical') {
+                                            if (
+                                                question.choices &&
+                                                !Array.isArray(question.choices)
+                                            ) {
+                                                if (
+                                                    question.choices.type === 'high-low' &&
+                                                    question.choices.numberHigh &&
+                                                    question.choices.numberLow
+                                                ) {
+                                                    const answerNumber = parseFloat(answerText);
+                                                    if (!isNaN(answerNumber)) {
+                                                        isCorrect =
+                                                            answerNumber <=
+                                                                question.choices.numberHigh &&
+                                                            answerNumber >=
+                                                                question.choices.numberLow;
+                                                    }
+                                                }
+                                                if (
+                                                    question.choices.type === 'simple' &&
+                                                    question.choices.number
+                                                ) {
+                                                    const answerNumber = parseFloat(answerText);
+                                                    if (!isNaN(answerNumber)) {
+                                                        isCorrect =
+                                                            answerNumber ===
+                                                            question.choices.number;
+                                                    }
+                                                }
+                                                //TODO add support for type range ?
+                                            }
+                                        } else if (question.type === 'Short') {
+                                            isCorrect = question.choices.some(
+                                                (choice) =>
+                                                    choice.text.text.toUpperCase() ===
+                                                    answerText.toUpperCase()
+                                            );
                                         }
                                     }
                                 }
