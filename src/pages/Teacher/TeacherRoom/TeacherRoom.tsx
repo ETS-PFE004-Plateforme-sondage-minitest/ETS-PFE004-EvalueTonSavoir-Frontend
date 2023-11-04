@@ -2,11 +2,7 @@
 import React from 'react';
 
 const TeacherRoom: React.FC = () => {
-    return (
-        <div>
-            Coucou
-        </div>
-    );
+    return <div>Coucou</div>;
 };
 
 export default TeacherRoom;

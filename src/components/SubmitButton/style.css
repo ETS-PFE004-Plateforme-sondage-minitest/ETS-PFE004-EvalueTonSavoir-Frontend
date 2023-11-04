@@ -1,20 +1,20 @@
 .submit-button {
-  background-color: var(--submit);
-  border: 0;
-  border-radius: 0.25rem;
-  padding: 0.75rem;
-  width: 10rem;
-  margin-left: 0;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+    background-color: var(--submit);
+    border: 0;
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    width: 10rem;
+    margin-left: 0;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .submit-button:hover:enabled {
-  background-color: var(--submit-hover);
+    background-color: var(--submit-hover);
 }
 
 @media only screen and (max-width: 960px) {
-  .submit-button {
-    width: 100%;
-  }
+    .submit-button {
+        width: 100%;
+    }
 }

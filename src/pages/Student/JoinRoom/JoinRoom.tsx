@@ -7,7 +7,7 @@ import webSocketService from '../../../services/WebsocketService';
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
     const [username, setUsername] = useState('');
-    const [socket , setSocket] = useState<Socket | null>(null);
+    const [socket, setSocket] = useState<Socket | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [question, setQuestion] = useState<GIFTQuestion>();
 
@@ -24,21 +24,21 @@ const JoinRoom: React.FC = () => {
         socket.on('end-quiz', () => {
             console.log('end-quiz.');
             //socket.disconnect();
-            disconnect()
+            disconnect();
         });
         socket.on('join-failure', () => {
             console.log('Failed to join the room.');
         });
         socket.on('connect_error', (error) => {
-            console.log("Connection Error:", error);
+            console.log('Connection Error:', error);
         });
         setSocket(socket);
-        return () => { 
+        return () => {
             webSocketService.disconnect();
         };
-    },[]);
+    }, []);
 
-    const disconnect= () => {
+    const disconnect = () => {
         setSocket(null);
         setQuestion(undefined);
         setIsLoading(false);
@@ -46,13 +46,12 @@ const JoinRoom: React.FC = () => {
         setUsername('');
     };
 
-
     const handleSocket = () => {
-        if(!socket){
-            const socket = webSocketService.connect();  
-            setSocket(socket); 
+        if (!socket) {
+            const socket = webSocketService.connect();
+            setSocket(socket);
         }
-        
+
         if (username && roomName) {
             webSocketService.joinRoom(roomName, username);
         }
@@ -60,34 +59,37 @@ const JoinRoom: React.FC = () => {
 
     return (
         <div>
-            { isLoading ?
+            {isLoading ? (
+                <div>Waiting for question...</div>
+            ) : (
                 <div>
-                    Waiting for question...
-                </div>
-                
-            :
-                <div>
-                    { question ? 
+                    {question ? (
                         <div>
-                            <QuestionComponent socket={socket} question={question} roomName={roomName} username={username} />
-                        </div> 
-                    :
+                            <QuestionComponent
+                                socket={socket}
+                                question={question}
+                                roomName={roomName}
+                                username={username}
+                            />
+                        </div>
+                    ) : (
                         <div>
-                            <input 
-                            value={username}  
-                            onChange={(e) => setUsername(e.target.value)} 
-                            placeholder="Enter username" />
-                    
-                            <input 
-                                value={roomName} 
+                            <input
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Enter username"
+                            />
+
+                            <input
+                                value={roomName}
                                 onChange={(e) => setRoomName(e.target.value)}
                                 placeholder="Enter room name"
                             />
                             <button onClick={handleSocket}>Join</button>
                         </div>
-                    }
+                    )}
                 </div>
-            }
+            )}
         </div>
     );
 };
