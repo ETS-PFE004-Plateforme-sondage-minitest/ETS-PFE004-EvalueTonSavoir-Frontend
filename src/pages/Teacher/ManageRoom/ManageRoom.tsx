@@ -6,8 +6,8 @@ import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 import { GIFTQuestion, parse } from 'gift-pegjs';
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
-import PreviewComponent from '../../../components/EditorPreview/Preview';
 import webSocketService from '../../../services/WebsocketService';
+import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
 const ManageRoom: React.FC = () => {
     const [roomName, setRoomName] = useState<string>('');
@@ -16,8 +16,8 @@ const ManageRoom: React.FC = () => {
     const quizId = useParams<{ id: string }>();
     const [quizQuestions, setQuizQuestions] = useState<GIFTQuestion[] | undefined>();
     const [quiz, setQuiz] = useState<QuizType>();
-    const [presentQuestion, setPresentQuestion] = useState<GIFTQuestion[]>();
     const [isLastQuestion, setIsLastQuestion] = useState<boolean>(false);
+    const [presentQuestionString, setPresentQuestionString] = useState<string[]>();
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
@@ -31,7 +31,7 @@ const ManageRoom: React.FC = () => {
         if (socket) {
             webSocketService.disconnect();
             setSocket(null);
-            setPresentQuestion(undefined);
+            setPresentQuestionString(undefined);
             setQuizQuestions(undefined);
             setIsLastQuestion(false);
             setUsers([]);
@@ -56,8 +56,9 @@ const ManageRoom: React.FC = () => {
 
     const nextQuestion = () => {
         if (socket && roomName) {
+            const quizQuestionArray = quiz?.questions;
             if (!quizQuestions) {
-                const quizQuestionArray = quiz?.questions;
+                console.log(quizQuestionArray ? quizQuestionArray[0] : '');
                 if (!quizQuestionArray) return;
 
                 const parsedQuestions = [] as GIFTQuestion[];
@@ -68,17 +69,18 @@ const ManageRoom: React.FC = () => {
                 if (parsedQuestions.length === 0) return;
 
                 setQuizQuestions(parsedQuestions);
-                setPresentQuestion([parsedQuestions[0]]);
+                setPresentQuestionString([quizQuestionArray[0]]);
                 webSocketService.nextQuestion(roomName, parsedQuestions[0]);
             } else {
-                if (!presentQuestion) return;
-                const index = quizQuestions?.indexOf(presentQuestion[0] as GIFTQuestion);
+                if (!presentQuestionString) return;
+                if (!presentQuestionString || !quizQuestionArray) return;
+                const index = quizQuestionArray?.indexOf(presentQuestionString[0]);
                 if (index !== undefined && quizQuestions) {
-                    if (index < quizQuestions.length - 1) {
-                        setPresentQuestion([quizQuestions[index + 1]]);
+                    if (index < quizQuestionArray.length - 1) {
+                        setPresentQuestionString([quizQuestionArray[index + 1]]);
                         webSocketService.nextQuestion(roomName, quizQuestions[index + 1]);
 
-                        if (index === quizQuestions.length - 2) {
+                        if (index === quizQuestionArray.length - 2) {
                             setIsLastQuestion(true);
                         }
                     } else {
@@ -94,11 +96,10 @@ const ManageRoom: React.FC = () => {
         <div>
             {quizQuestions ? (
                 <div>
-                    <PreviewComponent
-                        questions={'none'}
-                        showAnswers={false}
-                        giftQuestions={presentQuestion}
-                    ></PreviewComponent>
+                    <GIFTTemplatePreview
+                        questions={presentQuestionString ? presentQuestionString : []}
+                        hideAnswers={true}
+                    ></GIFTTemplatePreview>
                     <LiveResultsComponent
                         socket={socket}
                         questions={quizQuestions}
@@ -126,7 +127,6 @@ const ManageRoom: React.FC = () => {
                     ) : (
                         <div>
                             <h1>Room name</h1>
-
                             <button onClick={createWebSocketRoom}>Create Room</button>
                         </div>
                     )}

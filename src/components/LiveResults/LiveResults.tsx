@@ -166,25 +166,29 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                         </tr>
                     ))}
                 </tbody>
-                <tr className="grayed-table-row">
-                    <th>% réussite</th>
-                    {Array.from({ length: maxQuestions }, (_, index) => (
-                        <th key={index}>
-                            {(
-                                (studentResults.filter((student) =>
-                                    student.answers.some(
-                                        (answer) =>
-                                            parseInt(answer.idQuestion.toString()) === index + 1 &&
-                                            answer.isCorrect
-                                    )
-                                ).length /
-                                    studentResults.length) *
-                                100
-                            ).toFixed(0)}
-                            %
-                        </th>
-                    ))}
-                </tr>
+                <tfoot>
+                    <tr className="grayed-table-row">
+                        <th>% réussite</th>
+                        {Array.from({ length: maxQuestions }, (_, index) => (
+                            <th key={index}>
+                                {studentResults.length > 0
+                                    ? (
+                                          (studentResults.filter((student) =>
+                                              student.answers.some(
+                                                  (answer) =>
+                                                      parseInt(answer.idQuestion.toString()) ===
+                                                          index + 1 && answer.isCorrect
+                                              )
+                                          ).length /
+                                              studentResults.length) *
+                                          100
+                                      ).toFixed(0)
+                                    : 0}
+                                %
+                            </th>
+                        ))}
+                    </tr>
+                </tfoot>
             </table>
         </div>
     );
