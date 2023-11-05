@@ -10,8 +10,15 @@
 
 .correct-answer {
     background-color: lightgreen;
+    text-align: center;
 }
 
 .incorrect-answer {
     background-color: lightcoral;
+    text-align: center;
+}
+
+.grayed-table-row {
+    border-top: 2px solid black;
+    background-color: lightgray;
 }
