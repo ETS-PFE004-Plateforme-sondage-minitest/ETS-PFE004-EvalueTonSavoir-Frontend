@@ -59,6 +59,7 @@ const JoinRoom: React.FC = () => {
         setSocket(null);
         setQuestion(undefined);
         setIsLoading(false);
+        setQuizMode('');
         setRoomName('');
         setUsername('');
     };

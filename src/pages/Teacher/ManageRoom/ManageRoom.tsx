@@ -83,8 +83,7 @@ const ManageRoom: React.FC = () => {
                         setIsLastQuestion(true);
                     }
                 } else {
-                    webSocketService.endQuiz(roomName);
-                    disconnectWebSocket();
+                    exitRoom();
                 }
             }
         }
@@ -120,6 +119,11 @@ const ManageRoom: React.FC = () => {
         }
     };
 
+    const exitRoom = () => {
+        webSocketService.endQuiz(roomName);
+        disconnectWebSocket();
+    };
+
     return (
         <div>
             {quizQuestions ? (
@@ -137,9 +141,7 @@ const ManageRoom: React.FC = () => {
                             {isLastQuestion ? 'Fermer le quiz' : 'Question suivante'}
                         </button>
                     )}
-                    {quizMode === 'student' && (
-                        <button onClick={disconnectWebSocket}>Fermer le quiz</button>
-                    )}
+                    {quizMode === 'student' && <button onClick={exitRoom}>Fermer le quiz</button>}
                 </div>
             ) : (
                 <div>
