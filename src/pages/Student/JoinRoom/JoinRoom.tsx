@@ -1,8 +1,10 @@
-import { GIFTQuestion } from 'gift-pegjs';
+import { GIFTQuestion, parse } from 'gift-pegjs';
 import React, { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import QuestionComponent from '../../../components/Questions/Question';
 import webSocketService from '../../../services/WebsocketService';
+import StudentModeQuiz from '../StudentModeQuiz/StudentModeQuiz';
+import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
@@ -10,6 +12,8 @@ const JoinRoom: React.FC = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [question, setQuestion] = useState<GIFTQuestion>();
+    const [quizMode, setQuizMode] = useState<string>();
+    const [parsedQuestions, setParsedQuestions] = useState<Array<GIFTQuestion>>([]);
 
     useEffect(() => {
         const socket = webSocketService.connect();
@@ -18,8 +22,22 @@ const JoinRoom: React.FC = () => {
             console.log('Successfully joined the room.');
         });
         socket.on('next-question', (question: GIFTQuestion) => {
+            setQuizMode('teacher');
             setIsLoading(false);
             setQuestion(question);
+        });
+        socket.on('launch-student-mode', (questions: Array<string>) => {
+            setQuizMode('student');
+            setIsLoading(false);
+            const parsedQuestions = [] as GIFTQuestion[];
+            questions.forEach((question, index) => {
+                parsedQuestions.push(parse(question)[0]);
+                parsedQuestions[index].id = (index + 1).toString();
+            });
+            if (parsedQuestions.length === 0) return;
+
+            setParsedQuestions(parsedQuestions);
+            setQuestion(parsedQuestions[0]);
         });
         socket.on('end-quiz', () => {
             console.log('end-quiz.');
@@ -56,41 +74,48 @@ const JoinRoom: React.FC = () => {
         }
     };
 
-    return (
-        <div>
-            {isLoading ? (
-                <div>Waiting for question...</div>
-            ) : (
-                <div>
-                    {question ? (
-                        <div>
-                            <QuestionComponent
-                                socket={socket}
-                                question={question}
-                                roomName={roomName}
-                                username={username}
-                            />
-                        </div>
-                    ) : (
-                        <div>
-                            <input
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Enter username"
-                            />
+    const handleOnSubmitAnswer = (answer: string | number | boolean, idQuestion: string) => {
+        socket?.emit('submit-answer', {
+            answer: answer,
+            roomName: roomName,
+            username: username,
+            idQuestion: idQuestion
+        });
+    };
 
-                            <input
-                                value={roomName}
-                                onChange={(e) => setRoomName(e.target.value)}
-                                placeholder="Enter room name"
-                            />
-                            <button onClick={handleSocket}>Join</button>
-                        </div>
-                    )}
+    if (isLoading) {
+        return <div>En attente que le professeur lance le questionnaire...</div>;
+    }
+
+    switch (quizMode) {
+        case 'student':
+            return (
+                <StudentModeQuiz questions={parsedQuestions} submitAnswer={handleOnSubmitAnswer} />
+            );
+        case 'teacher':
+            return (
+                question && (
+                    <TeacherModeQuiz question={question} submitAnswer={handleOnSubmitAnswer} />
+                )
+            );
+        default:
+            return (
+                <div>
+                    <input
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Enter username"
+                    />
+
+                    <input
+                        value={roomName}
+                        onChange={(e) => setRoomName(e.target.value)}
+                        placeholder="Enter room name"
+                    />
+                    <button onClick={handleSocket}>Join</button>
                 </div>
-            )}
-        </div>
-    );
+            );
+    }
 };
 
 export default JoinRoom;

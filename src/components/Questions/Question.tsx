@@ -1,86 +1,60 @@
 import { GIFTQuestion } from 'gift-pegjs';
-import { Socket } from 'socket.io-client';
 
-import TrueFalseQuestion from './TrueFalseQuestion';
-import MultipleChoiceQuestion from './MultipleChoiceQuestion';
-import NumericalQuestion from './NumericalQuestion';
-import ShortAnswerQuestion from './ShortAnswerQuestion';
-import React, { useEffect, useState } from 'react';
+import TrueFalseQuestion from './TrueFalseQuestion/TrueFalseQuestion';
+import MultipleChoiceQuestion from './MultipleChoiceQuestion/MultipleChoiceQuestion';
+import NumericalQuestion from './NumericalQuestion/NumericalQuestion';
+import ShortAnswerQuestion from './ShortAnswerQuestion/ShortAnswerQuestion';
+import React from 'react';
 
 interface QuestionsProps {
-    socket: Socket | null;
     question: GIFTQuestion;
-    roomName: string;
-    username: string;
+    handleOnSubmitAnswer: (answer: string | number | boolean) => void;
+    showAnswer?: boolean;
 }
-const Questions: React.FC<QuestionsProps> = ({ socket, question, roomName, username }) => {
-    const [answersIsSubmitted, setAnswersIsSubmitted] = useState(false);
-
-    const handleOnSubmitAnswer = (answer: string | number | boolean) => {
-        console.log(`Sending answer to teacher server: ${answer}`);
-        socket?.emit('submit-answer', {
-            answer: answer,
-            roomName: roomName,
-            username: username,
-            idQuestion: question.id
-        });
-        setAnswersIsSubmitted(true);
-    };
-
-    useEffect(() => {
-        setAnswersIsSubmitted(false);
-    }, [question]);
-
-    let renderedQuestion;
-
+const Questions: React.FC<QuestionsProps> = ({ question, handleOnSubmitAnswer, showAnswer }) => {
     switch (question.type) {
         case 'TF':
-            renderedQuestion = (
+            return (
                 <TrueFalseQuestion
                     questionTitle={question.stem.text}
                     correctAnswer={question.isTrue}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
+                    showAnswer={showAnswer}
                 />
             );
-            break;
         case 'MC':
-            renderedQuestion = (
+            return (
                 <MultipleChoiceQuestion
                     questionTitle={question.stem.text}
                     choices={question.choices}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
+                    showAnswer={showAnswer}
                 />
             );
-            break;
         case 'Numerical':
             if (question.choices && !Array.isArray(question.choices)) {
-                renderedQuestion = (
+                return (
                     <NumericalQuestion
                         questionTitle={question.stem.text}
                         correctAnswers={question.choices}
                         handleOnSubmitAnswer={handleOnSubmitAnswer}
+                        showAnswer={showAnswer}
                     />
                 );
             }
             break;
         case 'Short':
-            renderedQuestion = (
+            return (
                 <ShortAnswerQuestion
                     questionTitle={question.stem.text}
                     choices={question.choices}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
+                    showAnswer={showAnswer}
                 />
             );
-            break;
         default:
-            renderedQuestion = <div>Unknown question type</div>;
+            return <div>Question de type inconnu</div>;
     }
-
-    return (
-        <div>
-            {answersIsSubmitted ? <div>waiting for the next question...</div> : renderedQuestion}
-        </div>
-    );
 };
 
 export default Questions;
