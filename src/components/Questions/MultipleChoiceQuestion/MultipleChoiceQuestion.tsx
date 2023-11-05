@@ -13,11 +13,11 @@ interface Props {
     questionTitle: string;
     choices: Choices[];
     handleOnSubmitAnswer: (answer: string) => void;
-    showAnswers?: boolean;
+    showAnswer?: boolean;
 }
 
 const MultipleChoiceQuestion: React.FC<Props> = (props) => {
-    const { questionTitle, choices, showAnswers, handleOnSubmitAnswer } = props;
+    const { questionTitle, choices, showAnswer, handleOnSubmitAnswer } = props;
     const [answer, setAnswer] = useState<string>();
 
     const handleOnClickAnswer = (choice: string) => {
@@ -37,9 +37,9 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
                         <button
                             className="button-wrapper"
                             onClick={() => handleOnClickAnswer(choice.text.text)}
-                            disabled={showAnswers}
+                            disabled={showAnswer}
                         >
-                            {showAnswers && (choice.isCorrect ? '✅' : '❌')}
+                            {showAnswer && (choice.isCorrect ? '✅' : '❌')}
                             <div className={`circle ${selected}`}>{alphabet[i]}</div>
                             <div className={`answer-text ${selected}`}>{choice.text.text}</div>
                         </button>
@@ -47,7 +47,7 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
                 );
             })}
             <SubmitButton
-                hide={showAnswers}
+                hide={showAnswer}
                 onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
                 disabled={answer === undefined}
             />

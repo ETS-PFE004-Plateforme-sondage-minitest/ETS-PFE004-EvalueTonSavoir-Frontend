@@ -13,17 +13,17 @@ interface Props {
     questionTitle: string;
     choices: Choices[];
     handleOnSubmitAnswer: (answer: string) => void;
-    showAnswers?: boolean;
+    showAnswer?: boolean;
 }
 
 const ShortAnswerQuestion: React.FC<Props> = (props) => {
-    const { questionTitle, choices, showAnswers, handleOnSubmitAnswer } = props;
+    const { questionTitle, choices, showAnswer, handleOnSubmitAnswer } = props;
     const [answer, setAnswer] = useState<string>();
 
     return (
         <div className="question-wrapper">
             <div className="title">{questionTitle}</div>
-            {showAnswers ? (
+            {showAnswer ? (
                 <div className="correct-answer-text">
                     {choices.map((choice) => (
                         <div>{choice.text.text}</div>
@@ -38,12 +38,12 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                         onChange={(e) => {
                             setAnswer(e.target.value);
                         }}
-                        disabled={showAnswers}
+                        disabled={showAnswer}
                     />
                 </div>
             )}
             <SubmitButton
-                hide={showAnswers}
+                hide={showAnswer}
                 onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
                 disabled={answer === undefined || answer === ''}
             />

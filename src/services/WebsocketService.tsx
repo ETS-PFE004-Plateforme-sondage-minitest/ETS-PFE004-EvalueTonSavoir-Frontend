@@ -33,6 +33,12 @@ class WebSocketService {
         }
     }
 
+    launchStudentModeQuiz(roomName: string, questions: any) {
+        if (this.socket) {
+            this.socket.emit('launch-student-mode', { roomName, questions });
+        }
+    }
+
     endQuiz(roomName: string) {
         if (this.socket) {
             this.socket.emit('end-quiz', { roomName });
