@@ -43,6 +43,7 @@ const ManageRoom: React.FC = () => {
 
     const createWebSocketRoom = () => {
         const socket = webSocketService.connect();
+        console.log(socket);
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
