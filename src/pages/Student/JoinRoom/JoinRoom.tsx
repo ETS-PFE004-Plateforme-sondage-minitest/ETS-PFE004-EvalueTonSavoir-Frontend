@@ -109,7 +109,7 @@ const JoinRoom: React.FC = () => {
 
                     <input
                         value={roomName}
-                        onChange={(e) => setRoomName(e.target.value)}
+                        onChange={(e) => setRoomName(e.target.value.toUpperCase())}
                         placeholder="Enter room name"
                     />
                     <button onClick={handleSocket}>Join</button>
