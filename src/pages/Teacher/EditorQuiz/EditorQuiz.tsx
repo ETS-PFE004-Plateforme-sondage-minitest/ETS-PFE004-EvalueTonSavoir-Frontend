@@ -25,7 +25,6 @@ const QuizForm: React.FC = () => {
     const [filteredValue, setFilteredValue] = useState<string[]>([]);
     const [quizToSave, setQuizToSave] = useState(false);
     const [quizTitle, setQuizTitle] = useState('');
-    const [quiz, setQuiz] = useState<Quiz | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -33,7 +32,6 @@ const QuizForm: React.FC = () => {
         const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
         const quizToEdit = storedQuizzes.find((q: Quiz) => q.id === id);
         if (quizToEdit) {
-            setQuiz(quizToEdit);
             setFilteredValue(quizToEdit.questions);
             setValue(quizToEdit.questions.join('\n\n'));
             setQuizTitle(quizToEdit.title);
