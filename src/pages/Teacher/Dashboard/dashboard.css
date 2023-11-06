@@ -40,3 +40,8 @@ h3,
 .green-btn {
     background-color: #28a745;
 }
+
+.invalid-quiz {
+    display: inline-block;
+    color: #dc3545;
+}

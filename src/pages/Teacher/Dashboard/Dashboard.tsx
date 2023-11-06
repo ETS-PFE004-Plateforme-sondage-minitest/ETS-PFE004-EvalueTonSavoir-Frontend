@@ -109,13 +109,17 @@ const Dashboard: React.FC = () => {
                             >
                                 <FontAwesomeIcon icon={faPencil} />
                             </Link>
-                            <Link
-                                className="green-btn"
-                                to={`/teacher/manage-room/${quiz.id}`}
-                                title="Démarrer"
-                            >
-                                <FontAwesomeIcon icon={faPlay} />
-                            </Link>
+                            {quiz.questions.length > 0 ? ( //TODO - gerer le cas ou le quiz est invalide (on ne gere que si il est vide)
+                                <Link
+                                    className="green-btn"
+                                    to={`/teacher/manage-room/${quiz.id}`}
+                                    title="Démarrer"
+                                >
+                                    <FontAwesomeIcon icon={faPlay} />
+                                </Link>
+                            ) : (
+                                <div className="invalid-quiz">Quiz invalide</div>
+                            )}
                         </li>
                     ))}
                 </ul>
