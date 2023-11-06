@@ -259,4 +259,5 @@ const lightItems = multiple.map((item) => Template(item, { theme: 'light' })).jo
 
 const errorItem = ErrorTemplate('Hello');
 
-document.getElementById('app').innerHTML = items + errorItemDark + lightItems + errorItem;
+const app = document.getElementById('app');
+if (app) app.innerHTML = items + errorItemDark + lightItems + errorItem;

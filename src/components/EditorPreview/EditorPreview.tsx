@@ -19,9 +19,9 @@ const EditorPreview: React.FC<EditorPreviewProps> = ({ initialValue }) => {
     };
 
     return (
-        <div id='editor-preview-container' className="container">
-                <Editor initialValue={initialValue} onUpdatedPreview={handleUpdatePreview} />
-                <Preview questions={value} />
+        <div id="editor-preview-container" className="container">
+            <Editor initialValue={initialValue} onEditorChange={handleUpdatePreview} />
+            <Preview questions={value} />
         </div>
     );
 };
