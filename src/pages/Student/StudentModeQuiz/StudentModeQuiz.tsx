@@ -34,7 +34,7 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({ questions, submitAnsw
                 question={question}
                 showAnswer={isAnswerSubmitted}
             />
-            {/* {Number(question.id) > 1 && (
+            {/* TODO {Number(question.id) > 1 && (
                 <button onClick={previousQuestion}>Question précédente</button>
             )} */}
             {Number(question.id) < questions.length && isAnswerSubmitted && (
