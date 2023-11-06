@@ -1,0 +1,24 @@
+.table-bordered {
+    border-collapse: collapse;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid black;
+    padding: 8px; /* pour un peu d'espacement */
+}
+
+.correct-answer {
+    background-color: lightgreen;
+    text-align: center;
+}
+
+.incorrect-answer {
+    background-color: lightcoral;
+    text-align: center;
+}
+
+.grayed-table-row {
+    border-top: 2px solid black;
+    background-color: lightgray;
+}
