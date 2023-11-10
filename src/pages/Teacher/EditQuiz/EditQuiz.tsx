@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../../components/Modal/Modal';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import Editor from '../../../components/EditorPreview/Editor';
+import Editor from '../../../components/Editor/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
-import '../../../components/EditorPreview/EditorPreview.css';
 import { QuizType } from '../../../Types/QuizType';
 import { QuizService } from '../../../services/QuizService';
 
