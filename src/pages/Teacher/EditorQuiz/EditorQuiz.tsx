@@ -5,12 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import Editor from '../../../components/Editor/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-
-interface Quiz {
-    id: string;
-    title: string;
-    questions: string[];
-}
+import { QuizService } from '../../../services/QuizService';
+import { QuizType } from '../../../Types/QuizType';
 
 interface EditQuizParams {
     id: string;
@@ -23,18 +19,23 @@ const QuizForm: React.FC = () => {
     const [filteredValue, setFilteredValue] = useState<string[]>([]);
     const [quizToSave, setQuizToSave] = useState(false);
     const [quizTitle, setQuizTitle] = useState('');
+    const [isNewQuiz, setNewQuiz] = useState(false);
+    const [quiz, setQuiz] = useState<QuizType | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         // Fetch quiz from local storage
-        const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-        const quizToEdit = storedQuizzes.find((q: Quiz) => q.id === id);
-        if (quizToEdit) {
+        const quizToEdit = QuizService.getQuizById(id);
+        if (!!quizToEdit) {
+            setQuiz(quizToEdit);
             setFilteredValue(quizToEdit.questions);
             setValue(quizToEdit.questions.join('\n\n'));
             setQuizTitle(quizToEdit.title);
+        } else {
+            setNewQuiz(true);
         }
-    }, [id]);
+        console.log(value);
+    }, [value]);
 
     function handleEditorChange(value: string) {
         setValue(value);
@@ -61,21 +62,34 @@ const QuizForm: React.FC = () => {
 
     const handleQuizSave = () => {
         const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-        const newQuiz = {
-            id: uuidv4(),
-            title: quizTitle || 'Untitled quiz',
-            questions: filteredValue
-        };
-        const updatedQuizzes = id
-            ? storedQuizzes.map((q: Quiz) =>
-                  q.id === id ? { ...q, title: quizTitle, questions: filteredValue } : q
-              )
-            : [...storedQuizzes, newQuiz];
-        localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+        if (isNewQuiz) {
+            const newQuiz = {
+                id: uuidv4(),
+                title: quizTitle || 'Untitled quiz',
+                questions: filteredValue
+            };
+            const updatedQuizzes = [...storedQuizzes, newQuiz];
+            localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+        } else {
+            console.log('id', id);
+            const updatedQuizzes = storedQuizzes.map((q: QuizType) => {
+                if (q.id === id) {
+                    return { ...q, title: quizTitle, questions: filteredValue };
+                }
+                return q;
+            });
+            localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+        }
         alert('Quiz saved!');
         handleModalClose();
         navigate('/teacher/dashboard');
     };
+
+    if (!isNewQuiz) {
+        if (!quiz) {
+            return <div>Loading...</div>;
+        }
+    }
 
     return (
         <div>

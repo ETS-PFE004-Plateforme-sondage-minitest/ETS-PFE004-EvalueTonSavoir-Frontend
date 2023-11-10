@@ -5,8 +5,7 @@ import Home from './pages/Home/Home';
 // Pages espace enseignant
 import Dashboard from './pages/Teacher/Dashboard/Dashboard';
 import ManageRoom from './pages/Teacher/ManageRoom/ManageRoom';
-import CreateQuiz from './pages/Teacher/CreateQuiz/CreateQuiz';
-import EditQuiz from './pages/Teacher/EditQuiz/EditQuiz';
+import QuizForm from './pages/Teacher/EditorQuiz/EditorQuiz';
 // Pages espace étudiant
 import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
 
@@ -21,8 +20,7 @@ function App() {
 
                         {/* Pages espace enseignant */}
                         <Route path="/teacher/dashboard" element={<Dashboard />} />
-                        <Route path="/teacher/create-quiz" element={<CreateQuiz />} />
-                        <Route path="/teacher/edit-quiz/:id" element={<EditQuiz />} />
+                        <Route path="/teacher/editor-quiz/:id" element={<QuizForm />} />
                         <Route path="/teacher/manage-room/:id" element={<ManageRoom />} />
                         {/* Pages espace étudiant */}
                         <Route path="/student/join-room" element={<JoinRoom />} />

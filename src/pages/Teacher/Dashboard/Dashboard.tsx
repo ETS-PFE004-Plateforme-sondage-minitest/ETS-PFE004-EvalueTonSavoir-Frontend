@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
                         value={searchTerm}
                         onChange={handleSearch}
                     />
-                    <Link to="/teacher/create-quiz">
+                    <Link to="/teacher/editor-quiz/new">
                         <FontAwesomeIcon icon={faPlus} />
                     </Link>
                 </div>
@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
                                     </a>
                                     <Link
                                         className="blue-btn"
-                                        to={`/teacher/edit-quiz/${quiz.id}`}
+                                        to={`/teacher/editor-quiz/${quiz.id}`}
                                         title="Modifier"
                                     >
                                         <FontAwesomeIcon icon={faPencil} />
