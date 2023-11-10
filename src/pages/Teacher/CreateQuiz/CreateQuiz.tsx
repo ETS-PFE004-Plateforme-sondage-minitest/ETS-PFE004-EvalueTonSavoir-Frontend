@@ -4,10 +4,8 @@ import Modal from '../../../components/Modal/Modal';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-import Editor from '../../../components/EditorPreview/Editor';
+import Editor from '../../../components/Editor/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-
-import '../../../components/EditorPreview/EditorPreview.css';
 
 const CreateQuiz: React.FC = () => {
     const [value, setValue] = useState('');
