@@ -1,0 +1,38 @@
+.join-room-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 80vh;
+}
+
+.student-info-input-container {
+    width: 70%;
+    height: 20vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid #3a3a3a;
+    border-radius: 20px;
+    background: linear-gradient(#ebd5c5, #aec5eb);
+    box-shadow: 0 0 10px #3a3a3a;
+    gap: 10px;
+    margin-top: 5vh;
+    padding: 5%;
+}
+
+.student-info-input {
+    padding: 2%;
+    font-size: large;
+    border: 0px;
+    border-radius: 10px;
+}
+
+.join-btn {
+    margin-top: 20px;
+    width: 50%;
+    border: 2px;
+    border-radius: 10px;
+    box-shadow: 0 0 3px #3a3a3a;
+}

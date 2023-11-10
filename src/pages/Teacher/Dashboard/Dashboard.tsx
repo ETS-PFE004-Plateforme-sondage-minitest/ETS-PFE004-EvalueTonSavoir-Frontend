@@ -70,9 +70,10 @@ const Dashboard: React.FC = () => {
     );
 
     return (
-        <div className="wrapper">
-            <div>
-                <h2>Quiz Dashboard</h2>
+        <div>
+            <div className="dashboardContainer">
+                <h1 className="page-title">Tableau de bord</h1>
+
                 <div className="search-bar">
                     <input
                         type="text"
@@ -87,28 +88,32 @@ const Dashboard: React.FC = () => {
                 <ul>
                     {filteredQuizzes.map((quiz: Quiz) => (
                         <li key={quiz.id}>
-                            <h3>{quiz.title}</h3>
-                            <a
-                                className="red-btn"
-                                onClick={() => handleRemoveQuiz(quiz)}
-                                title="Supprimer"
-                            >
-                                <FontAwesomeIcon icon={faTrashCan} />
-                            </a>
-                            <a
-                                className="blue-btn"
-                                onClick={() => handleDuplicateQuiz(quiz.id)}
-                                title="Dupliquer"
-                            >
-                                <FontAwesomeIcon icon={faClone} />
-                            </a>
-                            <Link
-                                className="blue-btn"
-                                to={`/teacher/edit-quiz/${quiz.id}`}
-                                title="Modifier"
-                            >
-                                <FontAwesomeIcon icon={faPencil} />
-                            </Link>
+                            <div className="quiz-card-control">
+                                <h3 className="quizTitle">{quiz.title}</h3>
+                                <div>
+                                    <a
+                                        className="red-btn"
+                                        onClick={() => handleRemoveQuiz(quiz)}
+                                        title="Supprimer"
+                                    >
+                                        <FontAwesomeIcon icon={faTrashCan} />
+                                    </a>
+                                    <a
+                                        className="blue-btn"
+                                        onClick={() => handleDuplicateQuiz(quiz.id)}
+                                        title="Dupliquer"
+                                    >
+                                        <FontAwesomeIcon icon={faClone} />
+                                    </a>
+                                    <Link
+                                        className="blue-btn"
+                                        to={`/teacher/edit-quiz/${quiz.id}`}
+                                        title="Modifier"
+                                    >
+                                        <FontAwesomeIcon icon={faPencil} />
+                                    </Link>
+                                </div>
+                            </div>
                             {quiz.questions.length > 0 ? ( //TODO - gerer le cas ou le quiz est invalide (on ne gere que si il est vide)
                                 <Link
                                     className="green-btn"

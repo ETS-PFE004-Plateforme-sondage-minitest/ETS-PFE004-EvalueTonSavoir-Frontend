@@ -13,6 +13,7 @@ import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
 function App() {
     return (
         <div className="wrapper">
+            <img className="logo" src="/Logo.svg" alt="Logo" />
             <div className="app">
                 <main>
                     <Routes>

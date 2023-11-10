@@ -4,6 +4,7 @@ import { Socket } from 'socket.io-client';
 import webSocketService from '../../../services/WebsocketService';
 import StudentModeQuiz from '../StudentModeQuiz/StudentModeQuiz';
 import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
+import './JoinRoom.css';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
@@ -100,19 +101,26 @@ const JoinRoom: React.FC = () => {
             );
         default:
             return (
-                <div>
-                    <input
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter username"
-                    />
+                <div className="join-room-container">
+                    <h1 className="page-title">Rejoindre une salle</h1>
+                    <div className="student-info-input-container">
+                        <input
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Enter username"
+                            className="student-info-input"
+                        />
 
-                    <input
-                        value={roomName}
-                        onChange={(e) => setRoomName(e.target.value.toUpperCase())}
-                        placeholder="Enter room name"
-                    />
-                    <button onClick={handleSocket}>Join</button>
+                        <input
+                            value={roomName}
+                            onChange={(e) => setRoomName(e.target.value.toUpperCase())}
+                            placeholder="Enter room name"
+                            className="student-info-input"
+                        />
+                        <button className="join-btn" onClick={handleSocket}>
+                            Join
+                        </button>
+                    </div>
                 </div>
             );
     }
