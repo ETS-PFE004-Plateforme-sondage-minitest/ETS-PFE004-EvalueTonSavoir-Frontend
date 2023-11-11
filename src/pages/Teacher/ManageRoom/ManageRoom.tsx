@@ -8,6 +8,7 @@ import { GIFTQuestion, parse } from 'gift-pegjs';
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
 import webSocketService from '../../../services/WebsocketService';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
+import './ManageRoom.css';
 
 const ManageRoom: React.FC = () => {
     const [roomName, setRoomName] = useState<string>('');
@@ -19,10 +20,10 @@ const ManageRoom: React.FC = () => {
     const [isLastQuestion, setIsLastQuestion] = useState<boolean>(false);
     const [presentQuestionString, setPresentQuestionString] = useState<string[]>();
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
-
         return () => {
             webSocketService.disconnect();
         };
@@ -42,12 +43,19 @@ const ManageRoom: React.FC = () => {
     };
 
     const createWebSocketRoom = () => {
+        setLoading(true);
+        console.log('allo');
         const socket = webSocketService.connect();
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
         socket.on('create-success', (roomName: string) => {
+            setLoading(false);
             setRoomName(roomName);
+        });
+        socket.on('create-failure', () => {
+            setLoading(false);
+            console.log('Error creating room.');
         });
         socket.on('user-joined', (username: string) => {
             setUsers((prevUsers) => [...prevUsers, username]);
@@ -145,46 +153,69 @@ const ManageRoom: React.FC = () => {
             ) : (
                 <div>
                     {roomName ? (
-                        <div>
-                            <div>
-                                <h2>Room name : {roomName}</h2>
-                                <div>
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            checked={quizMode === 'teacher'}
-                                            onChange={() => {
-                                                setQuizMode('teacher');
-                                            }}
-                                        />
-                                        Au rythme du professeur
-                                    </label>
-                                    <br />
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            checked={quizMode === 'student'}
-                                            onChange={() => {
-                                                setQuizMode('student');
-                                            }}
-                                        />
-                                        Au rythme de l'étudiant
-                                    </label>
+                        <div className="manage-room-container">
+                            <h2 className="page-title">Salle : {roomName} </h2>
+
+                            <button className="quit-btn" onClick={disconnectWebSocket}>
+                                Déconnexion
+                            </button>
+                            <div className="quiz-setup-container">
+                                <div className="users-container">
+                                    <h2>Users:</h2>
+                                    <div>
+                                        {users.map((user) => (
+                                            <span className="user" key={user}>
+                                                {user}{' '}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                                <h2>Users:</h2>
-                                {users.map((user) => (
-                                    <span key={user}>{user} </span>
-                                ))}
                             </div>
-                            <div>
-                                <button onClick={launchQuiz}>Launch Quiz</button>
-                                <button onClick={disconnectWebSocket}>Quit</button>
+
+                            <button
+                                className="launch-quiz-btn big-btn-general-style"
+                                onClick={launchQuiz}
+                            >
+                                Lancer le quiz
+                            </button>
+                            <div className="quiz-mode-selection">
+                                <h3>Sélection du mode du quiz</h3>
+                                <label className="mode-choice">
+                                    <input
+                                        type="radio"
+                                        checked={quizMode === 'teacher'}
+                                        onChange={() => {
+                                            setQuizMode('teacher');
+                                        }}
+                                    />
+                                    Au rythme du professeur
+                                </label>
+                                <label className="mode-choice">
+                                    <input
+                                        type="radio"
+                                        checked={quizMode === 'student'}
+                                        onChange={() => {
+                                            setQuizMode('student');
+                                        }}
+                                    />
+                                    Au rythme de l'étudiant
+                                </label>
                             </div>
                         </div>
                     ) : (
-                        <div>
-                            <h1>Room name</h1>
-                            <button onClick={createWebSocketRoom}>Create Room</button>
+                        <div className="create-room-container">
+                            <h1 className="page-title">Création d'une salle</h1>
+                            {loading ? (
+                                <div className="loading-container">
+                                    <div className="loading"></div>
+                                </div>
+                            ) : null}
+                            <button
+                                className="create-room-btn big-btn-general-style"
+                                onClick={createWebSocketRoom}
+                            >
+                                Create Room
+                            </button>
                         </div>
                     )}
                 </div>

@@ -10,12 +10,12 @@ const Home: React.FC = () => {
         <div className="pageContainer">
             <h1 className="page-title">Évalue ton savoir</h1>
             <div className="btn-container">
-                <Link to="/student/join-room" className="homepage-btn">
+                <Link to="/student/join-room" className="homepage-btn big-btn-general-style">
                     Espace
                     <br />
                     étudiant
                 </Link>
-                <Link to="/teacher/dashboard" className="homepage-btn">
+                <Link to="/teacher/dashboard" className="homepage-btn big-btn-general-style">
                     Espace
                     <br />
                     enseignant

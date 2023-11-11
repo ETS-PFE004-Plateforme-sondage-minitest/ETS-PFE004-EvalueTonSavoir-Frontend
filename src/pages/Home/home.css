@@ -7,19 +7,8 @@
 }
 
 .homepage-btn {
-    display: flex;
     width: 35vw;
     height: 30vh;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 2rem;
-    border-radius: 8px;
-    background-color: #86abe7;
-    color: #4b4b4b;
-    border: none;
-    cursor: pointer;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 

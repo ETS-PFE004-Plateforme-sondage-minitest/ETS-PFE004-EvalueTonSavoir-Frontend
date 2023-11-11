@@ -45,12 +45,7 @@ button {
 
 body {
     background: rgb(174, 197, 235);
-    background: linear-gradient(
-        90deg,
-        rgba(174, 197, 235, 1) 0%,
-        rgba(174, 197, 235, 1) 40%,
-        rgba(235, 213, 197, 1) 100%
-    );
+    background: linear-gradient(90deg, #aec5eb 0%, #aec5eb 40%, #ebd5c5 100%);
     height: 100vh;
 }
 
@@ -58,4 +53,18 @@ body {
     width: 5%;
     position: absolute;
     left: 0;
+}
+
+.big-btn-general-style {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 2rem;
+    border-radius: 8px;
+    background-color: #86abe7;
+    color: #4b4b4b;
+    border: none;
+    cursor: pointer;
 }
