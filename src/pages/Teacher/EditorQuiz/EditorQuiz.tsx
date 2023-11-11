@@ -36,15 +36,16 @@ const QuizForm: React.FC = () => {
         } else {
             setNewQuiz(true);
         }
-        console.log(value);
-    }, [value, filteredValue]);
+    }, [id]);
 
     function handleEditorChange(value: string) {
         setValue(value);
     }
 
     function handleUpdatePreview(value: string) {
-        if (value !== '') handleEditorChange(value);
+        if (value !== '') {
+            handleEditorChange(value);
+        }
         const linesArray = value.split(/(?<=\}.*)[\n]+/); // Split at next line breaks after closing curly brace
         if (linesArray[linesArray.length - 1] === '') linesArray.pop(); // Remove last empty line
         setFilteredValue(linesArray);
@@ -74,7 +75,6 @@ const QuizForm: React.FC = () => {
             const updatedQuizzes = [...storedQuizzes, newQuiz];
             localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         } else {
-            console.log('id', id);
             const updatedQuizzes = storedQuizzes.map((q: QuizType) => {
                 if (q.id === id) {
                     return { ...q, title: quizTitle, questions: filteredValue };

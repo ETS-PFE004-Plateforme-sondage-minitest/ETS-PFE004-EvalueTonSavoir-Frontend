@@ -43,7 +43,6 @@ const ManageRoom: React.FC = () => {
 
     const createWebSocketRoom = () => {
         const socket = webSocketService.connect();
-        console.log(socket);
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
@@ -59,7 +58,6 @@ const ManageRoom: React.FC = () => {
     const nextQuestion = () => {
         const quizQuestionArray = quiz?.questions;
         if (!quizQuestions) {
-            console.log(quizQuestionArray ? quizQuestionArray[0] : '');
             if (!quizQuestionArray) return;
 
             const parsedQuestions = [] as GIFTQuestion[];
@@ -106,7 +104,7 @@ const ManageRoom: React.FC = () => {
 
     const launchQuiz = () => {
         if (!socket || !roomName || quiz?.questions.length === 0) {
-            console.log('Error launching quiz.');
+            console.log('Error launching quiz. No socket, room name or no questions.');
             // TODO Add show error to user.
             return;
         }
