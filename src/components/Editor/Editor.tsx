@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Editor.css';
 
 interface EditorProps {
     initialValue: string;
@@ -13,18 +14,8 @@ const Editor: React.FC<EditorProps> = ({ initialValue, onEditorChange }) => {
         onEditorChange(text || '');
     }
 
-    console.log('value', value);
-
     return (
-        <textarea
-            onChange={handleEditorChange}
-            defaultValue={value}
-            style={{
-                resize: 'vertical',
-                width: '100%',
-                height: '80vh'
-            }}
-        ></textarea>
+        <textarea onChange={handleEditorChange} defaultValue={value} className="editor"></textarea>
     );
 };
 

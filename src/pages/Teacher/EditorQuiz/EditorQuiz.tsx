@@ -7,6 +7,8 @@ import Editor from '../../../components/Editor/Editor';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
+import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
+import './EditorQuiz.css';
 
 interface EditQuizParams {
     id: string;
@@ -35,13 +37,14 @@ const QuizForm: React.FC = () => {
             setNewQuiz(true);
         }
         console.log(value);
-    }, [value]);
+    }, [value, filteredValue]);
 
     function handleEditorChange(value: string) {
         setValue(value);
     }
 
-    function handleUpdatePreview() {
+    function handleUpdatePreview(value: string) {
+        if (value !== '') handleEditorChange(value);
         const linesArray = value.split(/(?<=\}.*)[\n]+/); // Split at next line breaks after closing curly brace
         if (linesArray[linesArray.length - 1] === '') linesArray.pop(); // Remove last empty line
         setFilteredValue(linesArray);
@@ -93,15 +96,19 @@ const QuizForm: React.FC = () => {
 
     return (
         <div>
+            <h1 className="page-title">Editeur de quiz</h1>
             <div id="editor-preview-container" className="container">
+                <GiftCheatSheet />
                 <div className="editor-column">
-                    <Editor initialValue={value} onEditorChange={handleEditorChange} />
+                    <h2 className="subtitle">Editeur</h2>
+                    <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
                     <div className="quiz-action-buttons">
-                        <a onClick={handleUpdatePreview}>Prévisualisation</a>
                         <a onClick={handleSaveQuiz}>Enregistrer</a>
                     </div>
                 </div>
+
                 <div className="preview-column">
+                    <h2 className="subtitle">Prévisualisation</h2>
                     <GIFTTemplatePreview questions={filteredValue} />
                 </div>
             </div>
