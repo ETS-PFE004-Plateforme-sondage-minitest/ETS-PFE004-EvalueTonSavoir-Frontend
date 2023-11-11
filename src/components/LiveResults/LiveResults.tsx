@@ -22,7 +22,7 @@ interface StudentResult {
 }
 
 const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
-    const [hideUsernames, setHideUsernames] = useState<boolean>(false);
+    const [hideUsernames, setHideUsernames] = useState<boolean>(true);
     const [ShowCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
 
@@ -104,23 +104,25 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
 
     return (
         <div>
-            <h2>Résultats du quiz</h2>
-            <label>
-                Cacher les noms d'utilisateurs:
-                <input
-                    type="checkbox"
-                    checked={hideUsernames}
-                    onChange={() => setHideUsernames((prev) => !prev)}
-                />
-            </label>
-            <label>
-                Montrer les réponses correctes:
-                <input
-                    type="checkbox"
-                    checked={ShowCorrectAnswers}
-                    onChange={() => setShowCorrectAnswers((prev) => !prev)}
-                />
-            </label>
+            <h4 className="present-results-title ">Résultats du quiz</h4>
+            <div className="live-result-control-container">
+                <label className="live-result-control">
+                    Cacher les noms d'utilisateurs:
+                    <input
+                        type="checkbox"
+                        checked={hideUsernames}
+                        onChange={() => setHideUsernames((prev) => !prev)}
+                    />
+                </label>
+                <label className="live-result-control">
+                    Montrer les réponses correctes:
+                    <input
+                        type="checkbox"
+                        checked={ShowCorrectAnswers}
+                        onChange={() => setShowCorrectAnswers((prev) => !prev)}
+                    />
+                </label>
+            </div>
             <table className="table-bordered">
                 <thead>
                     <tr>

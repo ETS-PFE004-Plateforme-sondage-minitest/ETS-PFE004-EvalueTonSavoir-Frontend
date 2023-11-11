@@ -66,3 +66,14 @@
   .gift-textarea:-moz-placeholder {
     color: #999;
   } */
+.present-question-title {
+    margin-top: 8vh;
+    margin-bottom: 2vh;
+    font-size: 2rem;
+    font-weight: 500;
+}
+.preview-container {
+    margin-bottom: 2vh;
+    width: 60vw;
+    height: 100%;
+}

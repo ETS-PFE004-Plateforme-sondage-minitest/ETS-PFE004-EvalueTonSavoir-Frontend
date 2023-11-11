@@ -143,12 +143,16 @@ const ManageRoom: React.FC = () => {
                         socket={socket}
                         questions={quizQuestions}
                     ></LiveResultsComponent>
-                    {quizMode === 'teacher' && (
-                        <button onClick={nextQuestion}>
-                            {isLastQuestion ? 'Fermer le quiz' : 'Question suivante'}
-                        </button>
-                    )}
-                    {quizMode === 'student' && <button onClick={exitRoom}>Fermer le quiz</button>}
+                    <div className="bottom-btn">
+                        {quizMode === 'teacher' && (
+                            <button onClick={nextQuestion}>
+                                {isLastQuestion ? 'Fermer le quiz' : 'Question suivante'}
+                            </button>
+                        )}
+                        {quizMode === 'student' && (
+                            <button onClick={exitRoom}>Fermer le quiz</button>
+                        )}
+                    </div>
                 </div>
             ) : (
                 <div>

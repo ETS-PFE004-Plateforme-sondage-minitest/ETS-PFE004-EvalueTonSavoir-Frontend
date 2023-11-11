@@ -8,16 +8,20 @@ input[type='text'] {
 
 /* Style for quiz list */
 ul {
+    display: flex;
+    flex-direction: column;
     list-style: none;
     padding: 0;
+    width: 60vw;
 }
 
 li {
     display: flex;
     align-items: center;
+    align-self: center;
     justify-content: space-between;
-    height: 8vh;
-    width: 20vw;
+    height: 30%;
+    width: 60%;
     margin-bottom: 2vh;
     padding: 16px;
     border: 1px solid #535353;
@@ -28,6 +32,10 @@ li {
 .quizTitle {
     color: #535353;
     border-bottom: 1px solid #535353;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 60%;
 }
 
 p {
@@ -86,4 +94,6 @@ p {
     flex-direction: column;
     justify-content: space-around;
     height: 100%;
+    width: 60%;
+    gap: 2vh;
 }
