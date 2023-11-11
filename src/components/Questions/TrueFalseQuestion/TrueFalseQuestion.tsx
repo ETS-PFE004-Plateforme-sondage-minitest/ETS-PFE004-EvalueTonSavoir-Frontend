@@ -16,9 +16,9 @@ const TrueFalseQuestion: React.FC<Props> = (props) => {
     const selectedTrue = answer ? 'selected' : '';
     const selectedFalse = answer !== undefined && !answer ? 'selected' : '';
     return (
-        <div>
+        <div className="question-container">
             <div className="title">{questionTitle}</div>
-            <div>
+            <div className="choice-container">
                 <button
                     className="button-wrapper"
                     disabled={showAnswer}

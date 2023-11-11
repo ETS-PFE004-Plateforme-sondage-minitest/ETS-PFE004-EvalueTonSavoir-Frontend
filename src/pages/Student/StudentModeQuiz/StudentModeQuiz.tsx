@@ -1,6 +1,7 @@
 import { GIFTQuestion } from 'gift-pegjs';
 import React, { useState } from 'react';
 import QuestionComponent from '../../../components/Questions/Question';
+import '../styles.css';
 
 interface StudentModeQuizProps {
     questions: GIFTQuestion[];
@@ -28,7 +29,8 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({ questions, submitAnsw
     };
 
     return (
-        <div>
+        <div className="question-component-container">
+            <h2 className="page-title">Question {question.id}</h2>
             <QuestionComponent
                 handleOnSubmitAnswer={handleOnSubmitAnswer}
                 question={question}

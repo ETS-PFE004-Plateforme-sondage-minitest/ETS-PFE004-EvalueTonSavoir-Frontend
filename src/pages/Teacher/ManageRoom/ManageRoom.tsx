@@ -135,6 +135,7 @@ const ManageRoom: React.FC = () => {
         <div>
             {quizQuestions ? (
                 <div>
+                    <h2 className="page-title">Salle : {roomName} </h2>
                     <GIFTTemplatePreview
                         questions={presentQuestionString ? presentQuestionString : []}
                         hideAnswers={true}

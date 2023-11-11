@@ -85,7 +85,11 @@ const JoinRoom: React.FC = () => {
     };
 
     if (isLoading) {
-        return <div>En attente que le professeur lance le questionnaire...</div>;
+        return (
+            <div className="waiting-text">
+                En attente que le professeur lance le questionnaire...
+            </div>
+        );
     }
 
     switch (quizMode) {
@@ -107,14 +111,14 @@ const JoinRoom: React.FC = () => {
                         <input
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter username"
+                            placeholder="Nom d'utilisateur"
                             className="student-info-input"
                         />
 
                         <input
                             value={roomName}
                             onChange={(e) => setRoomName(e.target.value.toUpperCase())}
-                            placeholder="Enter room name"
+                            placeholder="Nom de la salle"
                             className="student-info-input"
                         />
                         <button className="join-btn" onClick={handleSocket}>

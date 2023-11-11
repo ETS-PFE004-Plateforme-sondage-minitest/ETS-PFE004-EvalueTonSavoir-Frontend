@@ -58,12 +58,7 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
                 <div className="error">{error}</div>
             ) : isPreviewReady ? (
                 <div>
-                    <h2 className="page-title">Vue d'ensemble du quiz</h2>
-                    <h4 className="present-question-title">Question actuelle</h4>
-                    <div
-                        className="preview-container"
-                        dangerouslySetInnerHTML={{ __html: items }}
-                    ></div>
+                    <div dangerouslySetInnerHTML={{ __html: items }}></div>
                 </div>
             ) : (
                 <div className="loading">Loading preview...</div>
