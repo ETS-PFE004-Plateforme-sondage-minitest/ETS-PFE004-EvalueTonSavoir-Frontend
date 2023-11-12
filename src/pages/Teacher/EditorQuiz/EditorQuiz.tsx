@@ -9,6 +9,7 @@ import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import './EditorQuiz.css';
+import { GoBackButton } from '../../../components/GoBackButton/GoBackButton';
 
 interface EditQuizParams {
     id: string;
@@ -97,6 +98,7 @@ const QuizForm: React.FC = () => {
     return (
         <div>
             <h1 className="page-title">Editeur de quiz</h1>
+            <GoBackButton askConfirm/>
             <div id="editor-preview-container" className="container">
                 <GiftCheatSheet />
                 <div className="editor-column">

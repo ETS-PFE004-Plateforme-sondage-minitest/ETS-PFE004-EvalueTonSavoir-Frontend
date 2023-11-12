@@ -88,6 +88,7 @@ const Dashboard: React.FC = () => {
     return (
         <div>
             <div className="dashboardContainer">
+                <Link to="/">Accueil</Link>
                 <h1 className="page-title">Tableau de bord</h1>
 
                 <div className="search-bar">
