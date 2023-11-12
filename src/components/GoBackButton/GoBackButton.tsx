@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../Modal/Modal';
 
-export function GoBackButton({ askConfirm = false }) {
+export default function GoBackButton({ askConfirm = false, message = 'Êtes-vous sûr de vouloir quitter la page ?' }) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
@@ -25,7 +25,7 @@ export function GoBackButton({ askConfirm = false }) {
             {showModal && (
                 <Modal
                     title="Confirmer"
-                    message="Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?"
+                    message={message}
                     onConfirm={handleConfirm}
                     onCancel={() => setShowModal(false)}
                 />

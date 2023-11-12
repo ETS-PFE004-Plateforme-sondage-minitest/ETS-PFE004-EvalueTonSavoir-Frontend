@@ -94,7 +94,7 @@ const Dashboard: React.FC = () => {
                 <div className="search-bar">
                     <input
                         type="text"
-                        placeholder="Search quizzes"
+                        placeholder="Rechercher un quiz"
                         value={searchTerm}
                         onChange={handleSearch}
                     />
@@ -111,21 +111,21 @@ const Dashboard: React.FC = () => {
                                     <a
                                         className="red-btn"
                                         onClick={() => handleRemoveQuiz(quiz)}
-                                        title="Supprimer"
+                                        title="Supprimer le quiz"
                                     >
                                         <FontAwesomeIcon icon={faTrashCan} />
                                     </a>
                                     <a
                                         className="blue-btn"
                                         onClick={() => handleDuplicateQuiz(quiz.id)}
-                                        title="Dupliquer"
+                                        title="Dupliquer le quiz"
                                     >
                                         <FontAwesomeIcon icon={faClone} />
                                     </a>
                                     <Link
                                         className="blue-btn"
                                         to={`/teacher/editor-quiz/${quiz.id}`}
-                                        title="Modifier"
+                                        title="Modifier le quiz"
                                     >
                                         <FontAwesomeIcon icon={faPencil} />
                                     </Link>
@@ -135,7 +135,7 @@ const Dashboard: React.FC = () => {
                                 <Link
                                     className="green-btn"
                                     to={`/teacher/manage-room/${quiz.id}`}
-                                    title="Démarrer"
+                                    title="Démarrer une session"
                                 >
                                     <FontAwesomeIcon icon={faPlay} />
                                 </Link>
