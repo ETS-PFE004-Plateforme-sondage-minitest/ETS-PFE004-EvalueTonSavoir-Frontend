@@ -2,21 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Modal from '../../../components/Modal/Modal';
+import Template from '../../../components/GiftTemplate/templates';
+import { parse } from 'gift-pegjs';
 import { v4 as uuidv4 } from 'uuid';
 import './dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrashCan, faClone, faPencil, faPlay } from '@fortawesome/free-solid-svg-icons';
-
-interface Quiz {
-    id: string;
-    title: string;
-    questions: string;
-}
+import { QuizType } from '../../../Types/QuizType';
 
 const Dashboard: React.FC = () => {
-    const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+    const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [quizToRemove, setQuizToRemove] = useState<Quiz | null>(null);
+    const [quizToRemove, setQuizToRemove] = useState<QuizType | null>(null);
 
     useEffect(() => {
         // Fetch quizzes from local storage
@@ -28,12 +25,12 @@ const Dashboard: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-    const handleRemoveQuiz = (quiz: Quiz) => {
+    const handleRemoveQuiz = (quiz: QuizType) => {
         setQuizToRemove(quiz);
     };
 
     const handleConfirmRemoveQuiz = () => {
-        const updatedQuizzes = quizzes.filter((quiz: Quiz) => quiz.id !== quizToRemove?.id);
+        const updatedQuizzes = quizzes.filter((quiz: QuizType) => quiz.id !== quizToRemove?.id);
         localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         setQuizzes(updatedQuizzes);
         setQuizToRemove(null);
@@ -44,30 +41,49 @@ const Dashboard: React.FC = () => {
     };
 
     const handleDuplicateQuiz = (id: string) => {
-        const quizToDuplicate = quizzes.find((quiz: Quiz) => quiz.id === id);
+        const quizToDuplicate = quizzes.find((quiz: QuizType) => quiz.id === id);
         if (!quizToDuplicate) return;
 
         const existingQuizzesWithTitle = Object.values(quizzes).filter(
-            (quiz: Quiz) =>
+            (quiz: QuizType) =>
                 quiz.title === quizToDuplicate.title ||
                 quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
         );
         const titleSuffix =
             existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
 
-        const duplicatedQuiz: Quiz = {
+        const duplicatedQuiz: QuizType = {
             ...quizToDuplicate,
             id: uuidv4(),
             title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz'
         };
-        const updatedQuizzes: Quiz[] = [...quizzes, duplicatedQuiz];
+        const updatedQuizzes: QuizType[] = [...quizzes, duplicatedQuiz];
         localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         setQuizzes(updatedQuizzes);
     };
 
-    const filteredQuizzes: Quiz[] = quizzes.filter((quiz: Quiz) =>
+    const filteredQuizzes: QuizType[] = quizzes.filter((quiz: QuizType) =>
         quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const validQuiz = (questions: string[]) => {
+        if (questions.length === 0) {
+            return false;
+        }
+
+        // Check if I can generate the Template for each question 
+        // Otherwise the quiz is invalid
+        for (let i = 0; i < questions.length; i++) {
+            try {
+                const parsedItem = parse(questions[i]);
+                Template(parsedItem[0]);
+            } catch (error) {
+                return false;
+            }
+        }
+
+        return true;
+    };
 
     return (
         <div>
@@ -86,7 +102,7 @@ const Dashboard: React.FC = () => {
                     </Link>
                 </div>
                 <ul>
-                    {filteredQuizzes.map((quiz: Quiz) => (
+                    {filteredQuizzes.map((quiz: QuizType) => (
                         <li key={quiz.id}>
                             <div className="quiz-card-control">
                                 <h3 className="quizTitle">{quiz.title}</h3>
@@ -114,7 +130,7 @@ const Dashboard: React.FC = () => {
                                     </Link>
                                 </div>
                             </div>
-                            {quiz.questions.length > 0 ? ( //TODO - gerer le cas ou le quiz est invalide (on ne gere que si il est vide)
+                            {validQuiz(quiz.questions) ? (
                                 <Link
                                     className="green-btn"
                                     to={`/teacher/manage-room/${quiz.id}`}
