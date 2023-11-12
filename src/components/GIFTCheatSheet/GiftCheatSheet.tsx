@@ -1,3 +1,4 @@
+// GiftCheatSheet.tsx
 import React from 'react';
 import './GiftCheatSheet.css';
 

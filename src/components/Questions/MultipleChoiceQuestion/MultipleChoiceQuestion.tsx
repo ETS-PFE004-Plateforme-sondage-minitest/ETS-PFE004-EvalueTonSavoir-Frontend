@@ -1,5 +1,6 @@
+// MultipleChoiceQuestion.tsx
 import React, { useState } from 'react';
-import SubmitButton from '../../SubmitButton';
+import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
 
 type Choices = {

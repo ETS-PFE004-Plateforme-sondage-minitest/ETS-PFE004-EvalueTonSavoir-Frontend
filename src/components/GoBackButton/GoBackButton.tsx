@@ -1,8 +1,9 @@
+// GoBackButton.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../Modal/Modal';
 
-export default function GoBackButton({ askConfirm = false, message = 'Êtes-vous sûr de vouloir quitter la page ?' }) {
+function GoBackButton({ askConfirm = false, message = 'Êtes-vous sûr de vouloir quitter la page ?' }) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
@@ -33,3 +34,5 @@ export default function GoBackButton({ askConfirm = false, message = 'Êtes-vous
         </>
     );
 }
+
+export default GoBackButton;

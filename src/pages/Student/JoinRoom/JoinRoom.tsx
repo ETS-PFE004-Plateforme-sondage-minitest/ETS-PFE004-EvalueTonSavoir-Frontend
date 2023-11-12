@@ -1,9 +1,12 @@
-import { GIFTQuestion, parse } from 'gift-pegjs';
+// JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
+import { GIFTQuestion, parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
-import webSocketService from '../../../services/WebsocketService';
+
 import StudentModeQuiz from '../StudentModeQuiz/StudentModeQuiz';
 import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
+import webSocketService from '../../../services/WebsocketService';
+
 import './JoinRoom.css';
 
 const JoinRoom: React.FC = () => {

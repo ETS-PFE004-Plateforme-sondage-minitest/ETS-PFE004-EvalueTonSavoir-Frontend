@@ -1,15 +1,18 @@
+// EditorQuiz.tsx
 import React, { useState, useEffect } from 'react';
-import Modal from '../../../components/Modal/Modal';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import Editor from '../../../components/Editor/Editor';
+import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
+import GoBackButton from '../../../components/GoBackButton/GoBackButton';
+import Modal from '../../../components/Modal/Modal';
+
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
-import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
+
 import './EditorQuiz.css';
-import GoBackButton from '../../../components/GoBackButton/GoBackButton';
 
 interface EditQuizParams {
     id: string;

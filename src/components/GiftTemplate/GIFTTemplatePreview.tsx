@@ -1,3 +1,4 @@
+// GIFTTemplatePreview.tsx
 import React, { useEffect, useState } from 'react';
 import Template, { ErrorTemplate } from './templates';
 import { parse } from 'gift-pegjs';

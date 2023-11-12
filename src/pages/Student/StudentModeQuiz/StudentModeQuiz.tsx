@@ -1,6 +1,9 @@
-import { GIFTQuestion } from 'gift-pegjs';
+// StudentModeQuiz.tsx
 import React, { useState } from 'react';
+import { GIFTQuestion } from 'gift-pegjs';
+
 import QuestionComponent from '../../../components/Questions/Question';
+
 import '../styles.css';
 
 interface StudentModeQuizProps {

@@ -1,3 +1,4 @@
+// Editor.tsx
 import React, { useState } from 'react';
 import './Editor.css';
 

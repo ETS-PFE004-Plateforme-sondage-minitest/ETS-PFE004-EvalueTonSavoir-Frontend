@@ -2,12 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
-import { QuizService } from '../../../services/QuizService';
-import { QuizType } from '../../../Types/QuizType';
 import { GIFTQuestion, parse } from 'gift-pegjs';
-import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
-import webSocketService from '../../../services/WebsocketService';
+
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
+import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
+import { QuizService } from '../../../services/QuizService';
+import webSocketService from '../../../services/WebsocketService';
+import { QuizType } from '../../../Types/QuizType';
+
 import './ManageRoom.css';
 
 const ManageRoom: React.FC = () => {

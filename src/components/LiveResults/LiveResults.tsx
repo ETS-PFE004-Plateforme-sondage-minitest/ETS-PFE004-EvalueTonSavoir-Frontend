@@ -1,9 +1,11 @@
+// LiveResults.tsx
 import React, { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
-import './results.css';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+
+import './results.css';
 
 interface LiveResultsProps {
     socket: Socket | null;
@@ -34,7 +36,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                 const userIndex = studentResults.findIndex(
                     (result) => result.username === username
                 );
-                let isCorrect = checkIfIsCorrect(answer, idQuestion);
+                const isCorrect = checkIfIsCorrect(answer, idQuestion);
                 if (userIndex !== -1) {
                     const newStudentResults = [...studentResults];
                     newStudentResults[userIndex].answers.push({
