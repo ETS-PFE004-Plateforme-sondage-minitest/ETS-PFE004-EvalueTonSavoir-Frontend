@@ -9,10 +9,17 @@ import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePr
 
 import '../../../components/EditorPreview/EditorPreview.css';
 
+interface Quiz {
+    id: string;
+    title: string;
+    questions: string;
+  }
+
 const CreateQuiz: React.FC = () => {
     const [value, setValue] = useState('');
     const [filteredValue, setFilteredValue] = useState<string[]>([]);
     const [quizToSave, setQuizToSave] = useState(false);
+    const [quizzesToSave, setQuizzesToSave] = useState<Quiz[]>([]);
     const [quizTitle, setQuizTitle] = useState('');
     const navigate = useNavigate();
 
@@ -52,8 +59,112 @@ const CreateQuiz: React.FC = () => {
         navigate('/teacher/dashboard');
     };
 
+
+
+    /*
+    const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+    
+        const file = event.dataTransfer.files[0];
+        if (file && file.type === 'text/plain') {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const fileContents = (e.target as FileReader).result as string;
+            setValue(fileContents);
+            handleUpdatePreview(); // Update the preview with the dropped quiz content
+          };
+          reader.readAsText(file);
+        }
+    };
+    */
+
+
+
+    const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+    
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+          Array.from(files).forEach((file) => {
+            if (file.type === 'text/plain') {
+              const reader = new FileReader();
+              reader.readAsText(file);
+              reader.onload = (e) => {
+                const fileContents = (e.target as FileReader).result as string;
+                setQuizzesToSave((prevQuizzes) => [
+                  ...prevQuizzes,
+                  { id: uuidv4(), title: '', questions: fileContents },
+                ]);
+              };
+            }
+            return null;
+          });
+        }
+    };
+
+
+    const handleSaveQuizzes = () => {
+        // Les quiz sont enregistres un par en par edition de nom par l'utilisateur
+        const updatedQuizzes = quizzesToSave.map((quiz) => ({
+          ...quiz,
+          title: quiz.title || 'Quiz sans nom',
+        }));
+    
+        localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+        setQuizzesToSave([]);
+        navigate('/teacher/dashboard');
+     };
+
+
+
+    
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file && file.type === 'text/plain') {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const fileContents = (e.target as FileReader).result as string;
+            setValue(fileContents);
+            // Met a jour le preview avec le contenu du quiz charge
+            handleUpdatePreview(); 
+          };
+          reader.readAsText(file);
+        }
+    };
+
+
+
+
+
+
+
     return (
         <div>
+
+            <div className="drop-zone" onDrop={handleFileDrop} onDragOver={(event) => event.preventDefault()}>
+                <p>Glisser un quiz pré-enregistré en format .txt ou ecrivez un nouveau quiz</p>
+            </div>
+            
+            <input type="file" accept=".txt" onChange={handleFileChange} style={{ display: 'none' }} />
+
+            {quizzesToSave.length > 0 && (
+                <Modal title="Sauvegarder les quiz" message="Entrez un titre pour chaque quiz:"
+                hasOptionalInput optionalInputValue={quizTitle} onOptionalInputChange={(event) => setQuizTitle(event.target.value)}
+                onConfirm={handleSaveQuizzes} onCancel={handleModalClose}/>
+            )}
+
+
+
+            
+
+
+
+
+
+
+
+
             <div id="editor-preview-container" className="container">
                 <div className="editor-column">
                     <Editor initialValue="" onEditorChange={handleEditorChange} />
@@ -66,6 +177,14 @@ const CreateQuiz: React.FC = () => {
                     <GIFTTemplatePreview questions={filteredValue} />
                 </div>
             </div>
+
+
+
+
+
+
+
+
             {quizToSave && (
                 <Modal
                     title="Sauvegarder le questionnaire"
