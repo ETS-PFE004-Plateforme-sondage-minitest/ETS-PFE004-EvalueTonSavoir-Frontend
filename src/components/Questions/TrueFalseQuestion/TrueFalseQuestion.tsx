@@ -1,6 +1,7 @@
+// TrueFalseQuestion.tsx
 import React, { useState } from 'react';
+import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
-import SubmitButton from '../../SubmitButton';
 
 interface Props {
     questionTitle: string;

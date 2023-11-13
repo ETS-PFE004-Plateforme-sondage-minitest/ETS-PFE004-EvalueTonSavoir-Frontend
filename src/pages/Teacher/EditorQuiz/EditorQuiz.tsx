@@ -1,15 +1,18 @@
+// EditorQuiz.tsx
 import React, { useState, useEffect } from 'react';
-import Modal from '../../../components/Modal/Modal';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 import Editor from '../../../components/Editor/Editor';
+import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
+import GoBackButton from '../../../components/GoBackButton/GoBackButton';
+import Modal from '../../../components/Modal/Modal';
+
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
-import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
+
 import './EditorQuiz.css';
-import { GoBackButton } from '../../../components/GoBackButton/GoBackButton';
 
 interface EditQuizParams {
     id: string;
@@ -91,22 +94,22 @@ const QuizForm: React.FC = () => {
 
     if (!isNewQuiz) {
         if (!quiz) {
-            return <div>Loading...</div>;
+            return <div>Chargement...</div>;
         }
     }
 
     return (
         <div>
-            <h1 className="page-title">Editeur de quiz</h1>
-            <GoBackButton askConfirm/>
+            <h1 className="page-title">Éditeur de quiz</h1>
+            <GoBackButton askConfirm message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`} />
             <div id="editor-preview-container" className="container">
-                <GiftCheatSheet />
                 <div className="editor-column">
-                    <h2 className="subtitle">Editeur</h2>
+                    <h2 className="subtitle">Éditeur</h2>
                     <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
                     <div className="quiz-action-buttons">
                         <a onClick={handleSaveQuiz}>Enregistrer</a>
                     </div>
+                    <GiftCheatSheet />
                 </div>
 
                 <div className="preview-column">

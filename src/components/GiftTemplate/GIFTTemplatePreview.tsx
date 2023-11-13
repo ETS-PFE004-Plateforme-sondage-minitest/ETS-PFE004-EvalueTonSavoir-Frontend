@@ -1,3 +1,4 @@
+// GIFTTemplatePreview.tsx
 import React, { useEffect, useState } from 'react';
 import Template, { ErrorTemplate } from './templates';
 import { parse } from 'gift-pegjs';
@@ -30,7 +31,7 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
                     if (error instanceof Error) {
                         previewHTML += ErrorTemplate(item + '\n' + error.message);
                     } else {
-                        previewHTML += ErrorTemplate(item + '\n' + 'Unknown error');
+                        previewHTML += ErrorTemplate(item + '\n' + 'Erreur inconnue');
                     }
                 }
                 previewHTML += '';
@@ -47,7 +48,7 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
             if (error instanceof Error) {
                 setError(error.message);
             } else {
-                setError('An error occurred while generating the preview.');
+                setError('Une erreur est survenue durant le chargement de la prévisualisation.');
             }
         }
     }, [questions]);
@@ -61,7 +62,7 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
                     <div dangerouslySetInnerHTML={{ __html: items }}></div>
                 </div>
             ) : (
-                <div className="loading">Loading preview...</div>
+                <div className="loading">Chargement de la prévisualisation...</div>
             )}
         </React.Fragment>
     );

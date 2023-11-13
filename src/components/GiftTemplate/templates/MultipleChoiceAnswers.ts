@@ -19,8 +19,8 @@ export default function MultipleChoiceAnswers({ choices }: MultipleChoiceAnswerO
 
     const isMultipleAnswer = choices.filter(({ isCorrect }) => isCorrect === true).length === 0;
 
-    const prompt = `<span style="${ParagraphStyle(state.theme)}">Select one${
-        isMultipleAnswer ? ` or more` : ``
+    const prompt = `<span style="${ParagraphStyle(state.theme)}">Choisir une réponse${
+        isMultipleAnswer ? ` ou plusieurs` : ``
     }:</span>`;
     const result = choices
         .map(({ weight, isCorrect, text, feedback }) => {

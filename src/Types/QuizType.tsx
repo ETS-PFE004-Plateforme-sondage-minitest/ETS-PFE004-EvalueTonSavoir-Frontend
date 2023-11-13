@@ -1,3 +1,4 @@
+// QuizType.tsx
 export interface QuizType {
     id: string;
     title: string;

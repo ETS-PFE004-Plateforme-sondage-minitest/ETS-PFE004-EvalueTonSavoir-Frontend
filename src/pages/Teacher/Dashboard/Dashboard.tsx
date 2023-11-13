@@ -1,14 +1,16 @@
 // Dashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Modal from '../../../components/Modal/Modal';
-import Template from '../../../components/GiftTemplate/templates';
 import { parse } from 'gift-pegjs';
 import { v4 as uuidv4 } from 'uuid';
-import './dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrashCan, faClone, faPencil, faPlay } from '@fortawesome/free-solid-svg-icons';
+
+import Modal from '../../../components/Modal/Modal';
+import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
+
+import './dashboard.css';
 
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
@@ -94,7 +96,7 @@ const Dashboard: React.FC = () => {
                 <div className="search-bar">
                     <input
                         type="text"
-                        placeholder="Search quizzes"
+                        placeholder="Rechercher un quiz"
                         value={searchTerm}
                         onChange={handleSearch}
                     />
@@ -111,21 +113,21 @@ const Dashboard: React.FC = () => {
                                     <a
                                         className="red-btn"
                                         onClick={() => handleRemoveQuiz(quiz)}
-                                        title="Supprimer"
+                                        title="Supprimer le quiz"
                                     >
                                         <FontAwesomeIcon icon={faTrashCan} />
                                     </a>
                                     <a
                                         className="blue-btn"
                                         onClick={() => handleDuplicateQuiz(quiz.id)}
-                                        title="Dupliquer"
+                                        title="Dupliquer le quiz"
                                     >
                                         <FontAwesomeIcon icon={faClone} />
                                     </a>
                                     <Link
                                         className="blue-btn"
                                         to={`/teacher/editor-quiz/${quiz.id}`}
-                                        title="Modifier"
+                                        title="Modifier le quiz"
                                     >
                                         <FontAwesomeIcon icon={faPencil} />
                                     </Link>
@@ -135,7 +137,7 @@ const Dashboard: React.FC = () => {
                                 <Link
                                     className="green-btn"
                                     to={`/teacher/manage-room/${quiz.id}`}
-                                    title="Démarrer"
+                                    title="Démarrer une session"
                                 >
                                     <FontAwesomeIcon icon={faPlay} />
                                 </Link>

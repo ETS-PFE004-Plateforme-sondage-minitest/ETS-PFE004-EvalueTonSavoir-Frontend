@@ -10,6 +10,9 @@
 .question-type {
     margin-bottom: 20;
 }
+.question-code-block, .code-comment {
+    white-space: pre-line;
+}
 
 code {
     font-family: 'Courier New', Courier, monospace;

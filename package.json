@@ -13,11 +13,7 @@
     "@fortawesome/fontawesome-free": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@types/katex": "^0.16.5",
-    "@types/marked": "^6.0.0",
-    "@types/nanoid": "^3.0.0",
-    "@types/react-modal": "^3.16.1",
-    "@types/uuid": "^9.0.5",
+    "@types/uuid": "^9.0.7",
     "gift-pegjs": "^0.2.1",
     "katex": "^0.16.9",
     "marked": "^9.1.2",
@@ -28,7 +24,8 @@
     "react-router-dom": "^6.16.0",
     "remark-math": "^6.0.0",
     "socket.io-client": "^4.7.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "vite-plugin-checker": "^0.6.2"
   },
   "devDependencies": {
     "@types/node": "^20.8.8",
