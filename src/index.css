@@ -5,7 +5,6 @@
 }
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
@@ -16,8 +15,8 @@ button {
     display: inline-block;
     padding: 8px 12px;
     margin: 0 4px;
-    background-color: #007bff;
-    color: #fff;
+    background-color: #439cfa;
+    color: #000;
     border-radius: 4px;
     text-decoration: none;
     cursor: pointer;
@@ -31,13 +30,41 @@ button {
 }
 
 .page-title {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 4rem;
+    font-weight: 500;
     margin: 1rem;
+    color: #3a3a3a;
+    text-align: center;
 }
 
 .centered {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+body {
+    background: rgb(174, 197, 235);
+    background: linear-gradient(90deg, #aec5eb 0%, #aec5eb 40%, #ebd5c5 100%);
+    height: 100vh;
+}
+
+.logo {
+    width: 5%;
+    position: absolute;
+    left: 0;
+}
+
+.big-btn-general-style {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 2rem;
+    border-radius: 8px;
+    background-color: #86abe7;
+    color: #4b4b4b;
+    border: none;
+    cursor: pointer;
 }

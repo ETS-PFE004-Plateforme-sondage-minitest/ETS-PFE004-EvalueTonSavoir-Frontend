@@ -1,5 +1,6 @@
+// MultipleChoiceQuestion.tsx
 import React, { useState } from 'react';
-import SubmitButton from '../../SubmitButton';
+import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
 
 type Choices = {
@@ -28,12 +29,12 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
     const alphabet = alpha.map((x) => String.fromCharCode(x));
 
     return (
-        <div>
+        <div className="question-container">
             <div className="title">{questionTitle}</div>
             {choices.map((choice, i) => {
                 const selected = answer === choice.text.text ? 'selected' : '';
                 return (
-                    <div key={choice.text.text + i}>
+                    <div key={choice.text.text + i} className="choices-container">
                         <button
                             className="button-wrapper"
                             onClick={() => handleOnClickAnswer(choice.text.text)}

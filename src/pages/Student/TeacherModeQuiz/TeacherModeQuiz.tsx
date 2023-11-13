@@ -1,6 +1,10 @@
-import { GIFTQuestion } from 'gift-pegjs';
+// TeacherModeQuiz.tsx
 import React, { useEffect, useState } from 'react';
+import { GIFTQuestion } from 'gift-pegjs';
+
 import QuestionComponent from '../../../components/Questions/Question';
+
+import '../styles.css';
 
 interface TeacherModeQuizProps {
     question: GIFTQuestion;
@@ -21,9 +25,10 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({ question, submitAnswe
     };
 
     return (
-        <div>
+        <div className="question-component-container">
+            <h2 className="page-title">Question {question.id}</h2>
             {isAnswerSubmitted ? (
-                <div>En attente pour la prochaine question... </div>
+                <div className="wait-text">En attente pour la prochaine question... </div>
             ) : (
                 <QuestionComponent
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
