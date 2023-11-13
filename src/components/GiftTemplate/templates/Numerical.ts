@@ -18,7 +18,7 @@ export default function Numerical({
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Numerical',
+                type: 'Numérique',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({

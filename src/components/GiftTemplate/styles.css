@@ -77,3 +77,10 @@
     width: 60vw;
     height: 100%;
 }
+.multiple-choice-answers-container {
+  margin: 1% 0% 1% 0%;
+}
+.multiple-choice-answers-container > * {
+  display: inline;
+  vertical-align: middle;
+}

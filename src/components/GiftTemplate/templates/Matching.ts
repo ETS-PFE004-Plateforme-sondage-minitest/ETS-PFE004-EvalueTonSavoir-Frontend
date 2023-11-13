@@ -21,7 +21,7 @@ export default function Matching({
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Matching',
+                type: 'Appariement',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({
