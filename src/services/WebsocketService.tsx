@@ -1,4 +1,4 @@
-// WebSocketService.ts
+// WebSocketService.tsx
 import { io, Socket } from 'socket.io-client';
 
 class WebSocketService {
@@ -27,13 +27,13 @@ class WebSocketService {
         }
     }
 
-    nextQuestion(roomName: string, question: any) {
+    nextQuestion(roomName: string, question: unknown) {
         if (this.socket) {
             this.socket.emit('next-question', { roomName, question });
         }
     }
 
-    launchStudentModeQuiz(roomName: string, questions: any) {
+    launchStudentModeQuiz(roomName: string, questions: unknown) {
         if (this.socket) {
             this.socket.emit('launch-student-mode', { roomName, questions });
         }

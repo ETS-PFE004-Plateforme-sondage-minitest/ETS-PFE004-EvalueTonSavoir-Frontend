@@ -1,3 +1,4 @@
+// QuizService.tsx
 import { QuizType } from '../Types/QuizType';
 
 export class QuizService {

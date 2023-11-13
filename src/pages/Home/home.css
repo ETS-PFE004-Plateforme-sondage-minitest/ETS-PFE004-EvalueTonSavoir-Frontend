@@ -1,32 +1,25 @@
-.homepage {
-}
-
 .btn-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 80vh;
-    width: 100vw;
     padding: 5vw;
+    gap: 5vw;
 }
 
 .homepage-btn {
-    display: flex;
-    width: 45%;
-    height: 100%;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 5em;
-    border-radius: 8px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    transition: 0.5s ease-in-out;
+    width: 35vw;
+    height: 30vh;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .homepage-btn:hover {
-    background-color: #0069d9;
+    background-color: #85a7df;
+}
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }

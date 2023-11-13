@@ -71,7 +71,7 @@ function MatchAnswers({ choices }: MatchAnswerOptions): string {
           </div>
           <div>
             <select class="gift-select" style="${SelectStyle(state.theme)} ${Dropdown}">
-            <option value="" disabled selected hidden>Choose...</option>
+            <option value="" disabled selected hidden>Choisir...</option>
             ${uniqueMatchOptions.map((subanswer) => `<option>${subanswer}</option>`).join('')}
             </select>
           </div>

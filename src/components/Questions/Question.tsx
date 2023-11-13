@@ -1,10 +1,11 @@
+// Question;tsx
+import React from 'react';
 import { GIFTQuestion } from 'gift-pegjs';
 
 import TrueFalseQuestion from './TrueFalseQuestion/TrueFalseQuestion';
 import MultipleChoiceQuestion from './MultipleChoiceQuestion/MultipleChoiceQuestion';
 import NumericalQuestion from './NumericalQuestion/NumericalQuestion';
 import ShortAnswerQuestion from './ShortAnswerQuestion/ShortAnswerQuestion';
-import React from 'react';
 
 interface QuestionsProps {
     question: GIFTQuestion;
