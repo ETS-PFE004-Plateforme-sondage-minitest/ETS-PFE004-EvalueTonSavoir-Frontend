@@ -39,7 +39,7 @@ function NumericalAnswers({ choices }: NumericalAnswerOptions): string {
       <div>
           <span style="${ParagraphStyle(
               state.theme
-          )}">Answer: </span><input class="gift-input" type="text" style="${InputStyle(
+          )}">Réponse: </span><input class="gift-input" type="text" style="${InputStyle(
         state.theme
     )}" placeholder="${placeholder}">
       </div>
