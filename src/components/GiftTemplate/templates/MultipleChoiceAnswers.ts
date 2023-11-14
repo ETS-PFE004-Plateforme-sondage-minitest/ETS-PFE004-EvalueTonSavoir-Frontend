@@ -35,7 +35,7 @@ export default function MultipleChoiceAnswers({ choices }: MultipleChoiceAnswerO
             const isCorrectOption = isMultipleAnswer ? isPositiveWeight : isCorrect;
 
             return `
-        <div>
+        <div class='multiple-choice-answers-container'>
           <input class="gift-input" type="${
               isMultipleAnswer ? 'checkbox' : 'radio'
           }" id="${inputId}" name="${id}">

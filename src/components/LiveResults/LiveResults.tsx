@@ -10,6 +10,7 @@ import './results.css';
 interface LiveResultsProps {
     socket: Socket | null;
     questions: GIFTQuestion[];
+    showSelectedQuestion: (index: number) => void;
 }
 
 interface Answer {
@@ -23,7 +24,7 @@ interface StudentResult {
     answers: Answer[];
 }
 
-const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
+const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion }) => {
     const [hideUsernames, setHideUsernames] = useState<boolean>(true);
     const [ShowCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
@@ -130,7 +131,9 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                     <tr>
                         <th>Nom d'utilisateur</th>
                         {Array.from({ length: maxQuestions }, (_, index) => (
-                            <th key={index}>{`Q${index + 1}`}</th>
+                            <th key={index} onClick={() => showSelectedQuestion(index)}>{`Q${
+                                index + 1
+                            }`}</th>
                         ))}
                     </tr>
                 </thead>

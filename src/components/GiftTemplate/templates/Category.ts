@@ -7,7 +7,7 @@ type CategoryOptions = TemplateOptions & CategoryType;
 export default function Category({ title }: CategoryOptions): string {
     return `${QuestionContainer({
         children: Title({
-            type: 'Category',
+            type: 'Catégorie',
             title: title
         })
     })}`;

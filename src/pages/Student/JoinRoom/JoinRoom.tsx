@@ -43,7 +43,6 @@ const JoinRoom: React.FC = () => {
             setQuestion(parsedQuestions[0]);
         });
         socket.on('end-quiz', () => {
-            console.log('end-quiz.');
             disconnect();
         });
         socket.on('join-failure', () => {
@@ -98,12 +97,20 @@ const JoinRoom: React.FC = () => {
     switch (quizMode) {
         case 'student':
             return (
-                <StudentModeQuiz questions={parsedQuestions} submitAnswer={handleOnSubmitAnswer} />
+                <StudentModeQuiz
+                    questions={parsedQuestions}
+                    submitAnswer={handleOnSubmitAnswer}
+                    disconnectWebSocket={disconnect}
+                />
             );
         case 'teacher':
             return (
                 question && (
-                    <TeacherModeQuiz question={question} submitAnswer={handleOnSubmitAnswer} />
+                    <TeacherModeQuiz
+                        question={question}
+                        submitAnswer={handleOnSubmitAnswer}
+                        disconnectWebSocket={disconnect}
+                    />
                 )
             );
         default:

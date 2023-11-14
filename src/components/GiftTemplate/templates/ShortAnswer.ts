@@ -18,7 +18,7 @@ export default function ShortAnswer({
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Short Answer',
+                type: 'Réponse courte',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({
