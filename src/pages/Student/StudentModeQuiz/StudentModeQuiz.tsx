@@ -1,13 +1,22 @@
-import { GIFTQuestion } from 'gift-pegjs';
+// StudentModeQuiz.tsx
 import React, { useState } from 'react';
+import { GIFTQuestion } from 'gift-pegjs';
+
 import QuestionComponent from '../../../components/Questions/Question';
+
+import '../styles.css';
 
 interface StudentModeQuizProps {
     questions: GIFTQuestion[];
     submitAnswer: (answer: string | number | boolean, idQuestion: string) => void;
+    disconnectWebSocket: () => void;
 }
 
-const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({ questions, submitAnswer }) => {
+const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
+    questions,
+    submitAnswer,
+    disconnectWebSocket
+}) => {
     const [question, setQuestion] = useState<GIFTQuestion>(questions[0]);
     const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
 
@@ -28,7 +37,11 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({ questions, submitAnsw
     };
 
     return (
-        <div>
+        <div className="question-component-container">
+            <h2 className="page-title">Question {question.id}</h2>
+            <button className="quit-btn" onClick={disconnectWebSocket}>
+                Déconnexion
+            </button>
             <QuestionComponent
                 handleOnSubmitAnswer={handleOnSubmitAnswer}
                 question={question}

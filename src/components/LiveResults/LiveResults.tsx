@@ -1,13 +1,16 @@
+// LiveResults.tsx
 import React, { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
-import './results.css';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
+import './results.css';
+
 interface LiveResultsProps {
     socket: Socket | null;
     questions: GIFTQuestion[];
+    showSelectedQuestion: (index: number) => void;
 }
 
 interface Answer {
@@ -21,8 +24,8 @@ interface StudentResult {
     answers: Answer[];
 }
 
-const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
-    const [hideUsernames, setHideUsernames] = useState<boolean>(false);
+const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion }) => {
+    const [hideUsernames, setHideUsernames] = useState<boolean>(true);
     const [ShowCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
 
@@ -34,7 +37,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
                 const userIndex = studentResults.findIndex(
                     (result) => result.username === username
                 );
-                let isCorrect = checkIfIsCorrect(answer, idQuestion);
+                const isCorrect = checkIfIsCorrect(answer, idQuestion);
                 if (userIndex !== -1) {
                     const newStudentResults = [...studentResults];
                     newStudentResults[userIndex].answers.push({
@@ -104,29 +107,33 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions }) => {
 
     return (
         <div>
-            <h2>Résultats du quiz</h2>
-            <label>
-                Cacher les noms d'utilisateurs:
-                <input
-                    type="checkbox"
-                    checked={hideUsernames}
-                    onChange={() => setHideUsernames((prev) => !prev)}
-                />
-            </label>
-            <label>
-                Montrer les réponses correctes:
-                <input
-                    type="checkbox"
-                    checked={ShowCorrectAnswers}
-                    onChange={() => setShowCorrectAnswers((prev) => !prev)}
-                />
-            </label>
+            <h4 className="present-results-title ">Résultats du quiz</h4>
+            <div className="live-result-control-container">
+                <label className="live-result-control">
+                    Cacher les noms d'utilisateurs:
+                    <input
+                        type="checkbox"
+                        checked={hideUsernames}
+                        onChange={() => setHideUsernames((prev) => !prev)}
+                    />
+                </label>
+                <label className="live-result-control">
+                    Montrer les réponses correctes:
+                    <input
+                        type="checkbox"
+                        checked={ShowCorrectAnswers}
+                        onChange={() => setShowCorrectAnswers((prev) => !prev)}
+                    />
+                </label>
+            </div>
             <table className="table-bordered">
                 <thead>
                     <tr>
                         <th>Nom d'utilisateur</th>
                         {Array.from({ length: maxQuestions }, (_, index) => (
-                            <th key={index}>{`Q${index + 1}`}</th>
+                            <th key={index} onClick={() => showSelectedQuestion(index)}>{`Q${
+                                index + 1
+                            }`}</th>
                         ))}
                     </tr>
                 </thead>

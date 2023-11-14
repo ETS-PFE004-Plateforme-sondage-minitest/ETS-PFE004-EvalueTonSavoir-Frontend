@@ -41,7 +41,7 @@ export default function TrueFalse({
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Multiple Choice',
+                type: 'Vrai/Faux',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({

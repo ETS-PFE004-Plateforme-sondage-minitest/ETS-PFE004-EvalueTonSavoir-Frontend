@@ -1,6 +1,7 @@
+// ShortAnswerQuestion.tsx
 import React, { useState } from 'react';
+import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
-import SubmitButton from '../../SubmitButton';
 
 type Choices = {
     feedback: { format: string; text: string } | null;

@@ -18,7 +18,7 @@ export default function ShortAnswer({
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Short Answer',
+                type: 'Réponse courte',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({
@@ -38,7 +38,7 @@ function Answers({ choices }: AnswerOptions): string {
     <div>
       <span style="${ParagraphStyle(
           state.theme
-      )}">Answer: </span><input class="gift-input" type="text" style="${InputStyle(
+      )}">Réponse: </span><input class="gift-input" type="text" style="${InputStyle(
         state.theme
     )}" placeholder="${placeholder}">
         </div>

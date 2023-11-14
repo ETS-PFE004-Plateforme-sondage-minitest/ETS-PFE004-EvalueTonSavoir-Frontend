@@ -18,7 +18,7 @@ export default function MultipleChoice({
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Multiple Choice',
+                type: 'Choix multiple',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({

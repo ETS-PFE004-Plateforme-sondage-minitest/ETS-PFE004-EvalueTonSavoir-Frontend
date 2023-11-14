@@ -1,11 +1,16 @@
 .table-bordered {
     border-collapse: collapse;
+    width: 100%;
 }
 
 .table-bordered th,
 .table-bordered td {
-    border: 1px solid black;
-    padding: 8px; /* pour un peu d'espacement */
+    border: 5px solid #f1edea;
+    padding: 8px;
+}
+
+th {
+    cursor: pointer;
 }
 
 .correct-answer {
@@ -20,5 +25,33 @@
 
 .grayed-table-row {
     border-top: 2px solid black;
-    background-color: lightgray;
+    background-color: rgb(192, 190, 190);
+}
+
+input[type='checkbox'] {
+    margin: 0 10px;
+    width: 20px;
+}
+
+.live-result-control-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 90%;
+    gap: 1vh;
+    margin: 2vh;
+}
+
+.live-result-control {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 60%;
+}
+
+.present-results-title {
+    margin-top: 8vh;
+    margin-bottom: 2vh;
+    font-size: 2rem;
+    font-weight: 500;
 }

@@ -12,7 +12,7 @@ export default function Essay({ title, stem, globalFeedback }: EssayOptions): st
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Essay',
+                type: 'Développement',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({
@@ -20,7 +20,7 @@ export default function Essay({ title, stem, globalFeedback }: EssayOptions): st
             })}</p>`,
             `<textarea class="gift-textarea" style="${TextAreaStyle(
                 state.theme
-            )}" placeholder="Enter your answer here..."></textarea>`,
+            )}" placeholder="Entrez votre réponse ici..."></textarea>`,
             GlobalFeedback({ feedback: globalFeedback })
         ]
     })}`;

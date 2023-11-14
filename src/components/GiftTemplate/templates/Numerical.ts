@@ -18,7 +18,7 @@ export default function Numerical({
     return `${QuestionContainer({
         children: [
             Title({
-                type: 'Numerical',
+                type: 'Numérique',
                 title: title
             }),
             `<p style="${ParagraphStyle(state.theme)}">${TextType({
@@ -39,7 +39,7 @@ function NumericalAnswers({ choices }: NumericalAnswerOptions): string {
       <div>
           <span style="${ParagraphStyle(
               state.theme
-          )}">Answer: </span><input class="gift-input" type="text" style="${InputStyle(
+          )}">Réponse: </span><input class="gift-input" type="text" style="${InputStyle(
         state.theme
     )}" placeholder="${placeholder}">
       </div>

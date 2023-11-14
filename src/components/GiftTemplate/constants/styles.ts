@@ -54,4 +54,5 @@ export const InputStyle = (t: ThemeType) => `
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  width: 90%;
 `;

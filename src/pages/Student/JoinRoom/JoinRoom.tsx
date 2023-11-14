@@ -1,9 +1,13 @@
-import { GIFTQuestion, parse } from 'gift-pegjs';
+// JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
+import { GIFTQuestion, parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
-import webSocketService from '../../../services/WebsocketService';
+
 import StudentModeQuiz from '../StudentModeQuiz/StudentModeQuiz';
 import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
+import webSocketService from '../../../services/WebsocketService';
+
+import './JoinRoom.css';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
@@ -39,7 +43,6 @@ const JoinRoom: React.FC = () => {
             setQuestion(parsedQuestions[0]);
         });
         socket.on('end-quiz', () => {
-            console.log('end-quiz.');
             disconnect();
         });
         socket.on('join-failure', () => {
@@ -84,35 +87,54 @@ const JoinRoom: React.FC = () => {
     };
 
     if (isLoading) {
-        return <div>En attente que le professeur lance le questionnaire...</div>;
+        return (
+            <div className="waiting-text">
+                En attente que le professeur lance le questionnaire...
+            </div>
+        );
     }
 
     switch (quizMode) {
         case 'student':
             return (
-                <StudentModeQuiz questions={parsedQuestions} submitAnswer={handleOnSubmitAnswer} />
+                <StudentModeQuiz
+                    questions={parsedQuestions}
+                    submitAnswer={handleOnSubmitAnswer}
+                    disconnectWebSocket={disconnect}
+                />
             );
         case 'teacher':
             return (
                 question && (
-                    <TeacherModeQuiz question={question} submitAnswer={handleOnSubmitAnswer} />
+                    <TeacherModeQuiz
+                        question={question}
+                        submitAnswer={handleOnSubmitAnswer}
+                        disconnectWebSocket={disconnect}
+                    />
                 )
             );
         default:
             return (
-                <div>
-                    <input
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter username"
-                    />
+                <div className="join-room-container">
+                    <h1 className="page-title">Rejoindre une salle</h1>
+                    <div className="student-info-input-container">
+                        <input
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Nom d'utilisateur"
+                            className="student-info-input"
+                        />
 
-                    <input
-                        value={roomName}
-                        onChange={(e) => setRoomName(e.target.value.toUpperCase())}
-                        placeholder="Enter room name"
-                    />
-                    <button onClick={handleSocket}>Join</button>
+                        <input
+                            value={roomName}
+                            onChange={(e) => setRoomName(e.target.value.toUpperCase())}
+                            placeholder="Nom de la salle"
+                            className="student-info-input"
+                        />
+                        <button className="join-btn" onClick={handleSocket}>
+                            Join
+                        </button>
+                    </div>
                 </div>
             );
     }
