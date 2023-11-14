@@ -1,0 +1,25 @@
+{
+    "version": 2,
+    "routes": [
+        {
+            "src": "/teacher/dashboard",
+            "dest": "/teacher/dashboard/index.html"
+        },
+        {
+            "src": "/teacher/editor-quiz/:id",
+            "dest": "/teacher/editor-quiz/:id/index.html"
+        },
+        {
+            "src": "/teacher/manage-room/:id",
+            "dest": "/teacher/manage-room/:id/index.html"
+        },
+        {
+            "src": "/student/join-room",
+            "dest": "/student/join-room/index.html"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/index.html"
+        }
+    ]
+}
