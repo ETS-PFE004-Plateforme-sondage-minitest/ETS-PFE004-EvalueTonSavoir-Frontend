@@ -21,6 +21,9 @@ const ManageRoom: React.FC = () => {
     const [quiz, setQuiz] = useState<QuizType>();
     const [isLastQuestion, setIsLastQuestion] = useState<boolean>(false);
     const [presentQuestionString, setPresentQuestionString] = useState<string[]>();
+    const [displayedQuestionString, setDisplayedQuestionString] = useState<string[] | undefined>(
+        []
+    );
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -46,7 +49,6 @@ const ManageRoom: React.FC = () => {
 
     const createWebSocketRoom = () => {
         setLoading(true);
-        console.log('allo');
         const socket = webSocketService.connect();
         socket.on('connect', () => {
             webSocketService.createRoom();
@@ -69,7 +71,6 @@ const ManageRoom: React.FC = () => {
         const quizQuestionArray = quiz?.questions;
         if (!quizQuestions) {
             if (!quizQuestionArray) return;
-
             const parsedQuestions = [] as GIFTQuestion[];
             quizQuestionArray.forEach((question, index) => {
                 parsedQuestions.push(parse(question)[0]);
@@ -79,6 +80,7 @@ const ManageRoom: React.FC = () => {
 
             setQuizQuestions(parsedQuestions);
             setPresentQuestionString([quizQuestionArray[0]]);
+            setDisplayedQuestionString([quizQuestionArray[0]]);
             webSocketService.nextQuestion(roomName, parsedQuestions[0]);
         } else {
             if (!presentQuestionString || !quizQuestionArray) return;
@@ -86,6 +88,7 @@ const ManageRoom: React.FC = () => {
             if (index !== undefined && quizQuestions) {
                 if (index < quizQuestionArray.length - 1) {
                     setPresentQuestionString([quizQuestionArray[index + 1]]);
+                    setDisplayedQuestionString([quizQuestionArray[index + 1]]);
                     webSocketService.nextQuestion(roomName, quizQuestions[index + 1]);
 
                     if (index === quizQuestionArray.length - 2) {
@@ -133,18 +136,27 @@ const ManageRoom: React.FC = () => {
         disconnectWebSocket();
     };
 
+    const showSelectedQuestion = (questionIndex: number) => {
+        //set presentQuestionString to the question at index questionIndex
+        if (quiz?.questions) setDisplayedQuestionString([quiz?.questions[questionIndex]]);
+    };
+
     return (
         <div>
             {quizQuestions ? (
                 <div>
                     <h2 className="page-title">Salle : {roomName} </h2>
+                    <button className="quit-btn" onClick={exitRoom}>
+                        Déconnexion
+                    </button>
                     <GIFTTemplatePreview
-                        questions={presentQuestionString ? presentQuestionString : []}
+                        questions={displayedQuestionString ? displayedQuestionString : []}
                         hideAnswers={true}
                     ></GIFTTemplatePreview>
                     <LiveResultsComponent
                         socket={socket}
                         questions={quizQuestions}
+                        showSelectedQuestion={showSelectedQuestion}
                     ></LiveResultsComponent>
                     <div className="bottom-btn">
                         {quizMode === 'teacher' && (
