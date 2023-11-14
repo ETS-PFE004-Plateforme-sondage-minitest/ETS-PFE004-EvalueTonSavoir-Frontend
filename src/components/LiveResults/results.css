@@ -9,6 +9,10 @@
     padding: 8px;
 }
 
+th {
+    cursor: pointer;
+}
+
 .correct-answer {
     background-color: lightgreen;
     text-align: center;
