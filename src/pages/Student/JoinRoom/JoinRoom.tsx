@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { GIFTQuestion, parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
+import { ENV_VARIABLES } from '../../../constants';
 
 import StudentModeQuiz from '../StudentModeQuiz/StudentModeQuiz';
 import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
@@ -19,7 +20,7 @@ const JoinRoom: React.FC = () => {
     const [parsedQuestions, setParsedQuestions] = useState<Array<GIFTQuestion>>([]);
 
     useEffect(() => {
-        const socket = webSocketService.connect();
+        const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('join-success', () => {
             setIsLoading(true);
             console.log('Successfully joined the room.');
@@ -68,7 +69,7 @@ const JoinRoom: React.FC = () => {
 
     const handleSocket = () => {
         if (!socket) {
-            const socket = webSocketService.connect();
+            const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
             setSocket(socket);
         }
 
