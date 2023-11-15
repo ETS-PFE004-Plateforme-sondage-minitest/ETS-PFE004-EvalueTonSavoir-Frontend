@@ -50,7 +50,7 @@ const QuizForm: React.FC = () => {
         if (value !== '') {
             handleEditorChange(value);
         }
-        const linesArray = value.split(/(?<=\}.*)[\n]+/); // Split at next line breaks after closing curly brace
+        const linesArray = value.split(/(?<=^|[^\\]}.*)[\n]+/); // Split at next line breaks after closing curly brace not preceded by a backslash
         if (linesArray[linesArray.length - 1] === '') linesArray.pop(); // Remove last empty line
         setFilteredValue(linesArray);
     }
