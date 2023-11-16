@@ -42,6 +42,7 @@ const NumericalQuestion: React.FC<Props> = (props) => {
                         onChange={(e) => {
                             setAnswer(e.target.valueAsNumber);
                         }}
+                        data-testid="number-input"
                     />
                 </div>
             )}
