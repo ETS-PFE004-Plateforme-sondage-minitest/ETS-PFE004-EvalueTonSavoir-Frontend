@@ -11,6 +11,7 @@ import webSocketService from '../../../services/WebsocketService';
 import { QuizType } from '../../../Types/QuizType';
 
 import './ManageRoom.css';
+import { ENV_VARIABLES } from '../../../constants';
 
 const ManageRoom: React.FC = () => {
     const [roomName, setRoomName] = useState<string>('');
@@ -49,7 +50,7 @@ const ManageRoom: React.FC = () => {
 
     const createWebSocketRoom = () => {
         setLoading(true);
-        const socket = webSocketService.connect();
+        const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('connect', () => {
             webSocketService.createRoom();
         });

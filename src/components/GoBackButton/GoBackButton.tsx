@@ -22,7 +22,7 @@ function GoBackButton({ askConfirm = false, message = 'Êtes-vous sûr de vouloi
 
     return (
         <>
-            <button type="button" onClick={handleGoBack}>Retour</button>
+            <button type="button" onClick={handleGoBack} className='modal-confirm' data-testid="modal-confirm-button">Retour</button>
             {showModal && (
                 <Modal
                     title="Confirmer"

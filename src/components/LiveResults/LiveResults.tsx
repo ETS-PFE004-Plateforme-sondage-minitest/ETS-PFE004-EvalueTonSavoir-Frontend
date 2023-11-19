@@ -33,32 +33,42 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
 
     useEffect(() => {
         if (socket) {
-            socket.on('submit-answer', ({ username, answer, idQuestion }) => {
-                const userIndex = studentResults.findIndex(
-                    (result) => result.username === username
-                );
-                const isCorrect = checkIfIsCorrect(answer, idQuestion);
-                if (userIndex !== -1) {
-                    const newStudentResults = [...studentResults];
-                    newStudentResults[userIndex].answers.push({
-                        answer: answer,
-                        isCorrect,
-                        idQuestion
-                    });
-                    setStudentResults(newStudentResults);
-                } else {
-                    const newStudentResults = [
-                        ...studentResults,
-                        { username, answers: [{ answer, isCorrect, idQuestion }] }
-                    ];
-                    setStudentResults(newStudentResults);
-                }
-            });
+            const submitAnswerHandler = ({
+                username,
+                answer,
+                idQuestion
+            }: {
+                username: string;
+                answer: string | number | boolean;
+                idQuestion: number;
+            }) => {
+                setStudentResults((currentResults) => {
+                    console.log('allo');
+                    const userIndex = currentResults.findIndex(
+                        (result) => result.username === username
+                    );
+                    const isCorrect = checkIfIsCorrect(answer, idQuestion);
+                    console.log(isCorrect);
+                    if (userIndex !== -1) {
+                        const newResults = [...currentResults];
+                        newResults[userIndex].answers.push({ answer, isCorrect, idQuestion });
+                        return newResults;
+                    } else {
+                        console.log(username, answer, idQuestion);
+                        return [
+                            ...currentResults,
+                            { username, answers: [{ answer, isCorrect, idQuestion }] }
+                        ];
+                    }
+                });
+            };
+
+            socket.on('submit-answer', submitAnswerHandler);
             return () => {
                 socket.off('submit-answer');
             };
         }
-    }, [socket, studentResults]);
+    }, [socket]);
 
     function checkIfIsCorrect(answer: string | number | boolean, idQuestion: number): boolean {
         const question = questions.find((q) => (q.id ? q.id === idQuestion.toString() : false));
@@ -115,6 +125,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         type="checkbox"
                         checked={hideUsernames}
                         onChange={() => setHideUsernames((prev) => !prev)}
+                        data-testid="hide-usernames-checkbox"
                     />
                 </label>
                 <label className="live-result-control">
@@ -123,6 +134,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         type="checkbox"
                         checked={ShowCorrectAnswers}
                         onChange={() => setShowCorrectAnswers((prev) => !prev)}
+                        data-testid="show-correct-answers-checkbox"
                     />
                 </label>
             </div>
