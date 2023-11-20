@@ -232,9 +232,12 @@ const ManageRoom: React.FC = () => {
                         <div className="create-room-container">
                             <h1 className="page-title">Création d'une salle</h1>
                             {loading ? (
-                                <div className="loading-container">
-                                    <div className="loading"></div>
-                                </div>
+                                <>
+                                    En attente pour la connexion....
+                                    <div className="loading-container">
+                                        <div className="loading" />
+                                    </div>
+                                </>
                             ) : (
                                 <>
                                     {errorConnecting && (
