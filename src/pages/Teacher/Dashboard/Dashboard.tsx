@@ -1,5 +1,5 @@
 // Dashboard.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,11 +11,13 @@ import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
 
 import './dashboard.css';
+import ImportModal from '../../../components/ImportModal/ImportModal';
 
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [quizToRemove, setQuizToRemove] = useState<QuizType | null>(null);
+    const [showImportModal, setShowImportModal] = useState<boolean>(false);
 
     useEffect(() => {
         // Fetch quizzes from local storage
@@ -64,16 +66,25 @@ const Dashboard: React.FC = () => {
         setQuizzes(updatedQuizzes);
     };
 
-    const filteredQuizzes: QuizType[] = quizzes.filter((quiz: QuizType) =>
-        quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredQuizzes = useMemo(() => {
+        return quizzes.filter(
+            (quiz) =>
+                quiz && quiz.title && quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [quizzes, searchTerm]);
+
+    const handleOnImport = () => {
+        const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
+        setQuizzes(storedQuizzes);
+        setShowImportModal(false);
+    };
 
     const validQuiz = (questions: string[]) => {
         if (questions.length === 0) {
             return false;
         }
 
-        // Check if I can generate the Template for each question 
+        // Check if I can generate the Template for each question
         // Otherwise the quiz is invalid
         for (let i = 0; i < questions.length; i++) {
             try {
@@ -90,9 +101,7 @@ const Dashboard: React.FC = () => {
     return (
         <div>
             <div className="dashboardContainer">
-                <Link to="/">Accueil</Link>
                 <h1 className="page-title">Tableau de bord</h1>
-
                 <div className="search-bar">
                     <input
                         type="text"
@@ -103,6 +112,7 @@ const Dashboard: React.FC = () => {
                     <Link to="/teacher/editor-quiz/new">
                         <FontAwesomeIcon icon={faPlus} />
                     </Link>
+                    <button onClick={() => setShowImportModal(true)}>Import</button>
                 </div>
                 <ul>
                     {filteredQuizzes.map((quiz: QuizType) => (
@@ -154,6 +164,12 @@ const Dashboard: React.FC = () => {
                     message={`Êtes-vous sûr de vouloir supprimer le quiz "${quizToRemove.title}" ?`}
                     onConfirm={handleConfirmRemoveQuiz}
                     onCancel={handleCancelRemoveQuiz}
+                />
+            )}
+            {showImportModal && (
+                <ImportModal
+                    handleOnClose={() => setShowImportModal(false)}
+                    handleOnImport={handleOnImport}
                 />
             )}
         </div>
