@@ -30,7 +30,6 @@ const QuizForm: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch quiz from local storage
         const quizToEdit = QuizService.getQuizById(id);
         if (!!quizToEdit) {
             setQuiz(quizToEdit);
@@ -101,7 +100,10 @@ const QuizForm: React.FC = () => {
     return (
         <div>
             <h1 className="page-title">Éditeur de quiz</h1>
-            <GoBackButton askConfirm message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`} />
+            <GoBackButton
+                askConfirm
+                message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
+            />
             <div id="editor-preview-container" className="container">
                 <div className="editor-column">
                     <h2 className="subtitle">Éditeur</h2>

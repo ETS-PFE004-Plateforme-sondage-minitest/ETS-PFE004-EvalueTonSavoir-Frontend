@@ -9,6 +9,7 @@ import { faPlus, faTrashCan, faClone, faPencil, faPlay } from '@fortawesome/free
 import Modal from '../../../components/Modal/Modal';
 import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
+import { QuestionService } from '../../../services/QuestionService';
 
 import './dashboard.css';
 
@@ -73,10 +74,11 @@ const Dashboard: React.FC = () => {
             return false;
         }
 
-        // Check if I can generate the Template for each question 
+        // Check if I can generate the Template for each question
         // Otherwise the quiz is invalid
         for (let i = 0; i < questions.length; i++) {
             try {
+                questions[i] = QuestionService.ignoreImgTags(questions[i]);
                 const parsedItem = parse(questions[i]);
                 Template(parsedItem[0]);
             } catch (error) {

@@ -4,12 +4,13 @@ import { Socket } from 'socket.io-client';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { QuestionType } from '../../Types/QuestionType';
 
 import './results.css';
 
 interface LiveResultsProps {
     socket: Socket | null;
-    questions: GIFTQuestion[];
+    questions: QuestionType[];
     showSelectedQuestion: (index: number) => void;
 }
 
@@ -43,18 +44,15 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                 idQuestion: number;
             }) => {
                 setStudentResults((currentResults) => {
-                    console.log('allo');
                     const userIndex = currentResults.findIndex(
                         (result) => result.username === username
                     );
                     const isCorrect = checkIfIsCorrect(answer, idQuestion);
-                    console.log(isCorrect);
                     if (userIndex !== -1) {
                         const newResults = [...currentResults];
                         newResults[userIndex].answers.push({ answer, isCorrect, idQuestion });
                         return newResults;
                     } else {
-                        console.log(username, answer, idQuestion);
                         return [
                             ...currentResults,
                             { username, answers: [{ answer, isCorrect, idQuestion }] }
@@ -71,9 +69,13 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
     }, [socket]);
 
     function checkIfIsCorrect(answer: string | number | boolean, idQuestion: number): boolean {
-        const question = questions.find((q) => (q.id ? q.id === idQuestion.toString() : false));
+        const questionInfo = questions.find((q) =>
+            q.question.id ? q.question.id === idQuestion.toString() : false
+        ) as QuestionType | undefined;
+
         const answerText = answer.toString();
-        if (question) {
+        if (questionInfo) {
+            const question = questionInfo.question as GIFTQuestion;
             if (question.type === 'TF') {
                 return (
                     (question.isTrue && answerText == 'true') ||

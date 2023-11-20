@@ -1,6 +1,6 @@
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
-import { GIFTQuestion, parse } from 'gift-pegjs';
+import { parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
 import { ENV_VARIABLES } from '../../../constants';
 
@@ -9,15 +9,17 @@ import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
 import webSocketService from '../../../services/WebsocketService';
 
 import './JoinRoom.css';
+import { QuestionType } from '../../../Types/QuestionType';
+import { QuestionService } from '../../../services/QuestionService';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
     const [username, setUsername] = useState('');
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [question, setQuestion] = useState<GIFTQuestion>();
+    const [question, setQuestion] = useState<QuestionType>();
     const [quizMode, setQuizMode] = useState<string>();
-    const [parsedQuestions, setParsedQuestions] = useState<Array<GIFTQuestion>>([]);
+    const [parsedQuestions, setParsedQuestions] = useState<Array<QuestionType>>([]);
 
     useEffect(() => {
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
@@ -25,7 +27,7 @@ const JoinRoom: React.FC = () => {
             setIsLoading(true);
             console.log('Successfully joined the room.');
         });
-        socket.on('next-question', (question: GIFTQuestion) => {
+        socket.on('next-question', (question: QuestionType) => {
             setQuizMode('teacher');
             setIsLoading(false);
             setQuestion(question);
@@ -33,10 +35,13 @@ const JoinRoom: React.FC = () => {
         socket.on('launch-student-mode', (questions: Array<string>) => {
             setQuizMode('student');
             setIsLoading(false);
-            const parsedQuestions = [] as GIFTQuestion[];
+            const parsedQuestions = [] as QuestionType[];
             questions.forEach((question, index) => {
-                parsedQuestions.push(parse(question)[0]);
-                parsedQuestions[index].id = (index + 1).toString();
+                const image = QuestionService.getImage(question);
+                question = QuestionService.ignoreImgTags(question);
+
+                parsedQuestions.push({ question: parse(question)[0], image: image });
+                parsedQuestions[index].question.id = (index + 1).toString();
             });
             if (parsedQuestions.length === 0) return;
 
@@ -108,7 +113,7 @@ const JoinRoom: React.FC = () => {
             return (
                 question && (
                     <TeacherModeQuiz
-                        question={question}
+                        questionInfos={question}
                         submitAnswer={handleOnSubmitAnswer}
                         disconnectWebSocket={disconnect}
                     />

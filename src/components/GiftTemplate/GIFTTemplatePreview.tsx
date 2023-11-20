@@ -21,22 +21,23 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
         try {
             let previewHTML = '';
             questions.forEach((item) => {
+                const isImage = item.includes('<img');
+                if (isImage) {
+                    const imageUrlMatch = item.match(/<img[^>]+>/i);
+                    if (imageUrlMatch) {
+                        let imageUrl = imageUrlMatch[0];
+                        imageUrl = imageUrl.replace('src=', 'style="width:10vw;" src=');
+                        item = item.replace(imageUrlMatch[0], '');
+                        previewHTML += `${imageUrl}`;
+                    }
+                }
+
                 try {
                     const parsedItem = parse(item);
-
-                    const isImage = item.includes('<img');
-                    if (isImage) {
-                        const imageUrlMatch = item.match(/<img[^>]+src="([^">]+)"/);
-                        if (imageUrlMatch) {
-                            const imageUrl = imageUrlMatch[1];
-                            previewHTML += `<div><p>Image Preview:</p><img src="${imageUrl}" alt="Image Preview" style={{ maxWidth: '100%' }} /><hr /></div>`;
-                        }
-                    } else {
-                        previewHTML += Template(parsedItem[0], {
-                            preview: true,
-                            theme: 'light'
-                        });
-                    }
+                    previewHTML += Template(parsedItem[0], {
+                        preview: true,
+                        theme: 'light'
+                    });
                 } catch (error) {
                     if (error instanceof Error) {
                         previewHTML += ErrorTemplate(item + '\n' + error.message);
