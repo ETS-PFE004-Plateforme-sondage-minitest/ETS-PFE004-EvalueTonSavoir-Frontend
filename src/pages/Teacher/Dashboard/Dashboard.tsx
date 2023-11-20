@@ -18,6 +18,7 @@ const Dashboard: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [quizToRemove, setQuizToRemove] = useState<QuizType | null>(null);
     const [showImportModal, setShowImportModal] = useState<boolean>(false);
+    const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
 
     useEffect(() => {
         // Fetch quizzes from local storage
@@ -98,6 +99,33 @@ const Dashboard: React.FC = () => {
         return true;
     };
 
+    const handleOnCheckQuiz = (selectedQuizId: string) => {
+        const quizSelected = selectedQuizes.includes(selectedQuizId);
+
+        if (quizSelected) {
+            setSelectedQuizes((prevQuizes) =>
+                prevQuizes.filter((quizId) => selectedQuizId !== quizId)
+            );
+        } else {
+            setSelectedQuizes((prevItems) => [...prevItems, selectedQuizId]);
+        }
+    };
+
+    const downloadTxtFile = () => {
+        quizzes
+            .filter((quiz) => selectedQuizes.includes(quiz.id))
+            .forEach((quiz) => {
+                const quizQuestionsString = quiz.questions.join('\n');
+                const blob = new Blob([quizQuestionsString], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${quiz.title}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+    };
+
     return (
         <div>
             <div className="dashboardContainer">
@@ -113,10 +141,16 @@ const Dashboard: React.FC = () => {
                         <FontAwesomeIcon icon={faPlus} />
                     </Link>
                     <button onClick={() => setShowImportModal(true)}>Import</button>
+                    {selectedQuizes.length > 0 && <button onClick={downloadTxtFile}>Export</button>}
                 </div>
                 <ul>
                     {filteredQuizzes.map((quiz: QuizType) => (
                         <li key={quiz.id}>
+                            <input
+                                type="checkbox"
+                                checked={selectedQuizes.includes(quiz.id)}
+                                onChange={() => handleOnCheckQuiz(quiz.id)}
+                            />
                             <div className="quiz-card-control">
                                 <h3 className="quizTitle">{quiz.title}</h3>
                                 <div>
