@@ -1,4 +1,4 @@
-import React, { useState, DragEvent } from 'react';
+import React, { useState, DragEvent, useRef } from 'react';
 import './importModal.css';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,13 +8,16 @@ type DroppedFile = {
     icon: string;
     file: File;
 };
+
 interface Props {
     handleOnClose: () => void;
     handleOnImport: () => void;
 }
+
 const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -34,19 +37,20 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport }) => {
         setIsDragging(false);
 
         const files = e.dataTransfer.files;
-        // Handle the dropped files, e.g., upload or process them
-        if (files.length > 0) {
-            const newDroppedFiles = Array.from(files)
-                .filter((file) => file.name.endsWith('.txt'))
-                .map((file, index) => ({
-                    id: index,
-                    name: file.name,
-                    icon: '📄',
-                    file
-                }));
+        handleFiles(files);
+    };
 
-            setDroppedFiles((prevFiles) => [...prevFiles, ...newDroppedFiles]);
-        }
+    const handleFiles = (files: FileList) => {
+        const newDroppedFiles = Array.from(files)
+            .filter((file) => file.name.endsWith('.txt'))
+            .map((file, index) => ({
+                id: index,
+                name: file.name,
+                icon: '📄',
+                file
+            }));
+
+        setDroppedFiles((prevFiles) => [...prevFiles, ...newDroppedFiles]);
     };
 
     const handleOnSave = () => {
@@ -84,6 +88,19 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport }) => {
 
     const handleRemoveFile = (id: number) => {
         setDroppedFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+    };
+
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            handleFiles(files);
+        }
+    };
+
+    const handleBrowseButtonClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
     };
 
     return (
@@ -131,6 +148,14 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport }) => {
                         ))}
                     </div>
                 </div>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleFileInputChange}
+                    multiple
+                />
+                <button onClick={handleBrowseButtonClick}>Parcourir</button>
                 <div className="modal-buttons">
                     <button className="modal-cancel" onClick={handleOnClose}>
                         Annuler
