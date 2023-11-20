@@ -187,7 +187,7 @@ const ManageRoom: React.FC = () => {
                             </button>
                             <div className="quiz-setup-container">
                                 <div className="users-container">
-                                    <h2>Users:</h2>
+                                    <h2>Utilisateurs:</h2>
                                     <div>
                                         {users.map((user) => (
                                             <span className="user" key={user}>

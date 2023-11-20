@@ -133,7 +133,7 @@ const JoinRoom: React.FC = () => {
                             className="student-info-input"
                         />
                         <button className="join-btn" onClick={handleSocket}>
-                            Join
+                            Rejoindre
                         </button>
                     </div>
                 </div>
