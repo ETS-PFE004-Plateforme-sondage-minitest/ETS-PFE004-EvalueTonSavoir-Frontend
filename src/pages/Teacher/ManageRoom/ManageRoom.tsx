@@ -27,6 +27,7 @@ const ManageRoom: React.FC = () => {
     );
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [loading, setLoading] = useState<boolean>(false);
+    const [errorConnecting, setErrorConnecting] = useState<boolean>(false);
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
@@ -53,6 +54,11 @@ const ManageRoom: React.FC = () => {
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('connect', () => {
             webSocketService.createRoom();
+        });
+        socket.on('connect_error', (error) => {
+            setLoading(false);
+            setErrorConnecting(true);
+            console.error('WebSocket connection error:', error);
         });
         socket.on('create-success', (roomName: string) => {
             setLoading(false);
@@ -229,13 +235,21 @@ const ManageRoom: React.FC = () => {
                                 <div className="loading-container">
                                     <div className="loading"></div>
                                 </div>
-                            ) : null}
-                            <button
-                                className="create-room-btn big-btn-general-style"
-                                onClick={createWebSocketRoom}
-                            >
-                                Create Room
-                            </button>
+                            ) : (
+                                <>
+                                    {errorConnecting && (
+                                        <div>
+                                            Erreure lors de la connexion... Veuillez réessayer
+                                        </div>
+                                    )}
+                                    <button
+                                        className="create-room-btn big-btn-general-style"
+                                        onClick={createWebSocketRoom}
+                                    >
+                                        Créer une salle
+                                    </button>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
