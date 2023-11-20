@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
                                 onChange={() => handleOnCheckQuiz(quiz.id)}
                             />
                             <div className="quiz-card-control">
-                                <h3 className="quizTitle">{quiz.title}</h3>
+                                <h3 className="quizTitle selectable-text">{quiz.title}</h3>
                                 <div>
                                     <a
                                         className="red-btn"
