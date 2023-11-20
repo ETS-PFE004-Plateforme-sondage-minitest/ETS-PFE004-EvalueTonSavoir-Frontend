@@ -12,6 +12,7 @@ import { QuizType } from '../../../Types/QuizType';
 
 import './dashboard.css';
 import ImportModal from '../../../components/ImportModal/ImportModal';
+import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
@@ -19,6 +20,9 @@ const Dashboard: React.FC = () => {
     const [quizToRemove, setQuizToRemove] = useState<QuizType | null>(null);
     const [showImportModal, setShowImportModal] = useState<boolean>(false);
     const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
+    const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
+
+    const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
         // Fetch quizzes from local storage
@@ -126,12 +130,32 @@ const Dashboard: React.FC = () => {
             });
     };
 
+    const handleSelectAll = () => {
+        if (isSelectAll) {
+            setIsSelectAll(false);
+            setSelectedQuizes([]);
+        } else {
+            setIsSelectAll(true);
+            setSelectedQuizes(quizzes.map((quiz) => quiz.id));
+        }
+    };
+
     return (
         <div>
             <div className="dashboardContainer">
                 <h1 className="page-title">Tableau de bord</h1>
-                <div className="search-bar">
+                <div className="action-bar">
+                    {!isMobile && (
+                        <div className="select-all-checkbox">
+                            <input
+                                type="checkbox"
+                                checked={isSelectAll}
+                                onChange={handleSelectAll}
+                            />
+                        </div>
+                    )}
                     <input
+                        className="search-bar"
                         type="text"
                         placeholder="Rechercher un quiz"
                         value={searchTerm}
@@ -146,11 +170,13 @@ const Dashboard: React.FC = () => {
                 <ul>
                     {filteredQuizzes.map((quiz: QuizType) => (
                         <li key={quiz.id}>
-                            <input
-                                type="checkbox"
-                                checked={selectedQuizes.includes(quiz.id)}
-                                onChange={() => handleOnCheckQuiz(quiz.id)}
-                            />
+                            {!isMobile && (
+                                <input
+                                    type="checkbox"
+                                    checked={selectedQuizes.includes(quiz.id)}
+                                    onChange={() => handleOnCheckQuiz(quiz.id)}
+                                />
+                            )}
                             <div className="quiz-card-control">
                                 <h3 className="quizTitle selectable-text">{quiz.title}</h3>
                                 <div>
