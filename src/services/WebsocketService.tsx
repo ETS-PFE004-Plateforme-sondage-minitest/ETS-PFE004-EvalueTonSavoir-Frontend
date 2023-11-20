@@ -4,9 +4,9 @@ import { io, Socket } from 'socket.io-client';
 class WebSocketService {
     private socket: Socket | null = null;
 
-    connect(): Socket {
+    connect(backendUrl: String): Socket {
         if (!this.socket) {
-            this.socket = io(`${import.meta.env.VITE_BACKEND_URL}`, {
+            this.socket = io(`${backendUrl}`, {
                 transports: ['websocket'],
                 reconnectionAttempts: 1
             });

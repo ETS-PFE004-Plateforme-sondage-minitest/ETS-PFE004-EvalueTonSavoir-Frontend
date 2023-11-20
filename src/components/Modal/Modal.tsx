@@ -33,6 +33,7 @@ const Modal: React.FC<ModalProps> = ({
                             id="optional-input"
                             value={optionalInputValue || ''}
                             onChange={onOptionalInputChange}
+                            data-testid="optional-input"
                         />
                     </div>
                 )}
