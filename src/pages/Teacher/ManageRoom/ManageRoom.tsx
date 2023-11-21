@@ -2,11 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
-import { GIFTQuestion, parse } from 'gift-pegjs';
-
+import { parse } from 'gift-pegjs';
+import { QuestionType } from '../../../Types/QuestionType';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
 import { QuizService } from '../../../services/QuizService';
+import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
 import { QuizType } from '../../../Types/QuizType';
 
@@ -19,7 +20,7 @@ const ManageRoom: React.FC = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [users, setUsers] = useState<UserType[]>([]);
     const quizId = useParams<{ id: string }>();
-    const [quizQuestions, setQuizQuestions] = useState<GIFTQuestion[] | undefined>();
+    const [quizQuestions, setQuizQuestions] = useState<QuestionType[] | undefined>();
     const [quiz, setQuiz] = useState<QuizType>();
     const [isLastQuestion, setIsLastQuestion] = useState<boolean>(false);
     const [presentQuestionString, setPresentQuestionString] = useState<string[]>();
@@ -88,10 +89,12 @@ const ManageRoom: React.FC = () => {
         const quizQuestionArray = quiz?.questions;
         if (!quizQuestions) {
             if (!quizQuestionArray) return;
-            const parsedQuestions = [] as GIFTQuestion[];
+            const parsedQuestions = [] as QuestionType[];
             quizQuestionArray.forEach((question, index) => {
-                parsedQuestions.push(parse(question)[0]);
-                parsedQuestions[index].id = (index + 1).toString();
+                const image = QuestionService.getImage(question);
+                question = QuestionService.ignoreImgTags(question);
+                parsedQuestions.push({ question: parse(question)[0], image: image });
+                parsedQuestions[index].question.id = (index + 1).toString();
             });
             if (parsedQuestions.length === 0) return;
 
@@ -121,10 +124,13 @@ const ManageRoom: React.FC = () => {
     const launchStudentMode = () => {
         const quizQuestionArray = quiz?.questions;
         if (!quizQuestionArray) return;
-        const parsedQuestions = [] as GIFTQuestion[];
+        const parsedQuestions = [] as QuestionType[];
         quizQuestionArray.forEach((question, index) => {
-            parsedQuestions.push(parse(question)[0]);
-            parsedQuestions[index].id = (index + 1).toString();
+            const image = QuestionService.getImage(question);
+            question = QuestionService.ignoreImgTags(question);
+
+            parsedQuestions.push({ question: parse(question)[0], image: image });
+            parsedQuestions[index].question.id = (index + 1).toString();
         });
         if (parsedQuestions.length === 0) return;
 
@@ -162,7 +168,7 @@ const ManageRoom: React.FC = () => {
         <div>
             {quizQuestions ? (
                 <div>
-                    <h2 className="page-title">Salle : {roomName} </h2>
+                    <h2 className="page-title selectable-text">Salle : {roomName} </h2>
                     <button className="quit-btn" onClick={exitRoom}>
                         Déconnexion
                     </button>
@@ -190,7 +196,7 @@ const ManageRoom: React.FC = () => {
                 <div>
                     {roomName ? (
                         <div className="manage-room-container">
-                            <h2 className="page-title">Salle : {roomName} </h2>
+                            <h2 className="page-title selectable-text">Salle : {roomName} </h2>
 
                             <button className="quit-btn" onClick={disconnectWebSocket}>
                                 Déconnexion

@@ -137,14 +137,28 @@ const GiftCheatSheet: React.FC = () => {
                 </p>
                 <p>Exemple d'équation:</p>
                 <pre>
-                    <code className="question-code-block selectable-text">
-                        {'$$x\\= \\frac\\{y^2\\}\\{4\\}$$'}
-                    </code>
+                    <code className="question-code-block">{'$$x\\= \\frac\\{y^2\\}\\{4\\}$$'}</code>
                 </pre>
             </div>
 
             <div className="question-type">
-                <h4> 9. Informations supplémentaires </h4>
+                <h4> 9. inserer une image </h4>
+                <p>Pour insérer une image, vous devez utiliser la syntaxe suivante:</p>
+                <pre>
+                    <code className="question-code-block">
+                        {'<img src="'}
+                        <span className="code-comment">{`un URL d'image`}</span>
+                        {'" />'}
+                    </code>
+                </pre>
+                <p style={{ color: 'red' }}>
+                    Attention nous ne supportons pas encore les images en tant que réponses à une
+                    question
+                </p>
+            </div>
+
+            <div className="question-type">
+                <h4> 10. Informations supplémentaires </h4>
                 <p>
                     GIFT supporte d'autres formats de questions que nous ne gérons pas sur cette
                     application.
