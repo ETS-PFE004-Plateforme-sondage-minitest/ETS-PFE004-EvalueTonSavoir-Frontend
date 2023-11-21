@@ -103,6 +103,7 @@
 }
 
 .loading {
+    position: relative;
     width: 20px;
     height: 20px;
     border: 4px solid #3498db;

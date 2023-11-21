@@ -153,7 +153,7 @@ const JoinRoom: React.FC = () => {
                         />
                         <button className="join-btn" onClick={handleSocket}>
                             Rejoindre
-                            {isConnecting && <div className="loading" />}
+                            {isConnecting && <div className="loading-btn" />}
                         </button>
                         {connectionError}
                     </div>

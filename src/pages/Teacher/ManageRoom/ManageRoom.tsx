@@ -28,7 +28,7 @@ const ManageRoom: React.FC = () => {
     );
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [loading, setLoading] = useState<boolean>(false);
-    const [errorConnecting, setErrorConnecting] = useState<boolean>(false);
+    const [connectingError, setConnectingError] = useState<string>('');
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
@@ -58,7 +58,7 @@ const ManageRoom: React.FC = () => {
         });
         socket.on('connect_error', (error) => {
             setLoading(false);
-            setErrorConnecting(true);
+            setConnectingError('Erreure lors de la connexion... Veuillez réessayer');
             console.error('WebSocket connection error:', error);
         });
         socket.on('create-success', (roomName: string) => {
@@ -71,6 +71,11 @@ const ManageRoom: React.FC = () => {
         });
         socket.on('user-joined', (user: UserType) => {
             setUsers((prevUsers) => [...prevUsers, user]);
+        });
+        socket.on('join-failure', (message) => {
+            setLoading(false);
+            setConnectingError(message);
+            setSocket(null);
         });
         socket.on('user-disconnected', (userId: string) => {
             setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
@@ -245,11 +250,7 @@ const ManageRoom: React.FC = () => {
                                 </>
                             ) : (
                                 <>
-                                    {errorConnecting && (
-                                        <div>
-                                            Erreure lors de la connexion... Veuillez réessayer
-                                        </div>
-                                    )}
+                                    {connectingError && <div>{connectingError}</div>}
                                     <button
                                         className="create-room-btn big-btn-general-style"
                                         onClick={createWebSocketRoom}
