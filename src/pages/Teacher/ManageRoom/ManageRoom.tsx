@@ -168,7 +168,7 @@ const ManageRoom: React.FC = () => {
         <div>
             {quizQuestions ? (
                 <div>
-                    <h2 className="page-title">Salle : {roomName} </h2>
+                    <h2 className="page-title selectable-text">Salle : {roomName} </h2>
                     <button className="quit-btn" onClick={exitRoom}>
                         Déconnexion
                     </button>
@@ -196,7 +196,7 @@ const ManageRoom: React.FC = () => {
                 <div>
                     {roomName ? (
                         <div className="manage-room-container">
-                            <h2 className="page-title">Salle : {roomName} </h2>
+                            <h2 className="page-title selectable-text">Salle : {roomName} </h2>
 
                             <button className="quit-btn" onClick={disconnectWebSocket}>
                                 Déconnexion
