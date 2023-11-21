@@ -21,6 +21,7 @@ interface Answer {
 
 interface StudentResult {
     username: string;
+    idUser: string;
     answers: Answer[];
 }
 
@@ -34,18 +35,19 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
     useEffect(() => {
         if (socket) {
             const submitAnswerHandler = ({
+                idUser,
                 username,
                 answer,
                 idQuestion
             }: {
+                idUser: string;
                 username: string;
                 answer: string | number | boolean;
                 idQuestion: number;
             }) => {
                 setStudentResults((currentResults) => {
-                    console.log('allo');
                     const userIndex = currentResults.findIndex(
-                        (result) => result.username === username
+                        (result) => result.idUser === idUser
                     );
                     const isCorrect = checkIfIsCorrect(answer, idQuestion);
                     console.log(isCorrect);
@@ -57,7 +59,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         console.log(username, answer, idQuestion);
                         return [
                             ...currentResults,
-                            { username, answers: [{ answer, isCorrect, idQuestion }] }
+                            { idUser, username, answers: [{ answer, isCorrect, idQuestion }] }
                         ];
                     }
                 });
@@ -151,7 +153,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                 </thead>
                 <tbody>
                     {studentResults.map((student) => (
-                        <tr key={student.username}>
+                        <tr key={student.idUser}>
                             <td>{hideUsernames ? '******' : student.username}</td>
                             {Array.from({ length: maxQuestions }, (_, index) => {
                                 const answer = student.answers.find(
