@@ -18,11 +18,21 @@ const JoinRoom: React.FC = () => {
     const [question, setQuestion] = useState<GIFTQuestion>();
     const [quizMode, setQuizMode] = useState<string>();
     const [parsedQuestions, setParsedQuestions] = useState<Array<GIFTQuestion>>([]);
+    const [connectionError, setConnectionError] = useState<string>('');
+    const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
     useEffect(() => {
+        handleCreateSocket();
+        return () => {
+            webSocketService.disconnect();
+        };
+    }, []);
+
+    const handleCreateSocket = () => {
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('join-success', () => {
             setIsLoading(true);
+            setIsConnecting(false);
             console.log('Successfully joined the room.');
         });
         socket.on('next-question', (question: GIFTQuestion) => {
@@ -46,17 +56,25 @@ const JoinRoom: React.FC = () => {
         socket.on('end-quiz', () => {
             disconnect();
         });
-        socket.on('join-failure', () => {
+        socket.on('join-failure', (message) => {
             console.log('Failed to join the room.');
+            setConnectionError(`Erreure de connexion: ${message}`);
+            setIsConnecting(false);
         });
         socket.on('connect_error', (error) => {
-            console.log('Connection Error:', error);
+            switch (error.message) {
+                case 'timeout':
+                    setConnectionError("Le serveur n'est pas disponible");
+                    break;
+                case 'websocket error':
+                    setConnectionError("Le serveur n'est pas disponible");
+                    break;
+            }
+            setIsConnecting(false);
+            console.log('Connection Error:', error.message);
         });
         setSocket(socket);
-        return () => {
-            webSocketService.disconnect();
-        };
-    }, []);
+    };
 
     const disconnect = () => {
         setSocket(null);
@@ -65,12 +83,13 @@ const JoinRoom: React.FC = () => {
         setQuizMode('');
         setRoomName('');
         setUsername('');
+        setIsConnecting(false);
     };
 
     const handleSocket = () => {
-        if (!socket) {
-            const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
-            setSocket(socket);
+        setIsConnecting(true);
+        if (!socket?.connected) {
+            handleCreateSocket();
         }
 
         if (username && roomName) {
@@ -133,8 +152,10 @@ const JoinRoom: React.FC = () => {
                             className="student-info-input"
                         />
                         <button className="join-btn" onClick={handleSocket}>
-                            Join
+                            Rejoindre
+                            {isConnecting && <div className="loading-btn" />}
                         </button>
+                        {connectionError}
                     </div>
                 </div>
             );

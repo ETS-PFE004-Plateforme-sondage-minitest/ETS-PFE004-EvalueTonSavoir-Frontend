@@ -12,11 +12,12 @@ import { QuizType } from '../../../Types/QuizType';
 
 import './ManageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
+import { UserType } from '../../../Types/UserType';
 
 const ManageRoom: React.FC = () => {
     const [roomName, setRoomName] = useState<string>('');
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [users, setUsers] = useState<string[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const quizId = useParams<{ id: string }>();
     const [quizQuestions, setQuizQuestions] = useState<GIFTQuestion[] | undefined>();
     const [quiz, setQuiz] = useState<QuizType>();
@@ -27,6 +28,7 @@ const ManageRoom: React.FC = () => {
     );
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [loading, setLoading] = useState<boolean>(false);
+    const [connectingError, setConnectingError] = useState<string>('');
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
@@ -54,6 +56,11 @@ const ManageRoom: React.FC = () => {
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
+        socket.on('connect_error', (error) => {
+            setLoading(false);
+            setConnectingError('Erreure lors de la connexion... Veuillez réessayer');
+            console.error('WebSocket connection error:', error);
+        });
         socket.on('create-success', (roomName: string) => {
             setLoading(false);
             setRoomName(roomName);
@@ -62,8 +69,17 @@ const ManageRoom: React.FC = () => {
             setLoading(false);
             console.log('Error creating room.');
         });
-        socket.on('user-joined', (username: string) => {
-            setUsers((prevUsers) => [...prevUsers, username]);
+        socket.on('user-joined', (user: UserType) => {
+            setUsers((prevUsers) => [...prevUsers, user]);
+        });
+        socket.on('join-failure', (message) => {
+            setLoading(false);
+            setConnectingError(message);
+            setSocket(null);
+        });
+        socket.on('user-disconnected', (userId: string) => {
+            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+            console.log(userId);
         });
         setSocket(socket);
     };
@@ -181,11 +197,11 @@ const ManageRoom: React.FC = () => {
                             </button>
                             <div className="quiz-setup-container">
                                 <div className="users-container">
-                                    <h2>Users:</h2>
+                                    <h2>Utilisateurs:</h2>
                                     <div>
                                         {users.map((user) => (
-                                            <span className="user" key={user}>
-                                                {user}{' '}
+                                            <span className="user" key={user.name}>
+                                                {user.name}{' '}
                                             </span>
                                         ))}
                                     </div>
@@ -226,16 +242,23 @@ const ManageRoom: React.FC = () => {
                         <div className="create-room-container">
                             <h1 className="page-title">Création d'une salle</h1>
                             {loading ? (
-                                <div className="loading-container">
-                                    <div className="loading"></div>
-                                </div>
-                            ) : null}
-                            <button
-                                className="create-room-btn big-btn-general-style"
-                                onClick={createWebSocketRoom}
-                            >
-                                Create Room
-                            </button>
+                                <>
+                                    En attente pour la connexion....
+                                    <div className="loading-container">
+                                        <div className="loading" />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    {connectingError && <div>{connectingError}</div>}
+                                    <button
+                                        className="create-room-btn big-btn-general-style"
+                                        onClick={createWebSocketRoom}
+                                    >
+                                        Créer une salle
+                                    </button>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
