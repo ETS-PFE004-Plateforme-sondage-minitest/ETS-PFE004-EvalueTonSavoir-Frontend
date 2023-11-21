@@ -22,6 +22,13 @@ const JoinRoom: React.FC = () => {
     const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
     useEffect(() => {
+        handleCreateSocket();
+        return () => {
+            webSocketService.disconnect();
+        };
+    }, []);
+
+    const handleCreateSocket = () => {
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('join-success', () => {
             setIsLoading(true);
@@ -67,10 +74,7 @@ const JoinRoom: React.FC = () => {
             console.log('Connection Error:', error.message);
         });
         setSocket(socket);
-        return () => {
-            webSocketService.disconnect();
-        };
-    }, []);
+    };
 
     const disconnect = () => {
         setSocket(null);
@@ -84,9 +88,8 @@ const JoinRoom: React.FC = () => {
 
     const handleSocket = () => {
         setIsConnecting(true);
-        if (!socket) {
-            const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
-            setSocket(socket);
+        if (!socket?.connected) {
+            handleCreateSocket();
         }
 
         if (username && roomName) {
