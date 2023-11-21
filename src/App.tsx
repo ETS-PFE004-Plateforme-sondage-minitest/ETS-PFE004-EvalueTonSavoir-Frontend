@@ -1,5 +1,5 @@
 // App.tsx
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 
 // Pages
 import Home from './pages/Home/Home';
@@ -11,9 +11,16 @@ import QuizForm from './pages/Teacher/EditorQuiz/EditorQuiz';
 import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
 
 function App() {
+    const navigate = useNavigate();
     return (
         <div className="wrapper">
-            <img className="logo" src="/Logo.svg" alt="Logo" />
+            <img
+                style={{ cursor: 'pointer' }}
+                className="logo"
+                src="/Logo.svg"
+                alt="Logo"
+                onClick={() => navigate('/')}
+            />
             <div className="app">
                 <main>
                     <Routes>

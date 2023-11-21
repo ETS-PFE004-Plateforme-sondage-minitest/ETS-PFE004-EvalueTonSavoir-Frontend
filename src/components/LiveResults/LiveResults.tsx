@@ -4,12 +4,13 @@ import { Socket } from 'socket.io-client';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { QuestionType } from '../../Types/QuestionType';
 
 import './results.css';
 
 interface LiveResultsProps {
     socket: Socket | null;
-    questions: GIFTQuestion[];
+    questions: QuestionType[];
     showSelectedQuestion: (index: number) => void;
 }
 
@@ -21,6 +22,7 @@ interface Answer {
 
 interface StudentResult {
     username: string;
+    idUser: string;
     answers: Answer[];
 }
 
@@ -33,37 +35,50 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
 
     useEffect(() => {
         if (socket) {
-            socket.on('submit-answer', ({ username, answer, idQuestion }) => {
-                const userIndex = studentResults.findIndex(
-                    (result) => result.username === username
-                );
-                const isCorrect = checkIfIsCorrect(answer, idQuestion);
-                if (userIndex !== -1) {
-                    const newStudentResults = [...studentResults];
-                    newStudentResults[userIndex].answers.push({
-                        answer: answer,
-                        isCorrect,
-                        idQuestion
-                    });
-                    setStudentResults(newStudentResults);
-                } else {
-                    const newStudentResults = [
-                        ...studentResults,
-                        { username, answers: [{ answer, isCorrect, idQuestion }] }
-                    ];
-                    setStudentResults(newStudentResults);
-                }
-            });
+            const submitAnswerHandler = ({
+                idUser,
+                username,
+                answer,
+                idQuestion
+            }: {
+                idUser: string;
+                username: string;
+                answer: string | number | boolean;
+                idQuestion: number;
+            }) => {
+                setStudentResults((currentResults) => {
+                    const userIndex = currentResults.findIndex(
+                        (result) => result.idUser === idUser
+                    );
+                    const isCorrect = checkIfIsCorrect(answer, idQuestion);
+                    if (userIndex !== -1) {
+                        const newResults = [...currentResults];
+                        newResults[userIndex].answers.push({ answer, isCorrect, idQuestion });
+                        return newResults;
+                    } else {
+                        return [
+                            ...currentResults,
+                            { idUser, username, answers: [{ answer, isCorrect, idQuestion }] }
+                        ];
+                    }
+                });
+            };
+
+            socket.on('submit-answer', submitAnswerHandler);
             return () => {
                 socket.off('submit-answer');
             };
         }
-    }, [socket, studentResults]);
+    }, [socket]);
 
     function checkIfIsCorrect(answer: string | number | boolean, idQuestion: number): boolean {
-        const question = questions.find((q) => (q.id ? q.id === idQuestion.toString() : false));
+        const questionInfo = questions.find((q) =>
+            q.question.id ? q.question.id === idQuestion.toString() : false
+        ) as QuestionType | undefined;
+
         const answerText = answer.toString();
-        if (question) {
+        if (questionInfo) {
+            const question = questionInfo.question as GIFTQuestion;
             if (question.type === 'TF') {
                 return (
                     (question.isTrue && answerText == 'true') ||
@@ -115,6 +130,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         type="checkbox"
                         checked={hideUsernames}
                         onChange={() => setHideUsernames((prev) => !prev)}
+                        data-testid="hide-usernames-checkbox"
                     />
                 </label>
                 <label className="live-result-control">
@@ -123,6 +139,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         type="checkbox"
                         checked={ShowCorrectAnswers}
                         onChange={() => setShowCorrectAnswers((prev) => !prev)}
+                        data-testid="show-correct-answers-checkbox"
                     />
                 </label>
             </div>
@@ -139,7 +156,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                 </thead>
                 <tbody>
                     {studentResults.map((student) => (
-                        <tr key={student.username}>
+                        <tr key={student.idUser}>
                             <td>{hideUsernames ? '******' : student.username}</td>
                             {Array.from({ length: maxQuestions }, (_, index) => {
                                 const answer = student.answers.find(
