@@ -12,11 +12,12 @@ import { QuizType } from '../../../Types/QuizType';
 
 import './ManageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
+import { UserType } from '../../../Types/UserType';
 
 const ManageRoom: React.FC = () => {
     const [roomName, setRoomName] = useState<string>('');
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [users, setUsers] = useState<string[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const quizId = useParams<{ id: string }>();
     const [quizQuestions, setQuizQuestions] = useState<GIFTQuestion[] | undefined>();
     const [quiz, setQuiz] = useState<QuizType>();
@@ -68,8 +69,12 @@ const ManageRoom: React.FC = () => {
             setLoading(false);
             console.log('Error creating room.');
         });
-        socket.on('user-joined', (username: string) => {
-            setUsers((prevUsers) => [...prevUsers, username]);
+        socket.on('user-joined', (user: UserType) => {
+            setUsers((prevUsers) => [...prevUsers, user]);
+        });
+        socket.on('user-disconnected', (userId: string) => {
+            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+            console.log(userId);
         });
         setSocket(socket);
     };
@@ -190,8 +195,8 @@ const ManageRoom: React.FC = () => {
                                     <h2>Utilisateurs:</h2>
                                     <div>
                                         {users.map((user) => (
-                                            <span className="user" key={user}>
-                                                {user}{' '}
+                                            <span className="user" key={user.name}>
+                                                {user.name}{' '}
                                             </span>
                                         ))}
                                     </div>

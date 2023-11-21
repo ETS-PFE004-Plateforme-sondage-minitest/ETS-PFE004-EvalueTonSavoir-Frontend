@@ -49,9 +49,9 @@ const JoinRoom: React.FC = () => {
         socket.on('end-quiz', () => {
             disconnect();
         });
-        socket.on('join-failure', () => {
+        socket.on('join-failure', (message) => {
             console.log('Failed to join the room.');
-            setConnectionError('Erreure de connexion à la salle');
+            setConnectionError(`Erreure de connexion: ${message}`);
             setIsConnecting(false);
         });
         socket.on('connect_error', (error) => {
