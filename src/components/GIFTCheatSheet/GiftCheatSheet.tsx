@@ -14,7 +14,7 @@ const GiftCheatSheet: React.FC = () => {
             <div className="question-type">
                 <h4>1. Questions Vrai/Faux</h4>
                 <pre>
-                    <code>
+                    <code className="selectable-text">
                         {'2+2 = 4 ? {T}'}
                         <br />
                         <span className="code-comment">
@@ -27,7 +27,7 @@ const GiftCheatSheet: React.FC = () => {
             <div className="question-type">
                 <h4>2. Questions à choix multiple</h4>
                 <pre>
-                    <code className="question-code-block">
+                    <code className="question-code-block selectable-text">
                         {
                             'Quelle ville est la capitale du Canada? {\n~ Toronto\n~ Montréal\n= Ottawa #Bonne réponse!\n}'
                         }
@@ -39,7 +39,7 @@ const GiftCheatSheet: React.FC = () => {
             <div className="question-type">
                 <h4>3. Questions à choix multiple avec plusieurs réponses</h4>
                 <pre>
-                    <code className="question-code-block">
+                    <code className="question-code-block selectable-text">
                         {
                             'Quelles villes trouve-t-on au Canada? { \n~ %33.3% Montréal \n~ %33.3% Ottawa \n~ %33.3% Vancouver \n~ %-100% New York \n~ %-100% Paris \n#### La bonne réponse est Montréal, Ottawa et Vancouver \n}'
                         }
@@ -58,7 +58,7 @@ const GiftCheatSheet: React.FC = () => {
             <div className="question-type">
                 <h4>4. Questions à reponse courte</h4>
                 <pre>
-                    <code className="question-code-block">
+                    <code className="question-code-block selectable-text">
                         {'Avec quoi ouvre-t-on une porte? { \n= clé \n= clef \n}'}
                         <br />
                         <span className="code-comment">
@@ -75,7 +75,7 @@ const GiftCheatSheet: React.FC = () => {
             <div className="question-type">
                 <h4> 5. Questions numériques </h4>
                 <pre>
-                    <code className="question-code-block">
+                    <code className="question-code-block selectable-text">
                         {
                             'Question {#=Nombre} //OU \nQuestion {#=Nombre:Tolérance} //OU \nQuestion {#=PetitNombre..GrandNombre}'
                         }
@@ -92,7 +92,7 @@ const GiftCheatSheet: React.FC = () => {
             <div className="question-type">
                 <h4> 6. Paramètres optionnels </h4>
                 <pre>
-                    <code className="question-code-block">
+                    <code className="question-code-block selectable-text">
                         {'::Titre:: '}
                         <span className="code-comment">{' // Ajoute un titre à une question'}</span>
                         <br />
@@ -123,7 +123,7 @@ const GiftCheatSheet: React.FC = () => {
                     devant:
                 </p>
                 <pre>
-                    <code className="question-code-block">
+                    <code className="question-code-block selectable-text">
                         {'\\~ \n\\= \n\\# \n\\{ \n\\} \n\\:'}
                     </code>
                 </pre>

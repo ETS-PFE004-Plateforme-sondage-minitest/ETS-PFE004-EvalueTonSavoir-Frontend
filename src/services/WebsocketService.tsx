@@ -5,12 +5,12 @@ class WebSocketService {
     private socket: Socket | null = null;
 
     connect(backendUrl: String): Socket {
-        if (!this.socket) {
-            this.socket = io(`${backendUrl}`, {
-                transports: ['websocket'],
-                reconnectionAttempts: 1
-            });
-        }
+        //if (!this.socket) {
+        this.socket = io(`${backendUrl}`, {
+            transports: ['websocket'],
+            reconnectionAttempts: 1
+        });
+        //}
         return this.socket;
     }
 
