@@ -40,6 +40,7 @@ const ManageRoom: React.FC = () => {
 
     const disconnectWebSocket = () => {
         if (socket) {
+            webSocketService.endQuiz(roomName);
             webSocketService.disconnect();
             setSocket(null);
             setPresentQuestionString(undefined);
@@ -47,12 +48,12 @@ const ManageRoom: React.FC = () => {
             setIsLastQuestion(false);
             setUsers([]);
             setRoomName('');
-            webSocketService.endQuiz(roomName);
         }
     };
 
     const createWebSocketRoom = () => {
         setLoading(true);
+        setConnectingError('');
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('connect', () => {
             webSocketService.createRoom();
@@ -115,7 +116,7 @@ const ManageRoom: React.FC = () => {
                         setIsLastQuestion(true);
                     }
                 } else {
-                    exitRoom();
+                    disconnectWebSocket();
                 }
             }
         }
@@ -154,11 +155,6 @@ const ManageRoom: React.FC = () => {
         }
     };
 
-    const exitRoom = () => {
-        webSocketService.endQuiz(roomName);
-        disconnectWebSocket();
-    };
-
     const showSelectedQuestion = (questionIndex: number) => {
         //set presentQuestionString to the question at index questionIndex
         if (quiz?.questions) setDisplayedQuestionString([quiz?.questions[questionIndex]]);
@@ -169,7 +165,7 @@ const ManageRoom: React.FC = () => {
             {quizQuestions ? (
                 <div>
                     <h2 className="page-title selectable-text">Salle : {roomName} </h2>
-                    <button className="quit-btn" onClick={exitRoom}>
+                    <button className="quit-btn" onClick={disconnectWebSocket}>
                         Déconnexion
                     </button>
                     <GIFTTemplatePreview
@@ -188,7 +184,7 @@ const ManageRoom: React.FC = () => {
                             </button>
                         )}
                         {quizMode === 'student' && (
-                            <button onClick={exitRoom}>Fermer le quiz</button>
+                            <button onClick={disconnectWebSocket}>Fermer le quiz</button>
                         )}
                     </div>
                 </div>

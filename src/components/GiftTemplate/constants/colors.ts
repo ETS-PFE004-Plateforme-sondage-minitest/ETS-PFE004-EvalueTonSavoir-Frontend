@@ -45,6 +45,7 @@ export const colors = {
     black700: 'hsl(0, 0%, 8%)',
     black800: 'hsl(0, 0%, 4%)',
     black900: 'hsl(0, 0%, 0%)',
+    blue: '#5271FF',
     success: 'hsl(120, 39%, 54%)',
     danger: 'hsl(2, 64%, 58%)',
     white: 'hsl(0, 0%, 100%)'

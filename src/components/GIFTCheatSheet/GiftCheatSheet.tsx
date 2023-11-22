@@ -15,7 +15,7 @@ const GiftCheatSheet: React.FC = () => {
                 <h4>1. Questions Vrai/Faux</h4>
                 <pre>
                     <code className="selectable-text">
-                        {'2+2 = 4 ? {T}'}
+                        {'2+2 \\= 4 ? {T}'}
                         <br />
                         <span className="code-comment">
                             {'// Vous pouvez utiliser les valeurs {T}, {F}, {TRUE} et {FALSE}'}
@@ -94,21 +94,27 @@ const GiftCheatSheet: React.FC = () => {
                 <pre>
                     <code className="question-code-block selectable-text">
                         {'::Titre:: '}
-                        <span className="code-comment">{' // Ajoute un titre à une question'}</span>
+                        <span className="code-comment selectable-text">
+                            {' // Ajoute un titre à une question'}
+                        </span>
                         <br />
                         {'# Feedback '}
-                        <span className="code-comment">{' // Feedback pour UNE réponse'}</span>
+                        <span className="code-comment selectable-text">
+                            {' // Feedback pour UNE réponse'}
+                        </span>
                         <br />
                         {'// Commentaire '}
-                        <span className="code-comment">{' // Commentaire non apparent'}</span>
+                        <span className="code-comment selectable-text">
+                            {' // Commentaire non apparent'}
+                        </span>
                         <br />
                         {'#### Feedback général '}
-                        <span className="code-comment">
+                        <span className="code-comment selectable-text">
                             {' // Feedback général pour une question'}
                         </span>
                         <br />
                         {'%50% '}
-                        <span className="code-comment">
+                        <span className="code-comment selectable-text">
                             {" // Poids d'une réponse (peut être négatif)"}
                         </span>
                     </code>
