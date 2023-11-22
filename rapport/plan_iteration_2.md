@@ -89,5 +89,13 @@ D'un autre coté, nous avons ajoutés des fonctionnalités qui n'étaient pas pr
 
 ![Alt text](./documentation/Diagramme_de_deploiement_iteration2.svg 'Diagramme de déploiement')
 
+## diagramme de séquence actuel de JoinRoom :
+
+![Alt text](./documentation/Diagramme_de_sequence_join_room.svg 'Diagramme de séquence JoinRoom')
+
+## diagramme de séquence actuel de ManageRoom :
+
+![Alt text](./documentation/Diagramme_de_sequence_manage_room.svg 'Diagramme de séquence JoinRoom')
+
 <a name="commentEstimer">Comment estimer la taille :</a>
 <https://docs.google.com/a/etsmtl.net/document/d/1bDy0chpWQbK9bZ82zdsBweuAgNYni3T2k79xihr6CuU/edit?usp=sharing>
