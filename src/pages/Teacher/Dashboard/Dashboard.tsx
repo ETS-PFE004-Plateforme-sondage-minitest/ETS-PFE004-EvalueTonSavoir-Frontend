@@ -3,8 +3,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
 import { v4 as uuidv4 } from 'uuid';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrashCan, faClone, faPencil, faPlay } from '@fortawesome/free-solid-svg-icons';
 
 import Modal from '../../../components/Modal/Modal';
 import Template from '../../../components/GiftTemplate/templates';
@@ -13,7 +11,29 @@ import { QuestionService } from '../../../services/QuestionService';
 
 import './dashboard.css';
 import ImportModal from '../../../components/ImportModal/ImportModal';
-import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
+//import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
+import {
+    TextField,
+    IconButton,
+    InputAdornment,
+    Button,
+    Tooltip,
+    Checkbox,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText
+} from '@mui/material';
+import {
+    Search,
+    DeleteOutline,
+    FileDownload,
+    Add,
+    Upload,
+    ContentCopy,
+    Edit
+} from '@mui/icons-material';
 
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
@@ -24,7 +44,7 @@ const Dashboard: React.FC = () => {
     const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
     const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
 
-    const isMobile = useCheckMobileScreen();
+    //const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
         // Fetch quizzes from local storage
@@ -160,91 +180,103 @@ const Dashboard: React.FC = () => {
             ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
             : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
     return (
-        <div>
-            <div className="dashboardContainer">
-                <h1 className="page-title">Tableau de bord</h1>
+        <>
+            <div className="dashboard-container">
                 <div className="action-bar">
-                    {!isMobile && (
-                        <div className="select-all-checkbox">
-                            <input
-                                type="checkbox"
-                                checked={isSelectAll}
-                                onChange={handleSelectAll}
-                            />
-                        </div>
-                    )}
-                    <input
-                        className="search-bar"
-                        type="text"
-                        placeholder="Rechercher un quiz"
-                        value={searchTerm}
-                        onChange={handleSearch}
-                    />
-                    <Link to="/teacher/editor-quiz/new">
-                        <FontAwesomeIcon icon={faPlus} />
-                    </Link>
-                    <button onClick={() => setShowImportModal(true)}>Import</button>
-                    {selectedQuizes.length > 0 && (
-                        <>
-                            <button onClick={downloadTxtFile}>Export</button>
-                            <a
-                                className="red-btn"
-                                onClick={() => handleRemoveQuiz(selectedQuizes)}
-                                title="Supprimer les quiz"
-                            >
-                                <FontAwesomeIcon icon={faTrashCan} />
-                            </a>
-                        </>
-                    )}
+                    <h1 className="page-title">Tableau de bord</h1>
+                    <div className="button-group">
+                        <Button
+                            component={Link}
+                            to="/teacher/editor-quiz/new"
+                            variant="outlined"
+                            color="primary"
+                            startIcon={<Add />}
+                        >
+                            Ajouter
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            startIcon={<Upload />}
+                            onClick={() => setShowImportModal(true)}
+                        >
+                            Importer
+                        </Button>
+                    </div>
                 </div>
-                <ul>
+                <div className="search-bar">
+                    <TextField
+                        onChange={handleSearch}
+                        value={searchTerm}
+                        placeholder="Rechercher un quiz"
+                        fullWidth
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton>
+                                        <Search />
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                    />
+                </div>
+                <div className="button-group">
+                    <Checkbox checked={isSelectAll} onChange={handleSelectAll} />
+                    <Tooltip title="Exporter">
+                        <IconButton color="secondary" onClick={downloadTxtFile}>
+                            <FileDownload />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Supprimer">
+                        <IconButton
+                            color="secondary"
+                            onClick={() => handleRemoveQuiz(selectedQuizes)}
+                        >
+                            <DeleteOutline />
+                        </IconButton>
+                    </Tooltip>
+                </div>
+
+                <List disablePadding>
                     {filteredQuizzes.map((quiz: QuizType) => (
-                        <li key={quiz.id}>
-                            <input
-                                type="checkbox"
-                                checked={selectedQuizes.includes(quiz.id)}
-                                onChange={() => handleOnCheckQuiz(quiz.id)}
-                            />
-                            <div className="quiz-card-control">
-                                <h3 className="quizTitle selectable-text">{quiz.title}</h3>
-                                <div>
-                                    <a
-                                        className="red-btn"
-                                        onClick={() => handleRemoveQuiz([quiz.id])}
-                                        title="Supprimer le quiz"
-                                    >
-                                        <FontAwesomeIcon icon={faTrashCan} />
-                                    </a>
-                                    <a
-                                        className="blue-btn"
-                                        onClick={() => handleDuplicateQuiz(quiz.id)}
-                                        title="Dupliquer le quiz"
-                                    >
-                                        <FontAwesomeIcon icon={faClone} />
-                                    </a>
-                                    <Link
-                                        className="blue-btn"
+                        <ListItem key={quiz.id} disablePadding>
+                            <ListItemButton
+                                role={undefined}
+                                onClick={() => handleOnCheckQuiz(quiz.id)}
+                                dense
+                            >
+                                <ListItemIcon>
+                                    <Checkbox
+                                        edge="start"
+                                        checked={selectedQuizes.includes(quiz.id)}
+                                        tabIndex={-1}
+                                        disableRipple
+                                    />
+                                </ListItemIcon>
+                                <ListItemText id={quiz.id + quiz.title} primary={quiz.title} />
+                                <div className="button-group">
+                                    <IconButton
+                                        component={Link}
                                         to={`/teacher/editor-quiz/${quiz.id}`}
-                                        title="Modifier le quiz"
                                     >
-                                        <FontAwesomeIcon icon={faPencil} />
-                                    </Link>
+                                        <Edit />
+                                    </IconButton>
+                                    <IconButton onClick={() => handleDuplicateQuiz(quiz.id)}>
+                                        <ContentCopy />
+                                    </IconButton>
+                                    <Button
+                                        component={Link}
+                                        to={`/teacher/manage-room/${quiz.id}`}
+                                        variant="contained"
+                                        disabled={!validQuiz(quiz.questions)}
+                                    >
+                                        {validQuiz(quiz.questions) ? 'Lancer' : 'Quiz invalide'}
+                                    </Button>
                                 </div>
-                            </div>
-                            {validQuiz(quiz.questions) ? (
-                                <Link
-                                    className="green-btn"
-                                    to={`/teacher/manage-room/${quiz.id}`}
-                                    title="Démarrer une session"
-                                >
-                                    <FontAwesomeIcon icon={faPlay} />
-                                </Link>
-                            ) : (
-                                <div className="invalid-quiz">Quiz invalide</div>
-                            )}
-                        </li>
+                            </ListItemButton>
+                        </ListItem>
                     ))}
-                </ul>
+                </List>
             </div>
             {quizIdsToRemove.length > 0 && (
                 <Modal
@@ -260,7 +292,7 @@ const Dashboard: React.FC = () => {
                     handleOnImport={handleOnImport}
                 />
             )}
-        </div>
+        </>
     );
 };
 

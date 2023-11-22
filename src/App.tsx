@@ -17,7 +17,7 @@ function App() {
             <img
                 style={{ cursor: 'pointer' }}
                 className="logo"
-                src="/Logo.svg"
+                src="/logo.png"
                 alt="Logo"
                 onClick={() => navigate('/')}
             />

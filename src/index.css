@@ -1,15 +1,17 @@
-:root {
+* {
+    margin: 0;
+    padding: 0;
+    font-family: OpenSans, Helvetica, sans-serif;
+    user-select: none;
+}
+
+/* :root {
     --selected: rgb(201, 61, 40, 0.2);
     --submit: rgb(201, 61, 40, 0.7);
     --submit-hover: rgb(201, 61, 40, 1);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    user-select: none;
-}
+
 
 a,
 button {
@@ -72,4 +74,4 @@ body {
 
 .selectable-text {
     user-select: text;
-}
+} */

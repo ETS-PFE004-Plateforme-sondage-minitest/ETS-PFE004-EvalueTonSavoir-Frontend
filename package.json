@@ -12,9 +12,13 @@
         "test:watch": "jest --watch"
     },
     "dependencies": {
+        "@emotion/react": "^11.11.1",
+        "@emotion/styled": "^11.11.0",
         "@fortawesome/fontawesome-free": "^6.4.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
         "@fortawesome/react-fontawesome": "^0.2.0",
+        "@mui/icons-material": "^5.14.18",
+        "@mui/material": "^5.14.18",
         "@types/uuid": "^9.0.7",
         "gift-pegjs": "^0.2.1",
         "jest-environment-jsdom": "^29.7.0",
