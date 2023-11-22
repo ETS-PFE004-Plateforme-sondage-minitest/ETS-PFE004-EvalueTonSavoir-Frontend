@@ -68,9 +68,5 @@ Tout les critères d'évaluation ont été atteints.
 
 Nous n'avons pas encore de solution de déploiement pour l'application. Nous envisageons d'utiliser la technologie websocket qui est assez lourde et restreint les options de déploiement.
 
-<a name="commentPlanifier">Comment planifier une itération selon le
-processus unifié :</a>
-<https://docs.google.com/a/etsmtl.net/document/d/1xeCCdR4-sTznTPaSKYIl4l_bQi-gE5stPWSA5VArRlY/edit?usp=sharing>
-
 <a name="commentEstimer">Comment estimer la taille :</a>
 <https://docs.google.com/a/etsmtl.net/document/d/1bDy0chpWQbK9bZ82zdsBweuAgNYni3T2k79xihr6CuU/edit?usp=sharing>
