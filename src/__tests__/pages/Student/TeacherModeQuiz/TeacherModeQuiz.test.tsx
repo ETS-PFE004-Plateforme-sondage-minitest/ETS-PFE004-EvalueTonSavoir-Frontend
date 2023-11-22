@@ -25,7 +25,7 @@ describe('TeacherModeQuiz', () => {
     beforeEach(() => {
         render(
             <TeacherModeQuiz
-                question={mockQuestion}
+                questionInfos={{ question: mockQuestion, image: 'sample-image-url' }}
                 submitAnswer={mockSubmitAnswer}
                 disconnectWebSocket={mockDisconnectWebSocket}
             />

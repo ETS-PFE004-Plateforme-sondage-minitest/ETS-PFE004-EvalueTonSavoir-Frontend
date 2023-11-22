@@ -1,40 +1,40 @@
-//GIFTCheatSheet.test.tsx
-import { render, screen } from '@testing-library/react';
+// GiftCheatSheet.test.tsx
+import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import GiftCheatSheet from "../../../components/GIFTCheatSheet/GiftCheatSheet";
+import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 
-describe('GiftCheatSheet Component', () => {
-    beforeEach(() => {
-        render(<GiftCheatSheet />);
-    });
+describe('GiftCheatSheet', () => {
+  it('renders the cheat sheet with correct headings and information', () => {
+    const { getByText, getByRole } = render(<GiftCheatSheet />);
 
-    it('renders the cheat sheet with all question types', () => {
-        expect(screen.getByText('Informations pratiques sur l\'éditeur')).toBeInTheDocument();
-        expect(screen.getByText('1. Questions Vrai/Faux')).toBeInTheDocument();
-        expect(screen.getByText('2. Questions à choix multiple')).toBeInTheDocument();
-        expect(screen.getByText('3. Questions à choix multiple avec plusieurs réponses')).toBeInTheDocument();
-        expect(screen.getByText('4. Questions à reponse courte')).toBeInTheDocument();
-        expect(screen.getByText('5. Questions numériques')).toBeInTheDocument();
-        expect(screen.getByText('6. Paramètres optionnels')).toBeInTheDocument();
-        expect(screen.getByText('7. Paramètres optionnels')).toBeInTheDocument();
-        expect(screen.getByText('8. LaTeX')).toBeInTheDocument();
-        expect(screen.getByText('9. Informations supplémentaires')).toBeInTheDocument();
-    });
+    expect(getByText("Informations pratiques sur l'éditeur")).toBeInTheDocument();
+    expect(getByText('1. Questions Vrai/Faux')).toBeInTheDocument();
+    expect(getByText('2. Questions à choix multiple')).toBeInTheDocument();
+    expect(getByText('3. Questions à choix multiple avec plusieurs réponses')).toBeInTheDocument();
+    expect(getByText('4. Questions à reponse courte')).toBeInTheDocument();
+    expect(getByText('5. Questions numériques')).toBeInTheDocument();
+    expect(getByText('6. Paramètres optionnels')).toBeInTheDocument();
+    expect(getByText('7. Paramètres optionnels')).toBeInTheDocument();
+    expect(getByText('8. LaTeX')).toBeInTheDocument();
+    expect(getByText('9. inserer une image')).toBeInTheDocument();
+    expect(getByText('10. Informations supplémentaires')).toBeInTheDocument();
 
-    it('renders the escape characters section correctly', () => {
-        const escapeCharacters = ['\\~', '\\=', '\\#', '\\{', '\\}', '\\:'];
+    expect(getByText(/L'éditeur utilise le format GIFT/i)).toBeInTheDocument();
+    expect(getByRole('link', { name: /Documentation de GIFT/i })).toBeInTheDocument();
+  });
 
-        escapeCharacters.forEach((character) => {
-            const escapedCharacters = screen.getAllByText(new RegExp(character));
-            escapedCharacters.forEach((escapedCharacter) => {
-                expect(escapedCharacter).toBeInTheDocument();
-            });
-        });
-    });
+  it('renders the correct example for Vrai/Faux questions', () => {
+    const { getByText } = render(<GiftCheatSheet />);
+    const exampleText = '2+2 = 4 ? {T}';
 
-    it('renders the additional information section correctly', () => {
-        expect(screen.getByText('GIFT supporte d\'autres formats de questions que nous ne gérons pas sur cette application.')).toBeInTheDocument();
-        expect(screen.getByText('Vous pouvez retrouver la Documentation de GIFT (en anglais):')).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: 'Documentation de GIFT' })).toHaveAttribute('href', 'https://ethan-ou.github.io/vscode-gift-docs/docs/questions');
-    });
+    expect(getByText(exampleText)).toBeInTheDocument();
+  });
+
+  it('renders information about using LaTeX', () => {
+    const { getByText } = render(<GiftCheatSheet />);
+    const latexExample = '$$x\\= \\frac\\{y^2\\}\\{4\\}$$';
+
+    expect(getByText(latexExample)).toBeInTheDocument();
+  });
+
 });

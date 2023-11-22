@@ -1,42 +1,56 @@
-// StudentModeQuiz.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { GIFTQuestion } from 'gift-pegjs';
-
+import { QuestionType } from '../../../../Types/QuestionType';
 import StudentModeQuiz from '../../../../pages/Student/StudentModeQuiz/StudentModeQuiz';
 
 describe('StudentModeQuiz', () => {
-    const mockQuestions: GIFTQuestion[] = [
+    const mockQuestions: QuestionType[] = [
         {
-            id: '1',
-            type: 'MC',
-            stem: { format: 'plain', text: 'Sample Question 1' },
-            title: 'Sample Question 1',
-            hasEmbeddedAnswers: false,
-            globalFeedback: null,
-            choices: [
-                { text: { format: 'plain', text: 'Option A' }, isCorrect: true, weight: 1, feedback: null },
-                { text: { format: 'plain', text: 'Option B' }, isCorrect: false, weight: 0, feedback: null },
-            ],
+            question: {
+                id: '1',
+                type: 'MC',
+                stem: { format: 'plain', text: 'Sample Question 1' },
+                title: 'Sample Question 1',
+                hasEmbeddedAnswers: false,
+                globalFeedback: null,
+                choices: [
+                    { text: { format: 'plain', text: 'Option A' }, isCorrect: true, weight: 1, feedback: null },
+                    { text: { format: 'plain', text: 'Option B' }, isCorrect: false, weight: 0, feedback: null },
+                ],
+            },
+            image: '<img src="sample-image-url" alt="Sample Image" />',
         },
         {
-            id: '2',
-            type: 'MC',
-            stem: { format: 'plain', text: 'Sample Question 2' },
-            title: 'Sample Question 2',
-            hasEmbeddedAnswers: false,
-            globalFeedback: null,
-            choices: [
-                { text: { format: 'plain', text: 'Option C' }, isCorrect: true, weight: 1, feedback: null },
-                { text: { format: 'plain', text: 'Option D' }, isCorrect: false, weight: 0, feedback: null },
-            ],
+            question: {
+                id: '2',
+                type: 'MC',
+                stem: { format: 'plain', text: 'Sample Question 2' },
+                title: 'Sample Question 2',
+                hasEmbeddedAnswers: false,
+                globalFeedback: null,
+                choices: [
+                    { text: { format: 'plain', text: 'Option C' }, isCorrect: true, weight: 1, feedback: null },
+                    { text: { format: 'plain', text: 'Option D' }, isCorrect: false, weight: 0, feedback: null },
+                ],
+            },
+            image: '',
         },
     ];
 
     const mockSubmitAnswer = jest.fn();
     const mockDisconnectWebSocket = jest.fn();
 
-    //test Question suivante
+    test('renders the initial question', () => {
+        render(
+            <StudentModeQuiz
+                questions={mockQuestions}
+                submitAnswer={mockSubmitAnswer}
+                disconnectWebSocket={mockDisconnectWebSocket}
+            />
+        );
+
+        expect(screen.getByText('Question 1')).toBeInTheDocument();
+    });
 
     test('handles disconnect button click', () => {
         render(
@@ -51,4 +65,5 @@ describe('StudentModeQuiz', () => {
 
         expect(mockDisconnectWebSocket).toHaveBeenCalled();
     });
+
 });
