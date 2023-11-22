@@ -1,25 +1,36 @@
 // Home.tsx
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import './home.css';
 import '../../index.css';
+import { Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
     return (
-        <div className="pageContainer">
-            <h1 className="page-title">Évalue ton savoir</h1>
+        <div className="page-container">
             <div className="btn-container">
-                <Link to="/student/join-room" className="homepage-btn big-btn-general-style">
-                    Espace
-                    <br />
-                    étudiant
-                </Link>
-                <Link to="/teacher/dashboard" className="homepage-btn big-btn-general-style">
-                    Espace
-                    <br />
-                    enseignant
-                </Link>
+                <Button component={Link} to="/student/join-room" variant="contained">
+                    <div className="btn-student">
+                        <h1>
+                            Espace
+                            <br />
+                            étudiant
+                        </h1>
+                        <div className="right-component">
+                            <img src="student.svg" width="50%" />
+                        </div>
+                    </div>
+                </Button>
+                <Button component={Link} to="/teacher/dashboard" variant="contained">
+                    <div className="btn-teacher">
+                        <img src="teacher.svg" width="50%" />
+                        <h1 className="right-component">
+                            Espace <br />
+                            enseignant
+                        </h1>
+                    </div>
+                </Button>
             </div>
         </div>
     );

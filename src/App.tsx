@@ -15,7 +15,7 @@ function App() {
     return (
         <div className="wrapper">
             <img
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', position: 'absolute' }}
                 className="logo"
                 src="/logo.png"
                 alt="Logo"
