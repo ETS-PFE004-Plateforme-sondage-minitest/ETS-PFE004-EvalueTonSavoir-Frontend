@@ -56,6 +56,7 @@ Les objectifs clés de cette itération sont les suivants:
 -   L'utilisateur doit pouvoir se connecter à un quiz
 -   L'utilisateur doit pouvoir répondre à une question
 -   L'utilisateur doit pouvoir passer à la question suivante
+-   Création d'une couverture suite de test de 80% de l'application
 
 ## Évaluation
 
@@ -72,11 +73,13 @@ Nous avons réalisé tous les éléments de travail prévus, bien que certains �
 
 ### Évaluation par rapport aux résultats selon les critères d'évaluation
 
-Tout les critères d'évaluation ont été atteints.
+La pluspart des objectifs ont été atteints. L'application est fonctionnelle, mais présente encore quelques bogues. La couverture de test est de 95% pour le backend et de 0% pour le frontend.
+D'un autre coté, nous avons ajoutés des fonctionnalités qui n'étaient pas prévues, comme le support du LateX dans les questions.
 
 ## Autres préoccupations et écarts
 
-Nous n'avons pas encore de solution de déploiement pour l'application. Héroku demande un compte de crédit pour déployer une application. Les solutions GCP, AWS et Azure sont très complexes et demandent beaucoup de temps pour être mises en place.
+-   Nous n'avons pas encore de solution de déploiement pour l'application. Héroku demande un compte de crédit pour déployer une application. Les solutions GCP, AWS et Azure sont très complexes et demandent beaucoup de temps pour être mises en place.
+-   La couverture de test ne nous satisfait pas. Nous avons eu de la difficulté à tester les composants React. Cet objectif est donc reporté à l'itération 3.
 
 ## diagramme de conception actuel de l'application :
 
