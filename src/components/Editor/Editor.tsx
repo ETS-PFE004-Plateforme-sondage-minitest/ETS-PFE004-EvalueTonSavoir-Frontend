@@ -1,5 +1,5 @@
 // Editor.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './Editor.css';
 
 interface EditorProps {
@@ -9,6 +9,8 @@ interface EditorProps {
 
 const Editor: React.FC<EditorProps> = ({ initialValue, onEditorChange }) => {
     const [value, setValue] = useState(initialValue);
+    const editorRef = useRef<HTMLTextAreaElement | null>(null);
+
     function handleEditorChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
         const text = event.target.value;
         setValue(text);
@@ -16,7 +18,14 @@ const Editor: React.FC<EditorProps> = ({ initialValue, onEditorChange }) => {
     }
 
     return (
-        <textarea onChange={handleEditorChange} defaultValue={value} className="editor"></textarea>
+        <div>
+            <textarea
+                ref={editorRef}
+                onChange={handleEditorChange}
+                value={value}
+                className="editor"
+            ></textarea>
+        </div>
     );
 };
 

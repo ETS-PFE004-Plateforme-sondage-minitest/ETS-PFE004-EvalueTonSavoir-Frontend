@@ -4,12 +4,13 @@ import { Socket } from 'socket.io-client';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { QuestionType } from '../../Types/QuestionType';
 
 import './results.css';
 
 interface LiveResultsProps {
     socket: Socket | null;
-    questions: GIFTQuestion[];
+    questions: QuestionType[];
     showSelectedQuestion: (index: number) => void;
 }
 
@@ -21,6 +22,7 @@ interface Answer {
 
 interface StudentResult {
     username: string;
+    idUser: string;
     answers: Answer[];
 }
 
@@ -34,30 +36,29 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
     useEffect(() => {
         if (socket) {
             const submitAnswerHandler = ({
+                idUser,
                 username,
                 answer,
                 idQuestion
             }: {
+                idUser: string;
                 username: string;
                 answer: string | number | boolean;
                 idQuestion: number;
             }) => {
                 setStudentResults((currentResults) => {
-                    console.log('allo');
                     const userIndex = currentResults.findIndex(
-                        (result) => result.username === username
+                        (result) => result.idUser === idUser
                     );
                     const isCorrect = checkIfIsCorrect(answer, idQuestion);
-                    console.log(isCorrect);
                     if (userIndex !== -1) {
                         const newResults = [...currentResults];
                         newResults[userIndex].answers.push({ answer, isCorrect, idQuestion });
                         return newResults;
                     } else {
-                        console.log(username, answer, idQuestion);
                         return [
                             ...currentResults,
-                            { username, answers: [{ answer, isCorrect, idQuestion }] }
+                            { idUser, username, answers: [{ answer, isCorrect, idQuestion }] }
                         ];
                     }
                 });
@@ -71,9 +72,13 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
     }, [socket]);
 
     function checkIfIsCorrect(answer: string | number | boolean, idQuestion: number): boolean {
-        const question = questions.find((q) => (q.id ? q.id === idQuestion.toString() : false));
+        const questionInfo = questions.find((q) =>
+            q.question.id ? q.question.id === idQuestion.toString() : false
+        ) as QuestionType | undefined;
+
         const answerText = answer.toString();
-        if (question) {
+        if (questionInfo) {
+            const question = questionInfo.question as GIFTQuestion;
             if (question.type === 'TF') {
                 return (
                     (question.isTrue && answerText == 'true') ||
@@ -151,7 +156,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                 </thead>
                 <tbody>
                     {studentResults.map((student) => (
-                        <tr key={student.username}>
+                        <tr key={student.idUser}>
                             <td>{hideUsernames ? '******' : student.username}</td>
                             {Array.from({ length: maxQuestions }, (_, index) => {
                                 const answer = student.answers.find(

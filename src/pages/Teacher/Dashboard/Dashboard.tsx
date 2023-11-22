@@ -1,5 +1,5 @@
 // Dashboard.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,13 +9,22 @@ import { faPlus, faTrashCan, faClone, faPencil, faPlay } from '@fortawesome/free
 import Modal from '../../../components/Modal/Modal';
 import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
+import { QuestionService } from '../../../services/QuestionService';
 
 import './dashboard.css';
+import ImportModal from '../../../components/ImportModal/ImportModal';
+import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [quizToRemove, setQuizToRemove] = useState<QuizType | null>(null);
+    const [quizIdsToRemove, setQuizIdsToRemove] = useState<string[]>([]);
+    const [quizTitleToRemove, setQuizTitleToRemove] = useState<string>('');
+    const [showImportModal, setShowImportModal] = useState<boolean>(false);
+    const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
+    const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
+
+    const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
         // Fetch quizzes from local storage
@@ -23,23 +32,35 @@ const Dashboard: React.FC = () => {
         setQuizzes(storedQuizzes);
     }, []);
 
+    useEffect(() => {
+        if (selectedQuizes.length === 0) setIsSelectAll(false);
+    }, [selectedQuizes]);
+
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    const handleRemoveQuiz = (quiz: QuizType) => {
-        setQuizToRemove(quiz);
+    const handleRemoveQuiz = (quizIds: string[]) => {
+        setQuizIdsToRemove(quizIds);
+        if (quizIds.length === 1) {
+            const selectedQuiz = quizzes.find((quiz) => quizIds[0] === quiz.id);
+            setQuizTitleToRemove(selectedQuiz?.title || '');
+        }
     };
 
     const handleConfirmRemoveQuiz = () => {
-        const updatedQuizzes = quizzes.filter((quiz: QuizType) => quiz.id !== quizToRemove?.id);
+        const updatedQuizzes = quizzes.filter(
+            (quiz: QuizType) => !quizIdsToRemove.includes(quiz.id)
+        );
         localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         setQuizzes(updatedQuizzes);
-        setQuizToRemove(null);
+        setSelectedQuizes([]);
+        setQuizIdsToRemove([]);
+        setQuizTitleToRemove('');
     };
 
     const handleCancelRemoveQuiz = () => {
-        setQuizToRemove(null);
+        setQuizIdsToRemove([]);
     };
 
     const handleDuplicateQuiz = (id: string) => {
@@ -64,19 +85,29 @@ const Dashboard: React.FC = () => {
         setQuizzes(updatedQuizzes);
     };
 
-    const filteredQuizzes: QuizType[] = quizzes.filter((quiz: QuizType) =>
-        quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredQuizzes = useMemo(() => {
+        return quizzes.filter(
+            (quiz) =>
+                quiz && quiz.title && quiz.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [quizzes, searchTerm]);
+
+    const handleOnImport = () => {
+        const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
+        setQuizzes(storedQuizzes);
+        setShowImportModal(false);
+    };
 
     const validQuiz = (questions: string[]) => {
         if (questions.length === 0) {
             return false;
         }
 
-        // Check if I can generate the Template for each question 
+        // Check if I can generate the Template for each question
         // Otherwise the quiz is invalid
         for (let i = 0; i < questions.length; i++) {
             try {
+                questions[i] = QuestionService.ignoreImgTags(questions[i]);
                 const parsedItem = parse(questions[i]);
                 Template(parsedItem[0]);
             } catch (error) {
@@ -87,14 +118,63 @@ const Dashboard: React.FC = () => {
         return true;
     };
 
+    const handleOnCheckQuiz = (selectedQuizId: string) => {
+        const quizSelected = selectedQuizes.includes(selectedQuizId);
+
+        if (quizSelected) {
+            setSelectedQuizes((prevQuizes) =>
+                prevQuizes.filter((quizId) => selectedQuizId !== quizId)
+            );
+        } else {
+            setSelectedQuizes((prevItems) => [...prevItems, selectedQuizId]);
+        }
+    };
+
+    const downloadTxtFile = () => {
+        quizzes
+            .filter((quiz) => selectedQuizes.includes(quiz.id))
+            .forEach((quiz) => {
+                const quizQuestionsString = quiz.questions.join('\n');
+                const blob = new Blob([quizQuestionsString], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${quiz.title}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+    };
+
+    const handleSelectAll = () => {
+        if (isSelectAll) {
+            setIsSelectAll(false);
+            setSelectedQuizes([]);
+        } else {
+            setIsSelectAll(true);
+            setSelectedQuizes(quizzes.map((quiz) => quiz.id));
+        }
+    };
+
+    const quizRemoveMessage =
+        quizIdsToRemove.length > 1
+            ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
+            : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
     return (
         <div>
             <div className="dashboardContainer">
-                <Link to="/">Accueil</Link>
                 <h1 className="page-title">Tableau de bord</h1>
-
-                <div className="search-bar">
+                <div className="action-bar">
+                    {!isMobile && (
+                        <div className="select-all-checkbox">
+                            <input
+                                type="checkbox"
+                                checked={isSelectAll}
+                                onChange={handleSelectAll}
+                            />
+                        </div>
+                    )}
                     <input
+                        className="search-bar"
                         type="text"
                         placeholder="Rechercher un quiz"
                         value={searchTerm}
@@ -103,16 +183,34 @@ const Dashboard: React.FC = () => {
                     <Link to="/teacher/editor-quiz/new">
                         <FontAwesomeIcon icon={faPlus} />
                     </Link>
+                    <button onClick={() => setShowImportModal(true)}>Import</button>
+                    {selectedQuizes.length > 0 && (
+                        <>
+                            <button onClick={downloadTxtFile}>Export</button>
+                            <a
+                                className="red-btn"
+                                onClick={() => handleRemoveQuiz(selectedQuizes)}
+                                title="Supprimer les quiz"
+                            >
+                                <FontAwesomeIcon icon={faTrashCan} />
+                            </a>
+                        </>
+                    )}
                 </div>
                 <ul>
                     {filteredQuizzes.map((quiz: QuizType) => (
                         <li key={quiz.id}>
+                            <input
+                                type="checkbox"
+                                checked={selectedQuizes.includes(quiz.id)}
+                                onChange={() => handleOnCheckQuiz(quiz.id)}
+                            />
                             <div className="quiz-card-control">
-                                <h3 className="quizTitle">{quiz.title}</h3>
+                                <h3 className="quizTitle selectable-text">{quiz.title}</h3>
                                 <div>
                                     <a
                                         className="red-btn"
-                                        onClick={() => handleRemoveQuiz(quiz)}
+                                        onClick={() => handleRemoveQuiz([quiz.id])}
                                         title="Supprimer le quiz"
                                     >
                                         <FontAwesomeIcon icon={faTrashCan} />
@@ -148,12 +246,18 @@ const Dashboard: React.FC = () => {
                     ))}
                 </ul>
             </div>
-            {quizToRemove && (
+            {quizIdsToRemove.length > 0 && (
                 <Modal
                     title="Confirmation"
-                    message={`Êtes-vous sûr de vouloir supprimer le quiz "${quizToRemove.title}" ?`}
+                    message={quizRemoveMessage}
                     onConfirm={handleConfirmRemoveQuiz}
                     onCancel={handleCancelRemoveQuiz}
+                />
+            )}
+            {showImportModal && (
+                <ImportModal
+                    handleOnClose={() => setShowImportModal(false)}
+                    handleOnImport={handleOnImport}
                 />
             )}
         </div>

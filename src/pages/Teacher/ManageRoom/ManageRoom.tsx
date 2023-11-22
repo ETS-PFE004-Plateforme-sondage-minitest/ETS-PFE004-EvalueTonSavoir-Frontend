@@ -2,23 +2,25 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
-import { GIFTQuestion, parse } from 'gift-pegjs';
-
+import { parse } from 'gift-pegjs';
+import { QuestionType } from '../../../Types/QuestionType';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
 import { QuizService } from '../../../services/QuizService';
+import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
 import { QuizType } from '../../../Types/QuizType';
 
 import './ManageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
+import { UserType } from '../../../Types/UserType';
 
 const ManageRoom: React.FC = () => {
     const [roomName, setRoomName] = useState<string>('');
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [users, setUsers] = useState<string[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const quizId = useParams<{ id: string }>();
-    const [quizQuestions, setQuizQuestions] = useState<GIFTQuestion[] | undefined>();
+    const [quizQuestions, setQuizQuestions] = useState<QuestionType[] | undefined>();
     const [quiz, setQuiz] = useState<QuizType>();
     const [isLastQuestion, setIsLastQuestion] = useState<boolean>(false);
     const [presentQuestionString, setPresentQuestionString] = useState<string[]>();
@@ -27,6 +29,7 @@ const ManageRoom: React.FC = () => {
     );
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [loading, setLoading] = useState<boolean>(false);
+    const [connectingError, setConnectingError] = useState<string>('');
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
@@ -54,6 +57,11 @@ const ManageRoom: React.FC = () => {
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
+        socket.on('connect_error', (error) => {
+            setLoading(false);
+            setConnectingError('Erreure lors de la connexion... Veuillez réessayer');
+            console.error('WebSocket connection error:', error);
+        });
         socket.on('create-success', (roomName: string) => {
             setLoading(false);
             setRoomName(roomName);
@@ -62,8 +70,17 @@ const ManageRoom: React.FC = () => {
             setLoading(false);
             console.log('Error creating room.');
         });
-        socket.on('user-joined', (username: string) => {
-            setUsers((prevUsers) => [...prevUsers, username]);
+        socket.on('user-joined', (user: UserType) => {
+            setUsers((prevUsers) => [...prevUsers, user]);
+        });
+        socket.on('join-failure', (message) => {
+            setLoading(false);
+            setConnectingError(message);
+            setSocket(null);
+        });
+        socket.on('user-disconnected', (userId: string) => {
+            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+            console.log(userId);
         });
         setSocket(socket);
     };
@@ -72,10 +89,12 @@ const ManageRoom: React.FC = () => {
         const quizQuestionArray = quiz?.questions;
         if (!quizQuestions) {
             if (!quizQuestionArray) return;
-            const parsedQuestions = [] as GIFTQuestion[];
+            const parsedQuestions = [] as QuestionType[];
             quizQuestionArray.forEach((question, index) => {
-                parsedQuestions.push(parse(question)[0]);
-                parsedQuestions[index].id = (index + 1).toString();
+                const image = QuestionService.getImage(question);
+                question = QuestionService.ignoreImgTags(question);
+                parsedQuestions.push({ question: parse(question)[0], image: image });
+                parsedQuestions[index].question.id = (index + 1).toString();
             });
             if (parsedQuestions.length === 0) return;
 
@@ -105,10 +124,13 @@ const ManageRoom: React.FC = () => {
     const launchStudentMode = () => {
         const quizQuestionArray = quiz?.questions;
         if (!quizQuestionArray) return;
-        const parsedQuestions = [] as GIFTQuestion[];
+        const parsedQuestions = [] as QuestionType[];
         quizQuestionArray.forEach((question, index) => {
-            parsedQuestions.push(parse(question)[0]);
-            parsedQuestions[index].id = (index + 1).toString();
+            const image = QuestionService.getImage(question);
+            question = QuestionService.ignoreImgTags(question);
+
+            parsedQuestions.push({ question: parse(question)[0], image: image });
+            parsedQuestions[index].question.id = (index + 1).toString();
         });
         if (parsedQuestions.length === 0) return;
 
@@ -146,7 +168,7 @@ const ManageRoom: React.FC = () => {
         <div>
             {quizQuestions ? (
                 <div>
-                    <h2 className="page-title">Salle : {roomName} </h2>
+                    <h2 className="page-title selectable-text">Salle : {roomName} </h2>
                     <button className="quit-btn" onClick={exitRoom}>
                         Déconnexion
                     </button>
@@ -174,18 +196,18 @@ const ManageRoom: React.FC = () => {
                 <div>
                     {roomName ? (
                         <div className="manage-room-container">
-                            <h2 className="page-title">Salle : {roomName} </h2>
+                            <h2 className="page-title selectable-text">Salle : {roomName} </h2>
 
                             <button className="quit-btn" onClick={disconnectWebSocket}>
                                 Déconnexion
                             </button>
                             <div className="quiz-setup-container">
                                 <div className="users-container">
-                                    <h2>Users:</h2>
+                                    <h2>Utilisateurs:</h2>
                                     <div>
                                         {users.map((user) => (
-                                            <span className="user" key={user}>
-                                                {user}{' '}
+                                            <span className="user" key={user.name}>
+                                                {user.name}{' '}
                                             </span>
                                         ))}
                                     </div>
@@ -226,16 +248,23 @@ const ManageRoom: React.FC = () => {
                         <div className="create-room-container">
                             <h1 className="page-title">Création d'une salle</h1>
                             {loading ? (
-                                <div className="loading-container">
-                                    <div className="loading"></div>
-                                </div>
-                            ) : null}
-                            <button
-                                className="create-room-btn big-btn-general-style"
-                                onClick={createWebSocketRoom}
-                            >
-                                Create Room
-                            </button>
+                                <>
+                                    En attente pour la connexion....
+                                    <div className="loading-container">
+                                        <div className="loading" />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    {connectingError && <div>{connectingError}</div>}
+                                    <button
+                                        className="create-room-btn big-btn-general-style"
+                                        onClick={createWebSocketRoom}
+                                    >
+                                        Créer une salle
+                                    </button>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>

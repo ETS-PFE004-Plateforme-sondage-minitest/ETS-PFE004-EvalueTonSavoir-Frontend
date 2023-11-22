@@ -21,6 +21,17 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
         try {
             let previewHTML = '';
             questions.forEach((item) => {
+                const isImage = item.includes('<img');
+                if (isImage) {
+                    const imageUrlMatch = item.match(/<img[^>]+>/i);
+                    if (imageUrlMatch) {
+                        let imageUrl = imageUrlMatch[0];
+                        imageUrl = imageUrl.replace('src=', 'style="width:10vw;" src=');
+                        item = item.replace(imageUrlMatch[0], '');
+                        previewHTML += `${imageUrl}`;
+                    }
+                }
+
                 try {
                     const parsedItem = parse(item);
                     previewHTML += Template(parsedItem[0], {
@@ -36,12 +47,14 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
                 }
                 previewHTML += '';
             });
+
             if (hideAnswers) {
                 const svgRegex = /<svg[^>]*>([\s\S]*?)<\/svg>/gi;
                 previewHTML = previewHTML.replace(svgRegex, '');
                 const placeholderRegex = /(placeholder=")[^"]*(")/gi;
                 previewHTML = previewHTML.replace(placeholderRegex, '$1$2');
             }
+
             setItems(previewHTML);
             setIsPreviewReady(true);
         } catch (error: unknown) {

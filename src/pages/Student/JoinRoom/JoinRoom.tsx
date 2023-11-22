@@ -1,6 +1,6 @@
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
-import { GIFTQuestion, parse } from 'gift-pegjs';
+import { parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
 import { ENV_VARIABLES } from '../../../constants';
 
@@ -9,23 +9,35 @@ import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
 import webSocketService from '../../../services/WebsocketService';
 
 import './JoinRoom.css';
+import { QuestionType } from '../../../Types/QuestionType';
+import { QuestionService } from '../../../services/QuestionService';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
     const [username, setUsername] = useState('');
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [question, setQuestion] = useState<GIFTQuestion>();
+    const [question, setQuestion] = useState<QuestionType>();
     const [quizMode, setQuizMode] = useState<string>();
-    const [parsedQuestions, setParsedQuestions] = useState<Array<GIFTQuestion>>([]);
+    const [parsedQuestions, setParsedQuestions] = useState<Array<QuestionType>>([]);
+    const [connectionError, setConnectionError] = useState<string>('');
+    const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
     useEffect(() => {
+        handleCreateSocket();
+        return () => {
+            webSocketService.disconnect();
+        };
+    }, []);
+
+    const handleCreateSocket = () => {
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('join-success', () => {
             setIsLoading(true);
+            setIsConnecting(false);
             console.log('Successfully joined the room.');
         });
-        socket.on('next-question', (question: GIFTQuestion) => {
+        socket.on('next-question', (question: QuestionType) => {
             setQuizMode('teacher');
             setIsLoading(false);
             setQuestion(question);
@@ -33,10 +45,13 @@ const JoinRoom: React.FC = () => {
         socket.on('launch-student-mode', (questions: Array<string>) => {
             setQuizMode('student');
             setIsLoading(false);
-            const parsedQuestions = [] as GIFTQuestion[];
+            const parsedQuestions = [] as QuestionType[];
             questions.forEach((question, index) => {
-                parsedQuestions.push(parse(question)[0]);
-                parsedQuestions[index].id = (index + 1).toString();
+                const image = QuestionService.getImage(question);
+                question = QuestionService.ignoreImgTags(question);
+
+                parsedQuestions.push({ question: parse(question)[0], image: image });
+                parsedQuestions[index].question.id = (index + 1).toString();
             });
             if (parsedQuestions.length === 0) return;
 
@@ -46,17 +61,25 @@ const JoinRoom: React.FC = () => {
         socket.on('end-quiz', () => {
             disconnect();
         });
-        socket.on('join-failure', () => {
+        socket.on('join-failure', (message) => {
             console.log('Failed to join the room.');
+            setConnectionError(`Erreure de connexion: ${message}`);
+            setIsConnecting(false);
         });
         socket.on('connect_error', (error) => {
-            console.log('Connection Error:', error);
+            switch (error.message) {
+                case 'timeout':
+                    setConnectionError("Le serveur n'est pas disponible");
+                    break;
+                case 'websocket error':
+                    setConnectionError("Le serveur n'est pas disponible");
+                    break;
+            }
+            setIsConnecting(false);
+            console.log('Connection Error:', error.message);
         });
         setSocket(socket);
-        return () => {
-            webSocketService.disconnect();
-        };
-    }, []);
+    };
 
     const disconnect = () => {
         setSocket(null);
@@ -65,12 +88,13 @@ const JoinRoom: React.FC = () => {
         setQuizMode('');
         setRoomName('');
         setUsername('');
+        setIsConnecting(false);
     };
 
     const handleSocket = () => {
-        if (!socket) {
-            const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
-            setSocket(socket);
+        setIsConnecting(true);
+        if (!socket?.connected) {
+            handleCreateSocket();
         }
 
         if (username && roomName) {
@@ -108,7 +132,7 @@ const JoinRoom: React.FC = () => {
             return (
                 question && (
                     <TeacherModeQuiz
-                        question={question}
+                        questionInfos={question}
                         submitAnswer={handleOnSubmitAnswer}
                         disconnectWebSocket={disconnect}
                     />
@@ -133,8 +157,10 @@ const JoinRoom: React.FC = () => {
                             className="student-info-input"
                         />
                         <button className="join-btn" onClick={handleSocket}>
-                            Join
+                            Rejoindre
+                            {isConnecting && <div className="loading-btn" />}
                         </button>
+                        {connectionError}
                     </div>
                 </div>
             );
