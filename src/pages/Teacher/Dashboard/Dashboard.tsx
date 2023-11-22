@@ -286,12 +286,11 @@ const Dashboard: React.FC = () => {
                     onCancel={handleCancelRemoveQuiz}
                 />
             )}
-            {showImportModal && (
-                <ImportModal
-                    handleOnClose={() => setShowImportModal(false)}
-                    handleOnImport={handleOnImport}
-                />
-            )}
+            <ImportModal
+                open={showImportModal}
+                handleOnClose={() => setShowImportModal(false)}
+                handleOnImport={handleOnImport}
+            />
         </>
     );
 };
