@@ -1,30 +1,35 @@
-# Plan d'itération 1
+# Plan d'itération 2
 
 ## Étapes jalons
 
-| Étape jalon                            | Date       |
-| :------------------------------------- | :--------- |
-| Début de l'itération                   | 2023/09/05 |
-| Première rencontre avec les promoteurs | 2023/09/19 |
-| Démo des fichiers SRS et liste des CU  | 2023/10/02 |
-| Fin de l'itération                     | 2023/10/04 |
+| Étape jalon          | Date       |
+| :------------------- | :--------- |
+| Début de l'itération | 2023/10/05 |
+| Démo                 | 2023/10/31 |
+| Fin de l'itération   | 2023/11/02 |
 
 ## Objectifs clés
 
 Les objectifs clés de cette itération sont les suivants:
 
--   Créer un recueil des user stories
--   Prioriser les user stories
--   Créer un document SRS
--   Créer une liste des cas d'utilisation
+-   Céation d'une application web fonctionnelle
+-   Complétion des cas d'utilisation en relation avec les user-stories prioritaires
+-   Recherche préliminaire sur les technologies de déploiement
 
 ## Affectations d'éléments de travail
 
-| Nom / Description              | Priorité | [Taille estimée (points)](#commentEstimer 'Comment estimer?') | Assigné à (nom) | Documents de référence                                                                          |
-| ------------------------------ | -------: | ------------------------------------------------------------: | --------------- | ----------------------------------------------------------------------------------------------- |
-| premiere liste de user-stories |        1 |                                                             4 | tous            | [Document de Recueil de User Stories ](./documentation/Document-de-Recueil-de-User-Stories.pdf) |
-| Priorisation des user-stories  |        2 |                                                             2 | tous            | [Document de Recueil de User Stories ](./documentation/Document-de-Recueil-de-User-Stories.pdf) |
-| Document SRS                   |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf)                                                  |
+| Nom / Description                                      | Priorité | [Taille estimée (points)](#commentEstimer 'Comment estimer?') | Assigné à (nom) | Documents de référence                         |
+| ------------------------------------------------------ | -------: | ------------------------------------------------------------: | --------------- | ---------------------------------------------- |
+| CU 03 – Création d’un questionnaire                    |        1 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 04 – Suppression d'un questionnaire                 |        2 |                                                             2 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 05 – Ajout d’une question à un questionnaire        |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 06 – Suppression d’une question d’un questionnaire  |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 07 – Modification d’une question d’un questionnaire |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 08 – Visualisation des questionnaires               |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 09 – Lancement d’un quiz                            |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 10 – Connection à un quiz                           |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 11 – Répondre à une question                        |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
+| CU 12 – Passer à la question suivante                  |        3 |                                                             4 | tous            | [Document SRS](./documentation/SRS-PFE004.pdf) |
 
 ## Problèmes principaux rencontrés
 
