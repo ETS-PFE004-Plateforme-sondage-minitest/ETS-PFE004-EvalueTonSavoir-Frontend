@@ -1,3 +1,4 @@
+//QuizType.test.tsx
 import { QuizType } from "../../Types/QuizType";
 export function isQuizValid(quiz: QuizType): boolean {
     return quiz.title.length > 0 && quiz.questions.length > 0;
