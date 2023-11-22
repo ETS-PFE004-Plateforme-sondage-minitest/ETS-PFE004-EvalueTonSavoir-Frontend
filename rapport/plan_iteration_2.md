@@ -76,9 +76,11 @@ Tout les critères d'évaluation ont été atteints.
 
 ## Autres préoccupations et écarts
 
-Nous n'avons pas encore de solution de déploiement pour l'application. Héroku demande un compte de crédit pour déployer une application. Les solution GCP, AWS et Azure sont très complexes et demandent beaucoup de temps pour être mises en place.
+Nous n'avons pas encore de solution de déploiement pour l'application. Héroku demande un compte de crédit pour déployer une application. Les solutions GCP, AWS et Azure sont très complexes et demandent beaucoup de temps pour être mises en place.
 
 ## diagramme de conception actuel de l'application :
+
+![Alt text](./documentation/Diagramme_de_conception_iteration2.svg 'Diagramme de conception')
 
 ## diagramme de déploiement actuel de l'application :
 
