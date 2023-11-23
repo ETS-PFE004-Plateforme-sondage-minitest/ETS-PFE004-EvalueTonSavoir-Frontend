@@ -4,7 +4,7 @@ import { Socket } from 'socket.io-client';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { QuestionType } from '../../../../../Types/QuestionType';
+import { QuestionType } from '../../Types/QuestionType';
 
 import './liveResult.css';
 import {

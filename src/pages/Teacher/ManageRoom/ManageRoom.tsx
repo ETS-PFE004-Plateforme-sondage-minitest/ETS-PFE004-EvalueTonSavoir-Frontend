@@ -5,7 +5,7 @@ import { Socket } from 'socket.io-client';
 import { parse } from 'gift-pegjs';
 import { QuestionType } from '../../../Types/QuestionType';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-import LiveResultsComponent from './components/LiveResults/LiveResults';
+import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
 import { QuizService } from '../../../services/QuizService';
 import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
@@ -27,7 +27,7 @@ import {
 } from '@mui/material';
 import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
 import { Refresh, Error, PlayArrow, ChevronLeft, ChevronRight } from '@mui/icons-material';
-import UserWaitPage from './components/UserWaitPage/UserWaitPage';
+import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();

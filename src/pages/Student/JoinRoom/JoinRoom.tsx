@@ -4,8 +4,8 @@ import { parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
 import { ENV_VARIABLES } from '../../../constants';
 
-import StudentModeQuiz from '../StudentModeQuiz/StudentModeQuiz';
-import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
+import StudentModeQuiz from '../../../components/StudentModeQuiz/StudentModeQuiz';
+import TeacherModeQuiz from '../../../components/TeacherModeQuiz/TeacherModeQuiz';
 import webSocketService from '../../../services/WebsocketService';
 
 import './JoinRoom.css';

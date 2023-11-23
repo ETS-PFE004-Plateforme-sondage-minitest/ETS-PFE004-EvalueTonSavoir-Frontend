@@ -154,7 +154,7 @@ const GiftCheatSheet: React.FC = () => {
                     <code className="question-code-block">
                         {'<img '}
                         <span className="code-comment">{`un URL d'image`}</span>
-                        {' />'}
+                        {' >'}
                     </code>
                 </pre>
                 <p style={{ color: 'red' }}>
