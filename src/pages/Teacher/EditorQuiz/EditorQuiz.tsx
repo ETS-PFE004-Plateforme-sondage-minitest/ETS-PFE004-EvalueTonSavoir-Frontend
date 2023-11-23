@@ -6,8 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import Editor from '../../../components/Editor/Editor';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-import GoBackButton from '../../../components/GoBackButton/GoBackButton';
-import Modal from '../../../components/ConfirmDialog/ConfirmDialog';
 
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
@@ -15,6 +13,7 @@ import { QuizType } from '../../../Types/QuizType';
 import './EditorQuiz.css';
 import { Button } from '@mui/material';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
+import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 
 interface EditQuizParams {
     id: string;
@@ -101,10 +100,10 @@ const QuizForm: React.FC = () => {
     return (
         <div className="edit-page-container">
             <h1 className="page-title">Éditeur de quiz</h1>
-            {/* <GoBackButton
+            <ReturnButton
                 askConfirm
                 message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
-            /> */}
+            />
             <div className="container">
                 <div>
                     <h2 className="subtitle">Éditeur</h2>

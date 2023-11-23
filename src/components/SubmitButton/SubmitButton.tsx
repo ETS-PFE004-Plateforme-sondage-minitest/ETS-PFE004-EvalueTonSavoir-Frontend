@@ -8,6 +8,7 @@ interface Props {
     disabled: boolean;
 }
 
+// -TODO A SUPPRIMER
 const SubmitButton: React.FC<Props> = (props) => {
     const { hide, onClick, disabled } = props;
     if (hide) {

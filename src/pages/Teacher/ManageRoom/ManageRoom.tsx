@@ -29,6 +29,7 @@ import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
 import { Refresh, Error, PlayArrow, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
+import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -46,7 +47,6 @@ const ManageRoom: React.FC = () => {
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [loading, setLoading] = useState<boolean>(false);
     const [connectingError, setConnectingError] = useState<string>('');
-    const [confirmCloseQuizDialogOpen, setConfirmCloseQuizDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
@@ -183,14 +183,6 @@ const ManageRoom: React.FC = () => {
         if (quiz?.questions) setDisplayedQuestionString([quiz?.questions[questionIndex]]);
     };
 
-    const handleOnReturnButtonClick = () => {
-        if (quizQuestions) {
-            setConfirmCloseQuizDialogOpen(true);
-        } else {
-            handleReturn();
-        }
-    };
-
     const handleReturn = () => {
         disconnectWebSocket();
         navigate('/teacher/dashboard');
@@ -220,17 +212,7 @@ const ManageRoom: React.FC = () => {
 
     return (
         <div className="room-container">
-            <Button
-                variant="text"
-                startIcon={
-                    <IconButton>
-                        <ChevronLeft />
-                    </IconButton>
-                }
-                onClick={handleOnReturnButtonClick}
-            >
-                Retour
-            </Button>
+            <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
             {quizQuestions ? (
                 <div>
                     <div className="text-lg blue selectable-text room-name-wrapper">
@@ -270,14 +252,6 @@ const ManageRoom: React.FC = () => {
                     setQuizMode={setQuizMode}
                 />
             )}
-            <ConfirmDialog
-                open={confirmCloseQuizDialogOpen}
-                title="Êtes-vous sûr de vouloir fermer le quiz?"
-                message=""
-                onConfirm={handleReturn}
-                onCancel={() => setConfirmCloseQuizDialogOpen(false)}
-                buttonOrderType="warning"
-            />
         </div>
     );
 };

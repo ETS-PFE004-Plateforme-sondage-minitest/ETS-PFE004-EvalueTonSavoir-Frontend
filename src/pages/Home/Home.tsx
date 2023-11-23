@@ -1,8 +1,7 @@
 // Home.tsx
 import React from 'react';
 
-import './home.css';
-import '../../index.css';
+import './Home.css';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
