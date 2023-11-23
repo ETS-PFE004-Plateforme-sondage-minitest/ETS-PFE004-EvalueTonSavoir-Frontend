@@ -39,7 +39,7 @@ const UserWaitPage: React.FC<Props> = ({ users, launchQuiz, roomName, setQuizMod
                                     marginLeft: `${index % 6 === 0 && index % 12 !== 0 && '100px'}`
                                 }}
                             >
-                                <Chip label={index + 1} sx={{ width: '100%' }} />
+                                <Chip label={user.name} sx={{ width: '100%' }} />
                             </Grid>
                         ))}
                     </Grid>

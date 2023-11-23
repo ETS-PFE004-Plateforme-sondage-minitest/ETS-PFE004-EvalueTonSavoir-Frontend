@@ -41,7 +41,7 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
     };
 
     const getImageSource = (text: string): string => {
-        const regex = /src="([^"]*)"/;
+        const regex = /img([^"]*)/;
         const match = regex.exec(text);
         if (match) {
             return match[1];

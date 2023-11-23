@@ -32,7 +32,7 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
     };
 
     const getImageSource = (text: string): string => {
-        const regex = /src="([^"]*)"/;
+        const regex = /img([^"]*)/;
         const match = regex.exec(text);
         if (match) {
             return match[1];
