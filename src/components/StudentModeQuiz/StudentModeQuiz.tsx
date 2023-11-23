@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import QuestionComponent from '../Questions/Question';
 
-import '../../pages/Student/JoinRoom/JoinRoom.css';
+import '../../pages/Student/JoinRoom/joinRoom.css';
 import { QuestionType } from '../../Types/QuestionType';
 import { QuestionService } from '../../services/QuestionService';
 
