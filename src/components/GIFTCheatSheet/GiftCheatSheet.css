@@ -1,6 +1,6 @@
 .gift-cheat-sheet {
     width: 30vw;
-    height: 40vh;
+    height: 100%;
 }
 .subtitle {
     color: #3a3a3a;
@@ -10,7 +10,8 @@
 .question-type {
     margin-bottom: 20;
 }
-.question-code-block, .code-comment {
+.question-code-block,
+.code-comment {
     white-space: pre-line;
 }
 

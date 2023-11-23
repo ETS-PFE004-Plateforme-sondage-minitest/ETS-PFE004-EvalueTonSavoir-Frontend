@@ -1,11 +1,11 @@
 // ManageRoom.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import { parse } from 'gift-pegjs';
 import { QuestionType } from '../../../Types/QuestionType';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
+import LiveResultsComponent from './components/LiveResults/LiveResults';
 import { QuizService } from '../../../services/QuizService';
 import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
@@ -14,8 +14,23 @@ import { QuizType } from '../../../Types/QuizType';
 import './ManageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
 import { UserType } from '../../../Types/UserType';
+import {
+    Box,
+    Button,
+    Chip,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogTitle,
+    Grid,
+    IconButton
+} from '@mui/material';
+import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
+import { Refresh, Error, PlayArrow, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import UserWaitPage from './components/UserWaitPage/UserWaitPage';
 
 const ManageRoom: React.FC = () => {
+    const navigate = useNavigate();
     const [roomName, setRoomName] = useState<string>('');
     const [socket, setSocket] = useState<Socket | null>(null);
     const [users, setUsers] = useState<UserType[]>([]);
@@ -30,9 +45,16 @@ const ManageRoom: React.FC = () => {
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [loading, setLoading] = useState<boolean>(false);
     const [connectingError, setConnectingError] = useState<string>('');
+    const [confirmCloseQuizDialogOpen, setConfirmCloseQuizDialogOpen] = useState<boolean>(false);
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
+        createWebSocketRoom();
+        const temp = [];
+        for (let i = 0; i < 25; i++) {
+            temp.push({ name: `name ${i}`, id: i + '' });
+        }
+        setUsers(temp);
         return () => {
             webSocketService.disconnect();
         };
@@ -160,111 +182,105 @@ const ManageRoom: React.FC = () => {
         if (quiz?.questions) setDisplayedQuestionString([quiz?.questions[questionIndex]]);
     };
 
+    const handleOnReturnButtonClick = () => {
+        if (quizQuestions) {
+            setConfirmCloseQuizDialogOpen(true);
+        } else {
+            handleReturn();
+        }
+    };
+
+    const handleReturn = () => {
+        disconnectWebSocket();
+        navigate('/teacher/dashboard');
+    };
+
+    if (!roomName) {
+        return (
+            <div className="center">
+                {!connectingError ? (
+                    <LoadingCircle text="Veuillez attendre la connexion au serveur..." />
+                ) : (
+                    <div className="center-v-align">
+                        <Error sx={{ padding: 0 }} />
+                        <div className="text-base">{connectingError}</div>
+                        <Button
+                            variant="contained"
+                            startIcon={<Refresh />}
+                            onClick={createWebSocketRoom}
+                        >
+                            Reconnecter
+                        </Button>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
     return (
-        <div>
+        <div className="room-container">
+            <Button
+                variant="text"
+                startIcon={
+                    <IconButton>
+                        <ChevronLeft />
+                    </IconButton>
+                }
+                onClick={handleOnReturnButtonClick}
+            >
+                Retour
+            </Button>
             {quizQuestions ? (
                 <div>
-                    <h2 className="page-title selectable-text">Salle : {roomName} </h2>
-                    <button className="quit-btn" onClick={disconnectWebSocket}>
-                        Déconnexion
-                    </button>
-                    <GIFTTemplatePreview
-                        questions={displayedQuestionString ? displayedQuestionString : []}
-                        hideAnswers={true}
-                    ></GIFTTemplatePreview>
+                    <div className="text-lg blue selectable-text room-name-wrapper">
+                        Salle : {roomName}
+                    </div>
+                    <div className="title center-h-align">{quiz?.title}</div>
+                    {quizMode === 'teacher' && (
+                        <>
+                            <div className="center-h-align">
+                                <IconButton>
+                                    <ChevronLeft />
+                                </IconButton>
+                                <div className="text-base text-bold">
+                                    {`Questions ${1}/${quizQuestions.length}`}
+                                </div>
+                                <IconButton onClick={nextQuestion}>
+                                    <ChevronRight />
+                                </IconButton>
+                            </div>
+                            <GIFTTemplatePreview
+                                questions={displayedQuestionString ? displayedQuestionString : []}
+                                hideAnswers={true}
+                            />
+                        </>
+                    )}
                     <LiveResultsComponent
                         socket={socket}
                         questions={quizQuestions}
                         showSelectedQuestion={showSelectedQuestion}
                     ></LiveResultsComponent>
-                    <div className="bottom-btn">
-                        {quizMode === 'teacher' && (
-                            <button onClick={nextQuestion}>
-                                {isLastQuestion ? 'Fermer le quiz' : 'Question suivante'}
-                            </button>
-                        )}
-                        {quizMode === 'student' && (
-                            <button onClick={disconnectWebSocket}>Fermer le quiz</button>
-                        )}
-                    </div>
                 </div>
             ) : (
-                <div>
-                    {roomName ? (
-                        <div className="manage-room-container">
-                            <h2 className="page-title selectable-text">Salle : {roomName} </h2>
-
-                            <button className="quit-btn" onClick={disconnectWebSocket}>
-                                Déconnexion
-                            </button>
-                            <div className="quiz-setup-container">
-                                <div className="users-container">
-                                    <h2>Utilisateurs:</h2>
-                                    <div>
-                                        {users.map((user) => (
-                                            <span className="user" key={user.name}>
-                                                {user.name}{' '}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                className="launch-quiz-btn big-btn-general-style"
-                                onClick={launchQuiz}
-                            >
-                                Lancer le quiz
-                            </button>
-                            <div className="quiz-mode-selection">
-                                <h3>Sélection du mode du quiz</h3>
-                                <label className="mode-choice">
-                                    <input
-                                        type="radio"
-                                        checked={quizMode === 'teacher'}
-                                        onChange={() => {
-                                            setQuizMode('teacher');
-                                        }}
-                                    />
-                                    Au rythme du professeur
-                                </label>
-                                <label className="mode-choice">
-                                    <input
-                                        type="radio"
-                                        checked={quizMode === 'student'}
-                                        onChange={() => {
-                                            setQuizMode('student');
-                                        }}
-                                    />
-                                    Au rythme de l'étudiant
-                                </label>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="create-room-container">
-                            <h1 className="page-title">Création d'une salle</h1>
-                            {loading ? (
-                                <>
-                                    En attente pour la connexion....
-                                    <div className="loading-container">
-                                        <div className="loading" />
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    {connectingError && <div>{connectingError}</div>}
-                                    <button
-                                        className="create-room-btn big-btn-general-style"
-                                        onClick={createWebSocketRoom}
-                                    >
-                                        Créer une salle
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    )}
-                </div>
+                <UserWaitPage
+                    users={users}
+                    launchQuiz={launchQuiz}
+                    roomName={roomName}
+                    setQuizMode={setQuizMode}
+                />
             )}
+            <Dialog
+                open={confirmCloseQuizDialogOpen}
+                onClose={() => setConfirmCloseQuizDialogOpen(false)}
+            >
+                <DialogTitle>Êtes-vous sûr de vouloir fermer le quiz?</DialogTitle>
+                <DialogActions>
+                    <Button onClick={() => setConfirmCloseQuizDialogOpen(false)}>Annuler</Button>
+                    <Button onClick={handleReturn} autoFocus>
+                        Fermer
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

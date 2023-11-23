@@ -11,6 +11,8 @@ import webSocketService from '../../../services/WebsocketService';
 import './JoinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
 import { QuestionService } from '../../../services/QuestionService';
+import { Button, FormControl, FormControlLabel, Paper, TextField } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
@@ -67,6 +69,7 @@ const JoinRoom: React.FC = () => {
             setIsConnecting(false);
         });
         socket.on('connect_error', (error) => {
+            console.log('error');
             switch (error.message) {
                 case 'timeout':
                     setConnectionError("Le serveur n'est pas disponible");
@@ -93,6 +96,7 @@ const JoinRoom: React.FC = () => {
 
     const handleSocket = () => {
         setIsConnecting(true);
+        setConnectionError('');
         if (!socket?.connected) {
             handleCreateSocket();
         }
@@ -141,27 +145,40 @@ const JoinRoom: React.FC = () => {
         default:
             return (
                 <div className="join-room-container">
-                    <h1 className="page-title">Rejoindre une salle</h1>
-                    <div className="student-info-input-container">
-                        <input
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Nom d'utilisateur"
-                            className="student-info-input"
-                        />
-
-                        <input
-                            value={roomName}
-                            onChange={(e) => setRoomName(e.target.value.toUpperCase())}
-                            placeholder="Nom de la salle"
-                            className="student-info-input"
-                        />
-                        <button className="join-btn" onClick={handleSocket}>
-                            Rejoindre
-                            {isConnecting && <div className="loading-btn" />}
-                        </button>
-                        {connectionError}
-                    </div>
+                    <h1 className="title">Rejoindre une salle</h1>
+                    <Paper>
+                        <div className="login-container">
+                            <img className="login-avatar" src="./people.svg" width={'30%'}></img>
+                            <TextField
+                                label="Nom d'utilisateur"
+                                variant="outlined"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Nom d'utilisateur"
+                                sx={{ marginBottom: '1rem' }}
+                                fullWidth
+                            />
+                            <TextField
+                                label="Numéro de la salle"
+                                variant="outlined"
+                                value={roomName}
+                                onChange={(e) => setRoomName(e.target.value.toUpperCase())}
+                                placeholder="Nom de la salle"
+                                sx={{ marginBottom: '1rem' }}
+                                fullWidth
+                            />
+                            <LoadingButton
+                                loading={isConnecting}
+                                onClick={handleSocket}
+                                variant="contained"
+                                sx={{ marginBottom: `${connectionError && '2rem'}` }}
+                                disabled={!username || !roomName}
+                            >
+                                Rejoindre
+                            </LoadingButton>
+                            <div className="error-text text-base">{connectionError}</div>
+                        </div>
+                    </Paper>
                 </div>
             );
     }

@@ -152,9 +152,9 @@ const GiftCheatSheet: React.FC = () => {
                 <p>Pour insérer une image, vous devez utiliser la syntaxe suivante:</p>
                 <pre>
                     <code className="question-code-block">
-                        {'<img src="'}
+                        {'<img '}
                         <span className="code-comment">{`un URL d'image`}</span>
-                        {'" />'}
+                        {' />'}
                     </code>
                 </pre>
                 <p style={{ color: 'red' }}>

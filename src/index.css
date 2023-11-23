@@ -1,15 +1,116 @@
-:root {
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'OpenSans', sans-serif;
+}
+
+.primary-blue {
+    background-color: #5271ff;
+    color: #ffffff;
+}
+
+body,
+html,
+main {
+    height: 100%;
+}
+
+.wrapper {
+    height: 100%;
+}
+
+#root {
+    height: 100%;
+    overflow-y: hidden;
+}
+
+.app {
+    height: 100%;
+    padding: 1rem;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.title {
+    font-size: xx-large;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+.text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+.text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.center-v-align {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.center-v-align > * {
+    padding: 10px;
+}
+
+.center-h-align {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-h-align > * {
+    padding: 10px;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.end-h-align {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.error-text {
+    color: red;
+}
+
+.blue {
+    color: #5271ff;
+}
+/* :root {
     --selected: rgb(201, 61, 40, 0.2);
     --submit: rgb(201, 61, 40, 0.7);
     --submit-hover: rgb(201, 61, 40, 1);
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    user-select: none;
-}
+
 
 a,
 button {
@@ -44,11 +145,7 @@ button {
     align-items: center;
 }
 
-body {
-    background: rgb(174, 197, 235);
-    background: linear-gradient(90deg, #aec5eb 0%, #aec5eb 40%, #ebd5c5 100%);
-    height: 100vh;
-}
+ 
 
 .logo {
     width: 5%;
@@ -72,4 +169,4 @@ body {
 
 .selectable-text {
     user-select: text;
-}
+} */

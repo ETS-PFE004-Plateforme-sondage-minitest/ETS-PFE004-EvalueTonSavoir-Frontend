@@ -13,6 +13,7 @@ import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
 import './EditorQuiz.css';
+import { Button } from '@mui/material';
 
 interface EditQuizParams {
     id: string;
@@ -98,22 +99,23 @@ const QuizForm: React.FC = () => {
     }
 
     return (
-        <div>
+        <div className="edit-page-container">
             <h1 className="page-title">Éditeur de quiz</h1>
-            <GoBackButton
+            {/* <GoBackButton
                 askConfirm
                 message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
-            />
-            <div id="editor-preview-container" className="container">
-                <div className="editor-column">
+            /> */}
+            <div className="container">
+                <div>
                     <h2 className="subtitle">Éditeur</h2>
-                    <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
-                    <div className="quiz-action-buttons">
-                        <a onClick={handleSaveQuiz}>Enregistrer</a>
+                    <div className="editor-container">
+                        <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
+                        <Button variant="contained" onClick={handleSaveQuiz}>
+                            Enregistrer
+                        </Button>
                     </div>
                     <GiftCheatSheet />
                 </div>
-
                 <div className="preview-column">
                     <h2 className="subtitle">Prévisualisation</h2>
                     <GIFTTemplatePreview questions={filteredValue} />
