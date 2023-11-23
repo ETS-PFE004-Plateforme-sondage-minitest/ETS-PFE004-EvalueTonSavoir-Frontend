@@ -2,6 +2,7 @@
 import React from 'react';
 
 import './Home.css';
+import '../../index.css';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
