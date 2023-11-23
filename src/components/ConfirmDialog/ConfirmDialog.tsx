@@ -1,6 +1,5 @@
 // Modal.tsx
 import React from 'react';
-import './ConfirmDialog.css';
 import {
     Button,
     Dialog,

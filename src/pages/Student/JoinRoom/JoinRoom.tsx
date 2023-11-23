@@ -21,7 +21,7 @@ const JoinRoom: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [question, setQuestion] = useState<QuestionType>();
     const [quizMode, setQuizMode] = useState<string>();
-    const [parsedQuestions, setParsedQuestions] = useState<Array<QuestionType>>([]);
+    const [questions, setQuestions] = useState<QuestionType[]>([]);
     const [connectionError, setConnectionError] = useState<string>('');
     const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
@@ -44,21 +44,11 @@ const JoinRoom: React.FC = () => {
             setIsLoading(false);
             setQuestion(question);
         });
-        socket.on('launch-student-mode', (questions: Array<string>) => {
+        socket.on('launch-student-mode', (questions: QuestionType[]) => {
             setQuizMode('student');
             setIsLoading(false);
-            const parsedQuestions = [] as QuestionType[];
-            questions.forEach((question, index) => {
-                const image = QuestionService.getImage(question);
-                question = QuestionService.ignoreImgTags(question);
-
-                parsedQuestions.push({ question: parse(question)[0], image: image });
-                parsedQuestions[index].question.id = (index + 1).toString();
-            });
-            if (parsedQuestions.length === 0) return;
-
-            setParsedQuestions(parsedQuestions);
-            setQuestion(parsedQuestions[0]);
+            setQuestions(questions);
+            setQuestion(questions[0]);
         });
         socket.on('end-quiz', () => {
             disconnect();
@@ -127,7 +117,7 @@ const JoinRoom: React.FC = () => {
         case 'student':
             return (
                 <StudentModeQuiz
-                    questions={parsedQuestions}
+                    questions={questions}
                     submitAnswer={handleOnSubmitAnswer}
                     disconnectWebSocket={disconnect}
                 />

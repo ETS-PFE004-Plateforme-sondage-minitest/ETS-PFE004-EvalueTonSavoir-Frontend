@@ -21,10 +21,10 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
     const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
 
-    // TODO
-    // const previousQuestion = () => {
-    //     setQuestion(questions[Number(question?.id) - 2]);
-    // };
+    const previousQuestion = () => {
+        setQuestion(questions[Number(questionInfos.question?.id) - 2]);
+        setIsAnswerSubmitted(false);
+    };
 
     useEffect(() => {
         setImageUrl(QuestionService.getImageSource(questionInfos.image));
@@ -53,10 +53,10 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
                 question={questionInfos.question}
                 showAnswer={isAnswerSubmitted}
             />
-            {/* TODO {Number(question.id) > 1 && (
+            {Number(questionInfos.question.id) > 1 && (
                 <button onClick={previousQuestion}>Question précédente</button>
-            )} */}
-            {Number(questionInfos.question.id) < questions.length && isAnswerSubmitted && (
+            )}
+            {Number(questionInfos.question.id) < questions.length && (
                 <button onClick={nextQuestion}>Question suivante</button>
             )}
         </div>

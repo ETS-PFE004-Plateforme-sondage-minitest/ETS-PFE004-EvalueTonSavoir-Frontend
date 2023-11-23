@@ -169,7 +169,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         {Array.from({ length: maxQuestions }, (_, index) => (
                             <TableCell
                                 key={index}
-                                sx={{ textAlign: 'center' }}
+                                sx={{ textAlign: 'center', cursor: 'pointer' }}
                                 onClick={() => showSelectedQuestion(index)}
                             >{`Q${index + 1}`}</TableCell>
                         ))}
