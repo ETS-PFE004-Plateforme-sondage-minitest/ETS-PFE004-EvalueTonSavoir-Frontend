@@ -5,29 +5,20 @@ import { Socket } from 'socket.io-client';
 import { parse } from 'gift-pegjs';
 import { QuestionType } from '../../../Types/QuestionType';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-import LiveResultsComponent from './components/LiveResults/LiveResults';
+import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
 import { QuizService } from '../../../services/QuizService';
 import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
 import { QuizType } from '../../../Types/QuizType';
 
-import './ManageRoom.css';
+import './manageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
 import { UserType } from '../../../Types/UserType';
-import {
-    Box,
-    Button,
-    Chip,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogTitle,
-    Grid,
-    IconButton
-} from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
-import { Refresh, Error, PlayArrow, ChevronLeft, ChevronRight } from '@mui/icons-material';
-import UserWaitPage from './components/UserWaitPage/UserWaitPage';
+import { Refresh, Error, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
+import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -37,15 +28,10 @@ const ManageRoom: React.FC = () => {
     const quizId = useParams<{ id: string }>();
     const [quizQuestions, setQuizQuestions] = useState<QuestionType[] | undefined>();
     const [quiz, setQuiz] = useState<QuizType>();
-    const [isLastQuestion, setIsLastQuestion] = useState<boolean>(false);
-    const [presentQuestionString, setPresentQuestionString] = useState<string[]>();
-    const [displayedQuestionString, setDisplayedQuestionString] = useState<string[] | undefined>(
-        []
-    );
+    const [displayedQuestionString, setDisplayedQuestionString] = useState<string | undefined>();
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
-    const [loading, setLoading] = useState<boolean>(false);
     const [connectingError, setConnectingError] = useState<string>('');
-    const [confirmCloseQuizDialogOpen, setConfirmCloseQuizDialogOpen] = useState<boolean>(false);
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | undefined>(undefined);
 
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
@@ -65,39 +51,41 @@ const ManageRoom: React.FC = () => {
             webSocketService.endQuiz(roomName);
             webSocketService.disconnect();
             setSocket(null);
-            setPresentQuestionString(undefined);
             setQuizQuestions(undefined);
-            setIsLastQuestion(false);
+            setCurrentQuestion(undefined);
             setUsers([]);
             setRoomName('');
         }
     };
 
     const createWebSocketRoom = () => {
-        setLoading(true);
         setConnectingError('');
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
         socket.on('connect_error', (error) => {
-            setLoading(false);
             setConnectingError('Erreure lors de la connexion... Veuillez réessayer');
             console.error('WebSocket connection error:', error);
         });
         socket.on('create-success', (roomName: string) => {
-            setLoading(false);
             setRoomName(roomName);
         });
         socket.on('create-failure', () => {
-            setLoading(false);
             console.log('Error creating room.');
         });
         socket.on('user-joined', (user: UserType) => {
             setUsers((prevUsers) => [...prevUsers, user]);
+
+            // This doesn't relaunch the quiz for users that connected late
+            if (quizMode === 'teacher') {
+                webSocketService.nextQuestion(roomName, currentQuestion);
+            } else if (quizMode === 'student') {
+                console.log(quizQuestions);
+                webSocketService.launchStudentModeQuiz(roomName, quizQuestions);
+            }
         });
         socket.on('join-failure', (message) => {
-            setLoading(false);
             setConnectingError(message);
             setSocket(null);
         });
@@ -108,40 +96,47 @@ const ManageRoom: React.FC = () => {
         setSocket(socket);
     };
 
-    const nextQuestion = () => {
+    const initializeQuizQuestion = () => {
         const quizQuestionArray = quiz?.questions;
-        if (!quizQuestions) {
-            if (!quizQuestionArray) return;
-            const parsedQuestions = [] as QuestionType[];
-            quizQuestionArray.forEach((question, index) => {
-                const image = QuestionService.getImage(question);
-                question = QuestionService.ignoreImgTags(question);
-                parsedQuestions.push({ question: parse(question)[0], image: image });
-                parsedQuestions[index].question.id = (index + 1).toString();
-            });
-            if (parsedQuestions.length === 0) return;
+        if (!quizQuestionArray) return;
+        const parsedQuestions = [] as QuestionType[];
 
-            setQuizQuestions(parsedQuestions);
-            setPresentQuestionString([quizQuestionArray[0]]);
-            setDisplayedQuestionString([quizQuestionArray[0]]);
-            webSocketService.nextQuestion(roomName, parsedQuestions[0]);
-        } else {
-            if (!presentQuestionString || !quizQuestionArray) return;
-            const index = quizQuestionArray?.indexOf(presentQuestionString[0]);
-            if (index !== undefined && quizQuestions) {
-                if (index < quizQuestionArray.length - 1) {
-                    setPresentQuestionString([quizQuestionArray[index + 1]]);
-                    setDisplayedQuestionString([quizQuestionArray[index + 1]]);
-                    webSocketService.nextQuestion(roomName, quizQuestions[index + 1]);
+        quizQuestionArray.forEach((question, index) => {
+            const image = QuestionService.getImage(question);
+            question = QuestionService.ignoreImgTags(question);
+            parsedQuestions.push({ question: parse(question)[0], image: image });
+            parsedQuestions[index].question.id = (index + 1).toString();
+        });
+        if (parsedQuestions.length === 0) return;
 
-                    if (index === quizQuestionArray.length - 2) {
-                        setIsLastQuestion(true);
-                    }
-                } else {
-                    disconnectWebSocket();
-                }
-            }
-        }
+        setQuizQuestions(parsedQuestions);
+        setCurrentQuestion(parsedQuestions[0]);
+        setDisplayedQuestionString(quizQuestionArray[0]);
+
+        webSocketService.nextQuestion(roomName, parsedQuestions[0]);
+    };
+    const nextQuestion = () => {
+        if (!quizQuestions || !currentQuestion || !quiz?.questions) return;
+
+        const nextQuestionIndex = Number(currentQuestion?.question.id);
+
+        if (nextQuestionIndex === undefined || nextQuestionIndex > quizQuestions.length - 1) return;
+
+        setCurrentQuestion(quizQuestions[nextQuestionIndex]);
+        setDisplayedQuestionString(quiz?.questions[nextQuestionIndex]);
+        webSocketService.nextQuestion(roomName, quizQuestions[nextQuestionIndex]);
+    };
+
+    const previousQuestion = () => {
+        if (!quizQuestions || !currentQuestion || !quiz?.questions) return;
+
+        const prevQuestionIndex = Number(currentQuestion?.question.id) - 2; // -2 because question.id starts at index 1
+
+        if (prevQuestionIndex === undefined || prevQuestionIndex < 0) return;
+
+        setCurrentQuestion(quizQuestions[prevQuestionIndex]);
+        setDisplayedQuestionString(quiz?.questions[prevQuestionIndex]);
+        webSocketService.nextQuestion(roomName, quizQuestions[prevQuestionIndex]);
     };
 
     const launchStudentMode = () => {
@@ -158,7 +153,7 @@ const ManageRoom: React.FC = () => {
         if (parsedQuestions.length === 0) return;
 
         setQuizQuestions(parsedQuestions);
-        webSocketService.launchStudentModeQuiz(roomName, quiz?.questions);
+        webSocketService.launchStudentModeQuiz(roomName, parsedQuestions);
     };
 
     const launchQuiz = () => {
@@ -169,24 +164,17 @@ const ManageRoom: React.FC = () => {
         }
         switch (quizMode) {
             case 'student':
-                launchStudentMode();
-                return;
+                return launchStudentMode();
             case 'teacher':
-                nextQuestion();
-                return;
+                return initializeQuizQuestion();
         }
     };
 
     const showSelectedQuestion = (questionIndex: number) => {
-        //set presentQuestionString to the question at index questionIndex
-        if (quiz?.questions) setDisplayedQuestionString([quiz?.questions[questionIndex]]);
-    };
-
-    const handleOnReturnButtonClick = () => {
-        if (quizQuestions) {
-            setConfirmCloseQuizDialogOpen(true);
-        } else {
-            handleReturn();
+        if (quiz?.questions && quizQuestions) {
+            setDisplayedQuestionString(quiz?.questions[questionIndex]);
+            setCurrentQuestion(quizQuestions[questionIndex]);
+            webSocketService.nextQuestion(roomName, quizQuestions[questionIndex]);
         }
     };
 
@@ -219,17 +207,7 @@ const ManageRoom: React.FC = () => {
 
     return (
         <div className="room-container">
-            <Button
-                variant="text"
-                startIcon={
-                    <IconButton>
-                        <ChevronLeft />
-                    </IconButton>
-                }
-                onClick={handleOnReturnButtonClick}
-            >
-                Retour
-            </Button>
+            <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
             {quizQuestions ? (
                 <div>
                     <div className="text-lg blue selectable-text room-name-wrapper">
@@ -239,18 +217,30 @@ const ManageRoom: React.FC = () => {
                     {quizMode === 'teacher' && (
                         <>
                             <div className="center-h-align">
-                                <IconButton>
+                                <IconButton
+                                    onClick={previousQuestion}
+                                    disabled={
+                                        quizQuestions && Number(currentQuestion?.question.id) <= 1
+                                    }
+                                >
                                     <ChevronLeft />
                                 </IconButton>
                                 <div className="text-base text-bold">
-                                    {`Questions ${1}/${quizQuestions.length}`}
+                                    {`Questions ${currentQuestion?.question.id}/${quizQuestions.length}`}
                                 </div>
-                                <IconButton onClick={nextQuestion}>
+                                <IconButton
+                                    onClick={nextQuestion}
+                                    disabled={
+                                        quizQuestions &&
+                                        Number(currentQuestion?.question.id) >=
+                                            quizQuestions?.length
+                                    }
+                                >
                                     <ChevronRight />
                                 </IconButton>
                             </div>
                             <GIFTTemplatePreview
-                                questions={displayedQuestionString ? displayedQuestionString : []}
+                                questions={displayedQuestionString ? [displayedQuestionString] : []}
                                 hideAnswers={true}
                             />
                         </>
@@ -269,18 +259,6 @@ const ManageRoom: React.FC = () => {
                     setQuizMode={setQuizMode}
                 />
             )}
-            <Dialog
-                open={confirmCloseQuizDialogOpen}
-                onClose={() => setConfirmCloseQuizDialogOpen(false)}
-            >
-                <DialogTitle>Êtes-vous sûr de vouloir fermer le quiz?</DialogTitle>
-                <DialogActions>
-                    <Button onClick={() => setConfirmCloseQuizDialogOpen(false)}>Annuler</Button>
-                    <Button onClick={handleReturn} autoFocus>
-                        Fermer
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </div>
     );
 };

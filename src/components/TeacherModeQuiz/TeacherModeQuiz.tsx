@@ -1,10 +1,11 @@
 // TeacherModeQuiz.tsx
 import React, { useEffect, useState } from 'react';
 
-import QuestionComponent from '../../../components/Questions/Question';
+import QuestionComponent from '../Questions/Question';
 
-import '../styles.css';
-import { QuestionType } from '../../../Types/QuestionType';
+import '../../pages/Student/JoinRoom/joinRoom.css';
+import { QuestionType } from '../../Types/QuestionType';
+import { QuestionService } from '../../services/QuestionService';
 
 interface TeacherModeQuizProps {
     questionInfos: QuestionType;
@@ -22,22 +23,13 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
 
     useEffect(() => {
         setIsAnswerSubmitted(false);
-        setImageUrl(getImageSource(questionInfos.image));
+        setImageUrl(QuestionService.getImageSource(questionInfos.image));
     }, [questionInfos]);
 
     const handleOnSubmitAnswer = (answer: string | number | boolean) => {
         const idQuestion = questionInfos.question.id || '-1';
         submitAnswer(answer, idQuestion);
         setIsAnswerSubmitted(true);
-    };
-
-    const getImageSource = (text: string): string => {
-        const regex = /img([^"]*)/;
-        const match = regex.exec(text);
-        if (match) {
-            return match[1];
-        }
-        return '';
     };
 
     return (

@@ -1,6 +1,6 @@
 // Editor.tsx
 import React, { useState, useRef } from 'react';
-import './Editor.css';
+import './editor.css';
 
 interface EditorProps {
     initialValue: string;

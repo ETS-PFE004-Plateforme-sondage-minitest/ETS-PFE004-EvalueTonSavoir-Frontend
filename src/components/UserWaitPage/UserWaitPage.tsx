@@ -1,5 +1,5 @@
 import { Button, Chip, Grid } from '@mui/material';
-import { UserType } from '../../../../../Types/UserType';
+import { UserType } from '../../Types/UserType';
 import { PlayArrow } from '@mui/icons-material';
 import LaunchQuizDialog from '../LaunchQuizDialog/LaunchQuizDialog';
 import { useState } from 'react';

@@ -1,15 +1,9 @@
 .correct-answer {
     background-color: lightgreen;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .incorrect-answer {
     background-color: lightcoral;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .present-results-title {

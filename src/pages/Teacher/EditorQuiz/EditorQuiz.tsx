@@ -6,14 +6,14 @@ import { v4 as uuidv4 } from 'uuid';
 import Editor from '../../../components/Editor/Editor';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-import GoBackButton from '../../../components/GoBackButton/GoBackButton';
-import Modal from '../../../components/Modal/Modal';
 
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
-import './EditorQuiz.css';
+import './editorQuiz.css';
 import { Button } from '@mui/material';
+import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
+import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 
 interface EditQuizParams {
     id: string;
@@ -87,7 +87,6 @@ const QuizForm: React.FC = () => {
             });
             localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         }
-        alert('Quiz saved!');
         handleModalClose();
         navigate('/teacher/dashboard');
     };
@@ -101,10 +100,10 @@ const QuizForm: React.FC = () => {
     return (
         <div className="edit-page-container">
             <h1 className="page-title">Éditeur de quiz</h1>
-            {/* <GoBackButton
+            <ReturnButton
                 askConfirm
                 message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
-            /> */}
+            />
             <div className="container">
                 <div>
                     <h2 className="subtitle">Éditeur</h2>
@@ -121,17 +120,16 @@ const QuizForm: React.FC = () => {
                     <GIFTTemplatePreview questions={filteredValue} />
                 </div>
             </div>
-            {quizToSave && (
-                <Modal
-                    title="Sauvegarder le questionnaire"
-                    message="Entrez un titre pour votre questionnaire:"
-                    hasOptionalInput
-                    optionalInputValue={quizTitle}
-                    onOptionalInputChange={handleQuizTitleChange}
-                    onConfirm={handleQuizSave}
-                    onCancel={handleModalClose}
-                />
-            )}
+            <ConfirmDialog
+                open={quizToSave}
+                title="Sauvegarder le questionnaire"
+                message="Entrez un titre pour votre questionnaire:"
+                hasOptionalInput
+                optionalInputValue={quizTitle}
+                onOptionalInputChange={handleQuizTitleChange}
+                onConfirm={handleQuizSave}
+                onCancel={handleModalClose}
+            />
         </div>
     );
 };
