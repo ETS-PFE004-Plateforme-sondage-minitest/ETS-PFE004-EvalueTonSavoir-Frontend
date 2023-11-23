@@ -1,6 +1,6 @@
 // GiftCheatSheet.tsx
 import React from 'react';
-import './GiftCheatSheet.css';
+import './giftCheatSheet.css';
 
 const GiftCheatSheet: React.FC = () => {
     return (
@@ -154,7 +154,7 @@ const GiftCheatSheet: React.FC = () => {
                     <code className="question-code-block">
                         {'<img '}
                         <span className="code-comment">{`un URL d'image`}</span>
-                        {' />'}
+                        {' >'}
                     </code>
                 </pre>
                 <p style={{ color: 'red' }}>

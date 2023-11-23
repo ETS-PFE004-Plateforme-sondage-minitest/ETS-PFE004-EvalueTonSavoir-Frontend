@@ -1,9 +1,10 @@
 // StudentModeQuiz.tsx
 import React, { useEffect, useState } from 'react';
-import QuestionComponent from '../../../components/Questions/Question';
+import QuestionComponent from '../Questions/Question';
 
-import '../styles.css';
-import { QuestionType } from '../../../Types/QuestionType';
+import '../../pages/Student/JoinRoom/joinRoom.css';
+import { QuestionType } from '../../Types/QuestionType';
+import { QuestionService } from '../../services/QuestionService';
 
 interface StudentModeQuizProps {
     questions: QuestionType[];
@@ -20,13 +21,13 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
     const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
     const [imageUrl, setImageUrl] = useState('');
 
-    // TODO
-    // const previousQuestion = () => {
-    //     setQuestion(questions[Number(question?.id) - 2]);
-    // };
+    const previousQuestion = () => {
+        setQuestion(questions[Number(questionInfos.question?.id) - 2]);
+        setIsAnswerSubmitted(false);
+    };
 
     useEffect(() => {
-        setImageUrl(getImageSource(questionInfos.image));
+        setImageUrl(QuestionService.getImageSource(questionInfos.image));
     }, [questionInfos]);
 
     const nextQuestion = () => {
@@ -38,15 +39,6 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
         const idQuestion = questionInfos.question.id || '-1';
         submitAnswer(answer, idQuestion);
         setIsAnswerSubmitted(true);
-    };
-
-    const getImageSource = (text: string): string => {
-        const regex = /img([^"]*)/;
-        const match = regex.exec(text);
-        if (match) {
-            return match[1];
-        }
-        return '';
     };
 
     return (
@@ -61,10 +53,10 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
                 question={questionInfos.question}
                 showAnswer={isAnswerSubmitted}
             />
-            {/* TODO {Number(question.id) > 1 && (
+            {Number(questionInfos.question.id) > 1 && (
                 <button onClick={previousQuestion}>Question précédente</button>
-            )} */}
-            {Number(questionInfos.question.id) < questions.length && isAnswerSubmitted && (
+            )}
+            {Number(questionInfos.question.id) < questions.length && (
                 <button onClick={nextQuestion}>Question suivante</button>
             )}
         </div>

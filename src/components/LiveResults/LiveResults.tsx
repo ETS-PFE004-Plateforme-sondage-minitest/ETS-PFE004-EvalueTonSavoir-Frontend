@@ -4,7 +4,7 @@ import { Socket } from 'socket.io-client';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
-import { QuestionType } from '../../../../../Types/QuestionType';
+import { QuestionType } from '../../Types/QuestionType';
 
 import './liveResult.css';
 import {
@@ -169,7 +169,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         {Array.from({ length: maxQuestions }, (_, index) => (
                             <TableCell
                                 key={index}
-                                sx={{ textAlign: 'center' }}
+                                sx={{ textAlign: 'center', cursor: 'pointer' }}
                                 onClick={() => showSelectedQuestion(index)}
                             >{`Q${index + 1}`}</TableCell>
                         ))}
@@ -188,6 +188,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                 return (
                                     <TableCell
                                         key={index}
+                                        sx={{ textAlign: 'center' }}
                                         className={
                                             answerText === ''
                                                 ? ''

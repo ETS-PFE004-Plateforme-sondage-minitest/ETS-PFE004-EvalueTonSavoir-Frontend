@@ -1,17 +1,15 @@
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
-import { parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
 import { ENV_VARIABLES } from '../../../constants';
 
-import StudentModeQuiz from '../StudentModeQuiz/StudentModeQuiz';
-import TeacherModeQuiz from '../TeacherModeQuiz/TeacherModeQuiz';
+import StudentModeQuiz from '../../../components/StudentModeQuiz/StudentModeQuiz';
+import TeacherModeQuiz from '../../../components/TeacherModeQuiz/TeacherModeQuiz';
 import webSocketService from '../../../services/WebsocketService';
 
-import './JoinRoom.css';
+import './joinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
-import { QuestionService } from '../../../services/QuestionService';
-import { Button, FormControl, FormControlLabel, Paper, TextField } from '@mui/material';
+import { Paper, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 const JoinRoom: React.FC = () => {
@@ -21,14 +19,14 @@ const JoinRoom: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [question, setQuestion] = useState<QuestionType>();
     const [quizMode, setQuizMode] = useState<string>();
-    const [parsedQuestions, setParsedQuestions] = useState<Array<QuestionType>>([]);
+    const [questions, setQuestions] = useState<QuestionType[]>([]);
     const [connectionError, setConnectionError] = useState<string>('');
     const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
     useEffect(() => {
         handleCreateSocket();
         return () => {
-            webSocketService.disconnect();
+            disconnect();
         };
     }, []);
 
@@ -44,21 +42,11 @@ const JoinRoom: React.FC = () => {
             setIsLoading(false);
             setQuestion(question);
         });
-        socket.on('launch-student-mode', (questions: Array<string>) => {
+        socket.on('launch-student-mode', (questions: QuestionType[]) => {
             setQuizMode('student');
             setIsLoading(false);
-            const parsedQuestions = [] as QuestionType[];
-            questions.forEach((question, index) => {
-                const image = QuestionService.getImage(question);
-                question = QuestionService.ignoreImgTags(question);
-
-                parsedQuestions.push({ question: parse(question)[0], image: image });
-                parsedQuestions[index].question.id = (index + 1).toString();
-            });
-            if (parsedQuestions.length === 0) return;
-
-            setParsedQuestions(parsedQuestions);
-            setQuestion(parsedQuestions[0]);
+            setQuestions(questions);
+            setQuestion(questions[0]);
         });
         socket.on('end-quiz', () => {
             disconnect();
@@ -69,7 +57,6 @@ const JoinRoom: React.FC = () => {
             setIsConnecting(false);
         });
         socket.on('connect_error', (error) => {
-            console.log('error');
             switch (error.message) {
                 case 'timeout':
                     setConnectionError("Le serveur n'est pas disponible");
@@ -127,7 +114,7 @@ const JoinRoom: React.FC = () => {
         case 'student':
             return (
                 <StudentModeQuiz
-                    questions={parsedQuestions}
+                    questions={questions}
                     submitAnswer={handleOnSubmitAnswer}
                     disconnectWebSocket={disconnect}
                 />
