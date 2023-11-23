@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
 import { v4 as uuidv4 } from 'uuid';
 
-import Modal from '../../../components/ConfirmDialog/ConfirmDialog';
 import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
 import { QuestionService } from '../../../services/QuestionService';

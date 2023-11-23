@@ -1,6 +1,5 @@
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
-import { parse } from 'gift-pegjs';
 import { Socket } from 'socket.io-client';
 import { ENV_VARIABLES } from '../../../constants';
 
@@ -10,8 +9,7 @@ import webSocketService from '../../../services/WebsocketService';
 
 import './JoinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
-import { QuestionService } from '../../../services/QuestionService';
-import { Button, FormControl, FormControlLabel, Paper, TextField } from '@mui/material';
+import { Paper, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 const JoinRoom: React.FC = () => {

@@ -14,21 +14,10 @@ import { QuizType } from '../../../Types/QuizType';
 import './ManageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
 import { UserType } from '../../../Types/UserType';
-import {
-    Box,
-    Button,
-    Chip,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogTitle,
-    Grid,
-    IconButton
-} from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
-import { Refresh, Error, PlayArrow, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Refresh, Error, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
-import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 
 const ManageRoom: React.FC = () => {
@@ -41,7 +30,6 @@ const ManageRoom: React.FC = () => {
     const [quiz, setQuiz] = useState<QuizType>();
     const [displayedQuestionString, setDisplayedQuestionString] = useState<string | undefined>();
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
-    const [loading, setLoading] = useState<boolean>(false);
     const [connectingError, setConnectingError] = useState<string>('');
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | undefined>(undefined);
 
@@ -71,23 +59,19 @@ const ManageRoom: React.FC = () => {
     };
 
     const createWebSocketRoom = () => {
-        setLoading(true);
         setConnectingError('');
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
         socket.on('connect_error', (error) => {
-            setLoading(false);
             setConnectingError('Erreure lors de la connexion... Veuillez réessayer');
             console.error('WebSocket connection error:', error);
         });
         socket.on('create-success', (roomName: string) => {
-            setLoading(false);
             setRoomName(roomName);
         });
         socket.on('create-failure', () => {
-            setLoading(false);
             console.log('Error creating room.');
         });
         socket.on('user-joined', (user: UserType) => {
@@ -102,7 +86,6 @@ const ManageRoom: React.FC = () => {
             }
         });
         socket.on('join-failure', (message) => {
-            setLoading(false);
             setConnectingError(message);
             setSocket(null);
         });
