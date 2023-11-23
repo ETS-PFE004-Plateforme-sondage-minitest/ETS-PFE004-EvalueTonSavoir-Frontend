@@ -7,7 +7,7 @@ import StudentModeQuiz from '../../../components/StudentModeQuiz/StudentModeQuiz
 import TeacherModeQuiz from '../../../components/TeacherModeQuiz/TeacherModeQuiz';
 import webSocketService from '../../../services/WebsocketService';
 
-import './JoinRoom.css';
+import './joinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
 import { Paper, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';

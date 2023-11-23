@@ -1,5 +1,5 @@
 import React, { useState, DragEvent, useRef } from 'react';
-import './ImportModal.css';
+import './importModal.css';
 import { v4 as uuidv4 } from 'uuid';
 import {
     Button,

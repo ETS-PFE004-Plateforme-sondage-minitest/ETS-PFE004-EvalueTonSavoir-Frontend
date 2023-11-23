@@ -11,7 +11,7 @@ import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
 import { QuizType } from '../../../Types/QuizType';
 
-import './ManageRoom.css';
+import './manageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
 import { UserType } from '../../../Types/UserType';
 import { Button, IconButton } from '@mui/material';

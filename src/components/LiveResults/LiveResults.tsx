@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { QuestionType } from '../../Types/QuestionType';
 
-import './LiveResult.css';
+import './liveResult.css';
 import {
     FormControlLabel,
     FormGroup,

@@ -1,6 +1,6 @@
 // GiftCheatSheet.tsx
 import React from 'react';
-import './GiftCheatSheet.css';
+import './giftCheatSheet.css';
 
 const GiftCheatSheet: React.FC = () => {
     return (

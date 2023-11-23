@@ -10,7 +10,7 @@ import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePr
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
-import './EditorQuiz.css';
+import './editorQuiz.css';
 import { Button } from '@mui/material';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';

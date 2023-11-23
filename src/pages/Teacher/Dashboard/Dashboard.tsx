@@ -8,7 +8,7 @@ import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
 import { QuestionService } from '../../../services/QuestionService';
 
-import './Dashboard.css';
+import './dashboard.css';
 import ImportModal from '../../../components/ImportModal/ImportModal';
 //import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 import {
