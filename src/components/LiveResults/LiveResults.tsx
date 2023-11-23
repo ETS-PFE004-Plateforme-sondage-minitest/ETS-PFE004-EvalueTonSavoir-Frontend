@@ -188,6 +188,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                 return (
                                     <TableCell
                                         key={index}
+                                        sx={{ textAlign: 'center' }}
                                         className={
                                             answerText === ''
                                                 ? ''

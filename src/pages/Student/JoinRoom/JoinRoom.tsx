@@ -28,7 +28,7 @@ const JoinRoom: React.FC = () => {
     useEffect(() => {
         handleCreateSocket();
         return () => {
-            webSocketService.disconnect();
+            disconnect();
         };
     }, []);
 
@@ -59,7 +59,6 @@ const JoinRoom: React.FC = () => {
             setIsConnecting(false);
         });
         socket.on('connect_error', (error) => {
-            console.log('error');
             switch (error.message) {
                 case 'timeout':
                     setConnectionError("Le serveur n'est pas disponible");

@@ -92,6 +92,14 @@ const ManageRoom: React.FC = () => {
         });
         socket.on('user-joined', (user: UserType) => {
             setUsers((prevUsers) => [...prevUsers, user]);
+
+            // This doesn't relaunch the quiz for users that connected late
+            if (quizMode === 'teacher') {
+                webSocketService.nextQuestion(roomName, currentQuestion);
+            } else if (quizMode === 'student') {
+                console.log(quizQuestions);
+                webSocketService.launchStudentModeQuiz(roomName, quizQuestions);
+            }
         });
         socket.on('join-failure', (message) => {
             setLoading(false);
@@ -180,7 +188,6 @@ const ManageRoom: React.FC = () => {
     };
 
     const showSelectedQuestion = (questionIndex: number) => {
-        //set presentQuestionString to the question at index questionIndex
         if (quiz?.questions && quizQuestions) {
             setDisplayedQuestionString(quiz?.questions[questionIndex]);
             setCurrentQuestion(quizQuestions[questionIndex]);
