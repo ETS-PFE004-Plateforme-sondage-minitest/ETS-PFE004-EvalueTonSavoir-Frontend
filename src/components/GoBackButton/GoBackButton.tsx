@@ -1,9 +1,12 @@
 // GoBackButton.tsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Modal from '../Modal/Modal';
+import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 
-function GoBackButton({ askConfirm = false, message = 'Êtes-vous sûr de vouloir quitter la page ?' }) {
+function GoBackButton({
+    askConfirm = false,
+    message = 'Êtes-vous sûr de vouloir quitter la page ?'
+}) {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
@@ -22,15 +25,21 @@ function GoBackButton({ askConfirm = false, message = 'Êtes-vous sûr de vouloi
 
     return (
         <>
-            <button type="button" onClick={handleGoBack} className='modal-confirm' data-testid="modal-confirm-button">Retour</button>
-            {showModal && (
-                <Modal
-                    title="Confirmer"
-                    message={message}
-                    onConfirm={handleConfirm}
-                    onCancel={() => setShowModal(false)}
-                />
-            )}
+            <button
+                type="button"
+                onClick={handleGoBack}
+                className="modal-confirm"
+                data-testid="modal-confirm-button"
+            >
+                Retour
+            </button>
+            <ConfirmDialog
+                open={showModal}
+                title="Confirmer"
+                message={message}
+                onConfirm={handleConfirm}
+                onCancel={() => setShowModal(false)}
+            />
         </>
     );
 }

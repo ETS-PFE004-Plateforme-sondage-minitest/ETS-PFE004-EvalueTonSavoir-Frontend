@@ -1,7 +1,7 @@
 // Modal.test.tsx
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import Modal from '../../../components/Modal/Modal';
+import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 
 describe('Modal Component', () => {
     const mockOnConfirm = jest.fn();
@@ -9,6 +9,7 @@ describe('Modal Component', () => {
     const mockOnOptionalInputChange = jest.fn();
 
     const sampleProps = {
+        open: true,
         title: 'Sample Modal Title',
         message: 'Sample Modal Message',
         onConfirm: mockOnConfirm,
@@ -19,7 +20,7 @@ describe('Modal Component', () => {
     };
 
     beforeEach(() => {
-        render(<Modal {...sampleProps} />);
+        render(<ConfirmDialog {...sampleProps} />);
     });
 
     it('renders correctly', () => {

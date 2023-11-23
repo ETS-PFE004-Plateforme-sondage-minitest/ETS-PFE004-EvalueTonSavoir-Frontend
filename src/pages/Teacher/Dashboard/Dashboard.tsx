@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
 import { v4 as uuidv4 } from 'uuid';
 
-import Modal from '../../../components/Modal/Modal';
+import Modal from '../../../components/ConfirmDialog/ConfirmDialog';
 import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
 import { QuestionService } from '../../../services/QuestionService';
@@ -34,6 +34,7 @@ import {
     ContentCopy,
     Edit
 } from '@mui/icons-material';
+import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
@@ -278,14 +279,14 @@ const Dashboard: React.FC = () => {
                     ))}
                 </List>
             </div>
-            {quizIdsToRemove.length > 0 && (
-                <Modal
-                    title="Confirmation"
-                    message={quizRemoveMessage}
-                    onConfirm={handleConfirmRemoveQuiz}
-                    onCancel={handleCancelRemoveQuiz}
-                />
-            )}
+            <ConfirmDialog
+                open={quizIdsToRemove.length > 0}
+                title="Confirmation"
+                message={quizRemoveMessage}
+                onConfirm={handleConfirmRemoveQuiz}
+                onCancel={handleCancelRemoveQuiz}
+                buttonOrderType="warning"
+            />
             <ImportModal
                 open={showImportModal}
                 handleOnClose={() => setShowImportModal(false)}

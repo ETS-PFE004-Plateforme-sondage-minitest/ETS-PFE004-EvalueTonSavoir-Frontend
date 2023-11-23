@@ -28,6 +28,7 @@ import {
 import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
 import { Refresh, Error, PlayArrow, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
+import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -269,18 +270,14 @@ const ManageRoom: React.FC = () => {
                     setQuizMode={setQuizMode}
                 />
             )}
-            <Dialog
+            <ConfirmDialog
                 open={confirmCloseQuizDialogOpen}
-                onClose={() => setConfirmCloseQuizDialogOpen(false)}
-            >
-                <DialogTitle>Êtes-vous sûr de vouloir fermer le quiz?</DialogTitle>
-                <DialogActions>
-                    <Button onClick={() => setConfirmCloseQuizDialogOpen(false)}>Annuler</Button>
-                    <Button onClick={handleReturn} autoFocus>
-                        Fermer
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                title="Êtes-vous sûr de vouloir fermer le quiz?"
+                message=""
+                onConfirm={handleReturn}
+                onCancel={() => setConfirmCloseQuizDialogOpen(false)}
+                buttonOrderType="warning"
+            />
         </div>
     );
 };

@@ -7,13 +7,14 @@ import Editor from '../../../components/Editor/Editor';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 import GoBackButton from '../../../components/GoBackButton/GoBackButton';
-import Modal from '../../../components/Modal/Modal';
+import Modal from '../../../components/ConfirmDialog/ConfirmDialog';
 
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
 import './EditorQuiz.css';
 import { Button } from '@mui/material';
+import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 
 interface EditQuizParams {
     id: string;
@@ -87,7 +88,6 @@ const QuizForm: React.FC = () => {
             });
             localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         }
-        alert('Quiz saved!');
         handleModalClose();
         navigate('/teacher/dashboard');
     };
@@ -121,17 +121,16 @@ const QuizForm: React.FC = () => {
                     <GIFTTemplatePreview questions={filteredValue} />
                 </div>
             </div>
-            {quizToSave && (
-                <Modal
-                    title="Sauvegarder le questionnaire"
-                    message="Entrez un titre pour votre questionnaire:"
-                    hasOptionalInput
-                    optionalInputValue={quizTitle}
-                    onOptionalInputChange={handleQuizTitleChange}
-                    onConfirm={handleQuizSave}
-                    onCancel={handleModalClose}
-                />
-            )}
+            <ConfirmDialog
+                open={quizToSave}
+                title="Sauvegarder le questionnaire"
+                message="Entrez un titre pour votre questionnaire:"
+                hasOptionalInput
+                optionalInputValue={quizTitle}
+                onOptionalInputChange={handleQuizTitleChange}
+                onConfirm={handleQuizSave}
+                onCancel={handleModalClose}
+            />
         </div>
     );
 };
