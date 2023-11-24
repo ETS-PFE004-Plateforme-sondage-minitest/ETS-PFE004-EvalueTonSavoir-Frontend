@@ -159,7 +159,6 @@ const ManageRoom: React.FC = () => {
     const launchQuiz = () => {
         if (!socket || !roomName || quiz?.questions.length === 0) {
             console.log('Error launching quiz. No socket, room name or no questions.');
-            // TODO Add show error to user.
             return;
         }
         switch (quizMode) {
