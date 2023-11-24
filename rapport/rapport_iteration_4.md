@@ -35,7 +35,7 @@ Les objectifs clés de cette itération sont les suivants:
 | déploiement continue des applications                                                             |        3 |                                                             1 | tous             |                        | 🟢   |
 | Finaliser les suites de tests et les ajouter aux déploiement continue des application             |        3 |                                                             4 | Bavithra/Emerick |                        | 🟢   |
 | Amélioration de l'interface utilisateur                                                           |        4 |                                                             4 | Mihai            |                        | 🟢   |
-| Investigation d'une autre solution de déploiement backend                                         |        4 |                                                             4 | Mihai            |                        | 🟠   |
+| Investigation d'une autre solution de déploiement backend                                         |        4 |                                                             4 | tous             |                        | 🟠   |
 
 ## Problèmes principaux rencontrés
 
@@ -76,9 +76,25 @@ Enfin, nous avons intégré un système de déploiement continue pour le backend
 
 # Principaux diagrammes
 
-## Diagramme de classes
+## Diagramme de classe
 
-pas de changements majeurs par rapport à l'itération 2
+![Diagramme de conception du frontend](./documentation/diagrammes-iteration-4/Diagramme_conception_iteration4.svg)
+
+## Diagramme de déploiement
+
+![Diagramme de déploiement](./documentation/diagrammes-iteration-4/Diagramme_deploiement_iteration4.svg)
+
+## Diagramme de séquence - Création d'une salle
+
+![Diagramme de séquence - Création d'une salle](./documentation/diagrammes-iteration-4/Diagramme_de_sequence_creation_Room_iteration4.svg)
+
+## Diagramme de séquence - Rejoindre une salle
+
+![Diagramme de séquence - Rejoindre une salle](./documentation/diagrammes-iteration-4/Diagramme_de_sequence_join_room_iteration4.svg)
+
+## Diagramme de séquence - déroulement d'un quiz
+
+![Diagramme de séquence - déroulement d'un quiz](./documentation/diagrammes-iteration-4/Diagramme_de_sequence_deroulement_quiz_iteration4.svg)
 
 <a name="commentEstimer">Comment estimer la taille :</a>
 <https://docs.google.com/a/etsmtl.net/document/d/1bDy0chpWQbK9bZ82zdsBweuAgNYni3T2k79xihr6CuU/edit?usp=sharing>

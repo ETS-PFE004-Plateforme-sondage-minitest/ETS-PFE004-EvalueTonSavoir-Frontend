@@ -16,7 +16,7 @@ const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
     const [username, setUsername] = useState('');
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isWaitingForTeacher, setIsWaitingForTeacher] = useState(false);
     const [question, setQuestion] = useState<QuestionType>();
     const [quizMode, setQuizMode] = useState<string>();
     const [questions, setQuestions] = useState<QuestionType[]>([]);
@@ -33,18 +33,18 @@ const JoinRoom: React.FC = () => {
     const handleCreateSocket = () => {
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
         socket.on('join-success', () => {
-            setIsLoading(true);
+            setIsWaitingForTeacher(true);
             setIsConnecting(false);
             console.log('Successfully joined the room.');
         });
         socket.on('next-question', (question: QuestionType) => {
             setQuizMode('teacher');
-            setIsLoading(false);
+            setIsWaitingForTeacher(false);
             setQuestion(question);
         });
         socket.on('launch-student-mode', (questions: QuestionType[]) => {
             setQuizMode('student');
-            setIsLoading(false);
+            setIsWaitingForTeacher(false);
             setQuestions(questions);
             setQuestion(questions[0]);
         });
@@ -74,7 +74,7 @@ const JoinRoom: React.FC = () => {
     const disconnect = () => {
         setSocket(null);
         setQuestion(undefined);
-        setIsLoading(false);
+        setIsWaitingForTeacher(false);
         setQuizMode('');
         setRoomName('');
         setUsername('');
@@ -94,15 +94,10 @@ const JoinRoom: React.FC = () => {
     };
 
     const handleOnSubmitAnswer = (answer: string | number | boolean, idQuestion: string) => {
-        socket?.emit('submit-answer', {
-            answer: answer,
-            roomName: roomName,
-            username: username,
-            idQuestion: idQuestion
-        });
+        webSocketService.submitAnswer(roomName, answer, username, idQuestion);
     };
 
-    if (isLoading) {
+    if (isWaitingForTeacher) {
         return (
             <div className="waiting-text">
                 En attente que le professeur lance le questionnaire...
