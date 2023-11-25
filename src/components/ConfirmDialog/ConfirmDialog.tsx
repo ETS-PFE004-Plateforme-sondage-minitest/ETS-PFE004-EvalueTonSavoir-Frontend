@@ -60,6 +60,7 @@ const ConfirmDialog: React.FC<Props> = ({
                 <Button
                     variant={buttonOrderType === 'normal' ? 'contained' : 'outlined'}
                     onClick={onConfirm}
+                    data-testid="modal-confirm-button"
                 >
                     Confirmer
                 </Button>

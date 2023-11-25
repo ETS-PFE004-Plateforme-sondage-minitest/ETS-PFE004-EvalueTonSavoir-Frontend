@@ -58,17 +58,6 @@
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.quit-btn {
-    background-color: #e9afa3;
-    align-self: flex-end;
-    margin-right: 8vw;
-    margin-top: 6vh;
-    color: #3a3a3a;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
 .mode-choice {
     display: flex;
     flex-direction: row;

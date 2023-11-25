@@ -16,7 +16,10 @@ const theme = createTheme({
         }
     },
     typography: {
-        fontFamily: 'OpenSans'
+        fontFamily: 'OpenSans',
+        button: {
+            textTransform: 'none'
+        }
     }
 });
 

@@ -1,3 +1,7 @@
+:root {
+    --main-color: #5271ff;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -99,6 +103,17 @@ main {
 
 .error-text {
     color: red;
+}
+
+.quit-btn {
+    align-self: flex-end;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
 }
 
 .blue {

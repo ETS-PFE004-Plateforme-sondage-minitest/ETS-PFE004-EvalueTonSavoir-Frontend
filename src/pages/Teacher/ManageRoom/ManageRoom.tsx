@@ -14,11 +14,12 @@ import { QuizType } from '../../../Types/QuizType';
 import './manageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
 import { UserType } from '../../../Types/UserType';
-import { Button, IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
-import { Refresh, Error, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Refresh, Error } from '@mui/icons-material';
 import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
+import QuestionNavigation from '../../../components/QuestionNavigation/QuestionNavigation';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -215,29 +216,12 @@ const ManageRoom: React.FC = () => {
                     <div className="title center-h-align">{quiz?.title}</div>
                     {quizMode === 'teacher' && (
                         <>
-                            <div className="center-h-align">
-                                <IconButton
-                                    onClick={previousQuestion}
-                                    disabled={
-                                        quizQuestions && Number(currentQuestion?.question.id) <= 1
-                                    }
-                                >
-                                    <ChevronLeft />
-                                </IconButton>
-                                <div className="text-base text-bold">
-                                    {`Questions ${currentQuestion?.question.id}/${quizQuestions.length}`}
-                                </div>
-                                <IconButton
-                                    onClick={nextQuestion}
-                                    disabled={
-                                        quizQuestions &&
-                                        Number(currentQuestion?.question.id) >=
-                                            quizQuestions?.length
-                                    }
-                                >
-                                    <ChevronRight />
-                                </IconButton>
-                            </div>
+                            <QuestionNavigation
+                                currentQuestionId={Number(currentQuestion?.question.id)}
+                                questionsLength={quizQuestions?.length}
+                                previousQuestion={previousQuestion}
+                                nextQuestion={nextQuestion}
+                            />
                             <GIFTTemplatePreview
                                 questions={displayedQuestionString ? [displayedQuestionString] : []}
                                 hideAnswers={true}

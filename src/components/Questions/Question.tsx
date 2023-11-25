@@ -20,7 +20,6 @@ const Questions: React.FC<QuestionsProps> = ({
     imageUrl
 }) => {
     let questionTypeComponent = null;
-    console.log(imageUrl);
     switch (question.type) {
         case 'TF':
             questionTypeComponent = (
@@ -72,7 +71,7 @@ const Questions: React.FC<QuestionsProps> = ({
                     {imageUrl && (
                         <img src={imageUrl} alt="QuestionImage" style={{ width: '12vw' }} />
                     )}
-                    {questionTypeComponent}{' '}
+                    {questionTypeComponent}
                 </>
             ) : (
                 <div>Question de type inconnue</div>
