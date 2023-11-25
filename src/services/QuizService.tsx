@@ -7,6 +7,7 @@ export class QuizService {
         if (!storage) {
             storage = localStorage;
         }
+
         const storedQuizzes = JSON.parse(storage.getItem('quizzes') || '[]');
         const quiz = storedQuizzes.find((q: QuizType) => q.id === id);
         return quiz;
