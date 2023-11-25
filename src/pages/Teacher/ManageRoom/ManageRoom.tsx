@@ -206,43 +206,47 @@ const ManageRoom: React.FC = () => {
     }
 
     return (
-        <div className="room-container">
-            <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
-            {quizQuestions ? (
-                <div>
-                    <div className="text-lg blue selectable-text room-name-wrapper">
-                        Salle : {roomName}
+        <div className="room-wrapper">
+            <div className="room-container">
+                <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
+                {quizQuestions ? (
+                    <div>
+                        <div className="text-lg blue selectable-text room-name-wrapper">
+                            Salle : {roomName}
+                        </div>
+                        <div className="title center-h-align">{quiz?.title}</div>
+                        {quizMode === 'teacher' && (
+                            <>
+                                <QuestionNavigation
+                                    currentQuestionId={Number(currentQuestion?.question.id)}
+                                    questionsLength={quizQuestions?.length}
+                                    previousQuestion={previousQuestion}
+                                    nextQuestion={nextQuestion}
+                                />
+                                <GIFTTemplatePreview
+                                    questions={
+                                        displayedQuestionString ? [displayedQuestionString] : []
+                                    }
+                                    hideAnswers={true}
+                                />
+                            </>
+                        )}
+                        <LiveResultsComponent
+                            quizMode={quizMode}
+                            socket={socket}
+                            questions={quizQuestions}
+                            showSelectedQuestion={showSelectedQuestion}
+                        ></LiveResultsComponent>
                     </div>
-                    <div className="title center-h-align">{quiz?.title}</div>
-                    {quizMode === 'teacher' && (
-                        <>
-                            <QuestionNavigation
-                                currentQuestionId={Number(currentQuestion?.question.id)}
-                                questionsLength={quizQuestions?.length}
-                                previousQuestion={previousQuestion}
-                                nextQuestion={nextQuestion}
-                            />
-                            <GIFTTemplatePreview
-                                questions={displayedQuestionString ? [displayedQuestionString] : []}
-                                hideAnswers={true}
-                            />
-                        </>
-                    )}
-                    <LiveResultsComponent
-                        quizMode={quizMode}
-                        socket={socket}
-                        questions={quizQuestions}
-                        showSelectedQuestion={showSelectedQuestion}
-                    ></LiveResultsComponent>
-                </div>
-            ) : (
-                <UserWaitPage
-                    users={users}
-                    launchQuiz={launchQuiz}
-                    roomName={roomName}
-                    setQuizMode={setQuizMode}
-                />
-            )}
+                ) : (
+                    <UserWaitPage
+                        users={users}
+                        launchQuiz={launchQuiz}
+                        roomName={roomName}
+                        setQuizMode={setQuizMode}
+                    />
+                )}
+            </div>
         </div>
     );
 };

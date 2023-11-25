@@ -16,29 +16,26 @@ const UserWaitPage: React.FC<Props> = ({ users, launchQuiz, roomName, setQuizMod
     return (
         <div className="manage-room-container">
             <div className="end-h-align w-full">
-                <div className="text-xl text-bold selectable-text">Salle : {roomName}</div>
-                <Button
-                    variant="contained"
-                    onClick={() => setIsDialogOpen(true)}
-                    startIcon={<PlayArrow />}
-                >
-                    Lancer
-                </Button>
+                <div className="title text-bold selectable-text">Salle : {roomName}</div>
+                <div className="text-bold">
+                    <Button
+                        variant="contained"
+                        onClick={() => setIsDialogOpen(true)}
+                        startIcon={<PlayArrow />}
+                        fullWidth
+                        sx={{ height: '100%', fontWeight: 800, fontSize: 20 }}
+                    >
+                        Lancer
+                    </Button>
+                </div>
             </div>
 
             <div className="quiz-setup-container">
                 <div>
-                    <div className="title">{`Utilisateurs: (${users.length}/60)`}</div>
-                    <Grid container spacing={2} columns={7}>
+                    <div className="text-xl text-bold mb-1">{`Utilisateurs: (${users.length}/60)`}</div>
+                    <Grid container spacing={2} columns={6}>
                         {users.map((user, index) => (
-                            <Grid
-                                item
-                                key={user.name + index}
-                                xs={1}
-                                sx={{
-                                    marginLeft: `${index % 6 === 0 && index % 12 !== 0 && '100px'}`
-                                }}
-                            >
+                            <Grid item key={user.name + index} xs={1}>
                                 <Chip label={user.name} sx={{ width: '100%' }} />
                             </Grid>
                         ))}

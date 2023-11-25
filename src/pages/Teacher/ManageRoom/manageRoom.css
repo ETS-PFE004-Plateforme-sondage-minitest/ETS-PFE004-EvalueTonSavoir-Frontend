@@ -23,12 +23,11 @@
 }
 
 .quiz-setup-container {
-    margin-top: 10vh;
     display: flex;
     flex-direction: row;
-    align-items: center;
     height: 100%;
-    width: 100vw;
+    width: 100%;
+    margin-top: 3rem;
 }
 
 .quiz-mode-selection {
@@ -46,9 +45,7 @@
     flex-direction: column;
     align-items: center;
     flex-grow: 1;
-    padding: 20px;
     gap: 2vh;
-    height: 20vh;
 }
 
 .launch-quiz-btn {
@@ -72,7 +69,6 @@
     padding: 10px 20px;
     border: 1px solid black;
     border-radius: 10px;
-    margin: 10px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -85,10 +81,22 @@
 
 .room-container {
     position: relative;
+    max-width: 80vw;
+}
+
+.room-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
 }
 
 .room-name-wrapper {
     position: absolute;
     top: 0;
     right: 0;
+}
+
+.user-item {
+    width: 100%;
 }
