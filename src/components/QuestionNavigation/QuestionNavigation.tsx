@@ -15,12 +15,16 @@ const QuestionNavigation: React.FC<Props> = ({
 }) => {
     return (
         <div className="center-h-align">
-            <IconButton onClick={previousQuestion} disabled={currentQuestionId <= 1}>
+            <IconButton
+                onClick={previousQuestion}
+                disabled={currentQuestionId <= 1}
+                color="primary"
+            >
                 <ChevronLeft />
             </IconButton>
             <h2 className="page-title">{`Question ${currentQuestionId}/${questionsLength}`}</h2>
             <IconButton onClick={nextQuestion} disabled={currentQuestionId >= questionsLength}>
-                <ChevronRight />
+                <ChevronRight color="primary" />
             </IconButton>
         </div>
     );

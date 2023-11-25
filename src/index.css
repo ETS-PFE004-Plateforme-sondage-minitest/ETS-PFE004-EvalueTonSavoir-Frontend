@@ -14,11 +14,18 @@
 }
 
 body,
-html,
-main {
+html {
     height: 100%;
+    width: 100%;
 }
 
+main {
+    height: 85%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 5rem;
+}
 .wrapper {
     height: 100%;
 }
@@ -31,6 +38,13 @@ main {
 .app {
     height: 100%;
     padding: 1rem;
+}
+
+.logo {
+    position: absolute;
+    cursor: pointer;
+    left: 0.5rem;
+    top: 0.5rem;
 }
 
 .center {
@@ -162,11 +176,7 @@ button {
 
  
 
-.logo {
-    width: 5%;
-    position: absolute;
-    left: 0;
-}
+
 
 .big-btn-general-style {
     display: flex;

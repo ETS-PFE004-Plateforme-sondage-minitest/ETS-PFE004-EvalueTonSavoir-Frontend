@@ -180,7 +180,7 @@ const Dashboard: React.FC = () => {
             ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
             : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
     return (
-        <>
+        <div className="dashboard-wrapper">
             <div className="dashboard-container">
                 <div className="action-bar">
                     <h1 className="page-title">Tableau de bord</h1>
@@ -237,7 +237,7 @@ const Dashboard: React.FC = () => {
                     </Tooltip>
                 </div>
 
-                <List disablePadding>
+                <List disablePadding sx={{ overflowY: 'scroll', height: '100%' }}>
                     {filteredQuizzes.map((quiz: QuizType) => (
                         <ListItem key={quiz.id} disablePadding>
                             <ListItemButton
@@ -291,7 +291,7 @@ const Dashboard: React.FC = () => {
                 handleOnClose={() => setShowImportModal(false)}
                 handleOnImport={handleOnImport}
             />
-        </>
+        </div>
     );
 };
 
