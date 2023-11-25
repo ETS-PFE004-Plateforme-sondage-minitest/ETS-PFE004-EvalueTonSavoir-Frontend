@@ -6,6 +6,7 @@ export class QuestionService {
         }
         return '';
     }
+
     static ignoreImgTags(text: string): string {
         if (text.includes('<img')) {
             const imageUrlMatch = text.match(/<img[^>]+>/i);
