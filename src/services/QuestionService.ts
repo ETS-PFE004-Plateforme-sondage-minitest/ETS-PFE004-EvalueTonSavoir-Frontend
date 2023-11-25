@@ -8,12 +8,10 @@ export class QuestionService {
     }
 
     static getImageSource = (text: string): string => {
-        const regex = /img([^"]*)/;
-        const match = regex.exec(text);
-        if (match) {
-            return match[1];
-        }
-        return '';
+        let imageUrl = text.replace('<img ', '');
+        imageUrl = imageUrl.replace('>', '');
+
+        return imageUrl;
     };
 
     static ignoreImgTags(text: string): string {
