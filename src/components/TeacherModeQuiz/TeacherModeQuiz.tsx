@@ -24,6 +24,7 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
     useEffect(() => {
         setIsAnswerSubmitted(false);
         setImageUrl(QuestionService.getImageSource(questionInfos.image));
+        console.log(imageUrl);
     }, [questionInfos]);
 
     const handleOnSubmitAnswer = (answer: string | number | boolean) => {
@@ -41,15 +42,11 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
             {isAnswerSubmitted ? (
                 <div className="wait-text">En attente pour la prochaine question... </div>
             ) : (
-                <>
-                    {imageUrl ? (
-                        <img src={imageUrl} alt="QuestionImage" style={{ width: '20vw' }} />
-                    ) : null}
-                    <QuestionComponent
-                        handleOnSubmitAnswer={handleOnSubmitAnswer}
-                        question={questionInfos.question}
-                    />
-                </>
+                <QuestionComponent
+                    imageUrl={imageUrl}
+                    handleOnSubmitAnswer={handleOnSubmitAnswer}
+                    question={questionInfos.question}
+                />
             )}
         </div>
     );

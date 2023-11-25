@@ -10,7 +10,6 @@ export class QuestionService {
     static getImageSource = (text: string): string => {
         let imageUrl = text.replace('<img ', '');
         imageUrl = imageUrl.replace('>', '');
-
         return imageUrl;
     };
 

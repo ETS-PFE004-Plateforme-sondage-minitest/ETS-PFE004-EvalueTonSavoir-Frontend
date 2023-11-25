@@ -47,11 +47,11 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
             <button className="quit-btn" onClick={disconnectWebSocket}>
                 Déconnexion
             </button>
-            {imageUrl ? <img src={imageUrl} alt="QuestionImage" style={{ width: '20vw' }} /> : null}
             <QuestionComponent
                 handleOnSubmitAnswer={handleOnSubmitAnswer}
                 question={questionInfos.question}
                 showAnswer={isAnswerSubmitted}
+                imageUrl={imageUrl}
             />
             {Number(questionInfos.question.id) > 1 && (
                 <button onClick={previousQuestion}>Question précédente</button>

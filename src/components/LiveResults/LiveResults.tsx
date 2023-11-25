@@ -24,6 +24,7 @@ interface LiveResultsProps {
     socket: Socket | null;
     questions: QuestionType[];
     showSelectedQuestion: (index: number) => void;
+    quizMode: 'teacher' | 'student';
 }
 
 interface Answer {
@@ -38,7 +39,12 @@ interface StudentResult {
     answers: Answer[];
 }
 
-const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion }) => {
+const LiveResults: React.FC<LiveResultsProps> = ({
+    socket,
+    questions,
+    showSelectedQuestion,
+    quizMode
+}) => {
     const [showUsernames, setShowUsernames] = useState<boolean>(false);
     const [showCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
@@ -169,8 +175,13 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         {Array.from({ length: maxQuestions }, (_, index) => (
                             <TableCell
                                 key={index}
-                                sx={{ textAlign: 'center', cursor: 'pointer' }}
-                                onClick={() => showSelectedQuestion(index)}
+                                sx={{
+                                    textAlign: 'center',
+                                    cursor: `${quizMode === 'teacher' ? 'pointer' : 'auto'}`
+                                }}
+                                onClick={() =>
+                                    quizMode === 'teacher' && showSelectedQuestion(index)
+                                }
                             >{`Q${index + 1}`}</TableCell>
                         ))}
                     </TableRow>

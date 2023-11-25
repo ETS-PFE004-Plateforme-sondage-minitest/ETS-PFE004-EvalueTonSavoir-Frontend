@@ -245,6 +245,7 @@ const ManageRoom: React.FC = () => {
                         </>
                     )}
                     <LiveResultsComponent
+                        quizMode={quizMode}
                         socket={socket}
                         questions={quizQuestions}
                         showSelectedQuestion={showSelectedQuestion}
