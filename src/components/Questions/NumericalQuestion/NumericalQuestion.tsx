@@ -1,5 +1,6 @@
 // NumericalQuestion.tsx
 import React, { useState } from 'react';
+import Latex from 'react-latex';
 import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
 
@@ -29,7 +30,7 @@ const NumericalQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-wrapper">
-            <div className="title">{questionTitle}</div>
+            <div className="title"><Latex>{questionTitle}</Latex></div>
             {showAnswer ? (
                 <div className="correct-answer-text">{correctAnswer}</div>
             ) : (

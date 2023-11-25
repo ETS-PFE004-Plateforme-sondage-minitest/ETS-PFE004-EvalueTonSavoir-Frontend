@@ -1,5 +1,6 @@
 // MultipleChoiceQuestion.tsx
 import React, { useState } from 'react';
+import Latex from 'react-latex';
 import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
 
@@ -30,7 +31,7 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-container">
-            <div className="title">{questionTitle}</div>
+            <div className="title"><Latex>{questionTitle}</Latex></div>
             {choices.map((choice, i) => {
                 const selected = answer === choice.text.text ? 'selected' : '';
                 return (
@@ -42,7 +43,7 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
                         >
                             {showAnswer && (choice.isCorrect ? '✅' : '❌')}
                             <div className={`circle ${selected}`}>{alphabet[i]}</div>
-                            <div className={`answer-text ${selected}`}>{choice.text.text}</div>
+                            <div className={`answer-text ${selected}`}><Latex>{choice.text.text}</Latex></div>
                         </button>
                     </div>
                 );

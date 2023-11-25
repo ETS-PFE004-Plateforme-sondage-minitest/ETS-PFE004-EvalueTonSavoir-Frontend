@@ -1,5 +1,6 @@
 // TrueFalseQuestion.tsx
 import React, { useState } from 'react';
+import Latex from 'react-latex';
 import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
 
@@ -18,7 +19,7 @@ const TrueFalseQuestion: React.FC<Props> = (props) => {
     const selectedFalse = answer !== undefined && !answer ? 'selected' : '';
     return (
         <div className="question-container">
-            <div className="title">{questionTitle}</div>
+            <div className="title"><Latex>{questionTitle}</Latex></div>
             <div className="choice-container">
                 <button
                     className="button-wrapper"
