@@ -1,6 +1,16 @@
 import React, { useState, DragEvent, useRef } from 'react';
 import './importModal.css';
 import { v4 as uuidv4 } from 'uuid';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    IconButton
+} from '@mui/material';
+import { Clear, Download } from '@mui/icons-material';
 
 type DroppedFile = {
     id: number;
@@ -12,29 +22,23 @@ type DroppedFile = {
 interface Props {
     handleOnClose: () => void;
     handleOnImport: () => void;
+    open: boolean;
 }
 
-const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport }) => {
-    const [isDragging, setIsDragging] = useState(false);
+const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) => {
     const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        setIsDragging(true);
     };
 
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
     };
 
-    const handleDragLeave = () => {
-        setIsDragging(false);
-    };
-
     const handleDrop = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        setIsDragging(false);
 
         const files = e.dataTransfer.files;
         handleFiles(files);
@@ -81,7 +85,6 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport }) => {
             const updatedQuizzes = [...storedQuizzes, ...quizzesToImport];
             localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
 
-            alert('Quiz saved!');
             handleOnImport();
         });
     };
@@ -104,68 +107,58 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport }) => {
     };
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <h2>{'Importation de quiz'}</h2>
-                <div
+        <>
+            <Dialog open={open} onClose={handleOnClose} fullWidth>
+                <DialogTitle sx={{ fontWeight: 'bold', fontSize: 24 }}>
+                    {'Importation de quiz'}
+                </DialogTitle>
+                <DialogContent
+                    className="import-container"
                     onDragEnter={handleDragEnter}
                     onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    style={{
-                        border: isDragging ? '2px dashed #0087F7' : '2px solid #C0C0C0',
-                        borderRadius: '4px',
-                        padding: '20px',
-                        textAlign: 'center',
-                        cursor: 'pointer'
-                    }}
+                    onClick={handleBrowseButtonClick}
                 >
-                    {isDragging ? (
-                        <p>Déposez les fichiers ici</p>
-                    ) : (
-                        <p>Glissez et déposez les fichiers ici</p>
-                    )}
-
-                    <div style={{ marginTop: '20px' }}>
-                        {droppedFiles.map((file) => (
-                            <div
-                                key={file.id}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    marginBottom: '10px'
-                                }}
-                            >
-                                <span style={{ marginRight: '10px' }}>{file.icon}</span>
-                                <span>{file.name}</span>
-                                <button
-                                    style={{ marginLeft: '10px', cursor: 'pointer' }}
-                                    onClick={() => handleRemoveFile(file.id)}
-                                >
-                                    X
-                                </button>
-                            </div>
-                        ))}
+                    <div className="mb-1">
+                        <DialogContentText sx={{ textAlign: 'center' }}>
+                            Déposer des fichiers ici ou
+                            <br />
+                            cliquez pour ouvrir l'explorateur des fichiers
+                        </DialogContentText>
                     </div>
-                </div>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handleFileInputChange}
-                    multiple
-                />
-                <button onClick={handleBrowseButtonClick}>Parcourir</button>
-                <div className="modal-buttons">
-                    <button className="modal-cancel" onClick={handleOnClose}>
+                    <Download color="primary" />
+                </DialogContent>
+                <DialogContent>
+                    {droppedFiles.map((file) => (
+                        <div key={file.id} className="file-container">
+                            <span>{file.icon}</span>
+                            <span>{file.name}</span>
+                            <IconButton
+                                sx={{ padding: 0 }}
+                                onClick={() => handleRemoveFile(file.id)}
+                            >
+                                <Clear />
+                            </IconButton>
+                        </div>
+                    ))}
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleOnClose}>
                         Annuler
-                    </button>
-                    <button className="modal-confirm" onClick={handleOnSave}>
+                    </Button>
+                    <Button variant="contained" onClick={handleOnSave}>
                         Importer
-                    </button>
-                </div>
-            </div>
-        </div>
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileInputChange}
+                multiple
+            />
+        </>
     );
 };
 

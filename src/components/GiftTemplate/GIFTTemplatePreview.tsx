@@ -26,7 +26,7 @@ const GIFTTemplatePreview: React.FC<GIFTTemplatePreviewProps> = ({
                     const imageUrlMatch = item.match(/<img[^>]+>/i);
                     if (imageUrlMatch) {
                         let imageUrl = imageUrlMatch[0];
-                        imageUrl = imageUrl.replace('src=', 'style="width:10vw;" src=');
+                        imageUrl = imageUrl.replace('img', 'img style="width:10vw;" src=');
                         item = item.replace(imageUrlMatch[0], '');
                         previewHTML += `${imageUrl}`;
                     }

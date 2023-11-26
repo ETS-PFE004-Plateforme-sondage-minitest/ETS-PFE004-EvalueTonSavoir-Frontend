@@ -15,11 +15,11 @@ export default function Title({ type, title }: TitleOptions): string {
 `;
 
     const QuestionTitle = `
-  color: ${theme(state.theme, 'black700', 'gray200')}
+  color: ${theme(state.theme, 'blue', 'gray200')};
   `;
 
     const OptionalTitle = `
-  color: ${theme(state.theme, 'teal600', 'gray900')}
+  color: ${theme(state.theme, 'blue', 'gray900')};
 `;
 
     const QuestionTypeContainer = `
@@ -35,7 +35,7 @@ export default function Title({ type, title }: TitleOptions): string {
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
   border-radius: 4px;
-  background-color: ${theme(state.theme, 'cyan100', 'black400')};
+  background-color: ${theme(state.theme, 'white', 'black400')};
   color: ${theme(state.theme, 'teal700', 'gray300')};
 `;
 

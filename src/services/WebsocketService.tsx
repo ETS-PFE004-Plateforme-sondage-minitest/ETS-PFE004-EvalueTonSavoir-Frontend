@@ -50,6 +50,22 @@ class WebSocketService {
             this.socket.emit('join-room', { enteredRoomName, username });
         }
     }
+
+    submitAnswer(
+        roomName: string,
+        answer: string | number | boolean,
+        username: string,
+        idQuestion: string
+    ) {
+        if (this.socket) {
+            this.socket?.emit('submit-answer', {
+                answer: answer,
+                roomName: roomName,
+                username: username,
+                idQuestion: idQuestion
+            });
+        }
+    }
 }
 
 const webSocketService = new WebSocketService();

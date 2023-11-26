@@ -1,7 +1,8 @@
 // MultipleChoiceQuestion.tsx
 import React, { useState } from 'react';
-import SubmitButton from '../../SubmitButton/SubmitButton';
+import Latex from 'react-latex';
 import '../questionStyle.css';
+import { Button } from '@mui/material';
 
 type Choices = {
     feedback: { format: string; text: string } | null;
@@ -30,28 +31,38 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-container">
-            <div className="title">{questionTitle}</div>
-            {choices.map((choice, i) => {
-                const selected = answer === choice.text.text ? 'selected' : '';
-                return (
-                    <div key={choice.text.text + i} className="choices-container">
-                        <button
-                            className="button-wrapper"
-                            onClick={() => handleOnClickAnswer(choice.text.text)}
-                            disabled={showAnswer}
-                        >
-                            {showAnswer && (choice.isCorrect ? '✅' : '❌')}
-                            <div className={`circle ${selected}`}>{alphabet[i]}</div>
-                            <div className={`answer-text ${selected}`}>{choice.text.text}</div>
-                        </button>
-                    </div>
-                );
-            })}
-            <SubmitButton
-                hide={showAnswer}
-                onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
-                disabled={answer === undefined}
-            />
+            <div className="title mb-1">
+                <Latex>{questionTitle}</Latex>
+            </div>
+            <div className="choices-wrapper mb-1">
+                {choices.map((choice, i) => {
+                    const selected = answer === choice.text.text ? 'selected' : '';
+                    return (
+                        <div key={choice.text.text + i}>
+                            <Button
+                                variant="text"
+                                className="button-wrapper"
+                                onClick={() => !showAnswer && handleOnClickAnswer(choice.text.text)}
+                            >
+                                {showAnswer && (choice.isCorrect ? '✅' : '❌')}
+                                <div className={`circle ${selected}`}>{alphabet[i]}</div>
+                                <div className={`answer-text ${selected}`}>
+                                    <Latex>{choice.text.text}</Latex>
+                                </div>
+                            </Button>
+                        </div>
+                    );
+                })}
+            </div>
+            {!showAnswer && (
+                <Button
+                    variant="contained"
+                    onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
+                    disabled={answer === undefined}
+                >
+                    Répondre
+                </Button>
+            )}
         </div>
     );
 };

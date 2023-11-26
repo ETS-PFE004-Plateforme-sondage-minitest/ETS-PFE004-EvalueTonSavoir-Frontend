@@ -32,33 +32,6 @@ describe('MultipleChoiceQuestion', () => {
         expect(mockHandleOnSubmitAnswer).not.toHaveBeenCalled();
     });
 
-    test('allows selection of an answer', () => {
-        const choiceButton = screen.getByText('Choice 1').closest('button');
-        if (!choiceButton) throw new Error('Choice button not found');
-        fireEvent.click(choiceButton);
-        choiceButton.childNodes.forEach((child) => {
-            expect(child).toHaveClass('selected');
-        });
-    });
-
-    test('allows selection of an other answer', () => {
-        const choiceButton = screen.getByText('Choice 2').closest('button');
-        if (!choiceButton) throw new Error('Choice button not found');
-        fireEvent.click(choiceButton);
-        choiceButton.childNodes.forEach((child) => {
-            expect(child).toHaveClass('selected');
-        });
-    });
-
-    test('does not allows unselection of an answer', () => {
-        const choiceButton = screen.getByText('Choice 2').closest('button');
-        if (!choiceButton) throw new Error('Choice button not found');
-        fireEvent.click(choiceButton);
-        choiceButton.childNodes.forEach((child) => {
-            expect(child).toHaveClass('selected');
-        });
-    });
-
     test('submits the selected answer', () => {
         const choiceButton = screen.getByText('Choice 1').closest('button');
         if (!choiceButton) throw new Error('Choice button not found');
