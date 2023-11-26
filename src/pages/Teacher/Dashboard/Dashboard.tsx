@@ -35,6 +35,7 @@ import {
     Edit
 } from '@mui/icons-material';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
+import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
@@ -45,7 +46,7 @@ const Dashboard: React.FC = () => {
     const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
     const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
 
-    //const isMobile = useCheckMobileScreen();
+    const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
         // Fetch quizzes from local storage
@@ -183,8 +184,9 @@ const Dashboard: React.FC = () => {
     return (
         <div className="dashboard-wrapper">
             <div className="dashboard-container">
+                {isMobile && <div className="page-title mb-1">Tableau de bord</div>}
                 <div className="action-bar">
-                    <div className="page-title">Tableau de bord</div>
+                    {!isMobile && <div className="page-title">Tableau de bord</div>}
                     <div className="button-group">
                         <Button
                             component={Link}

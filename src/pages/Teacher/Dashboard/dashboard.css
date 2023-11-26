@@ -40,3 +40,9 @@
     justify-content: center;
     height: 100%;
 }
+
+@media only screen and (max-device-width: 768px) {
+    .dashboard-container {
+        max-width: 100%;
+    }
+}
