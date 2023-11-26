@@ -33,7 +33,12 @@ const UserWaitPage: React.FC<Props> = ({ users, launchQuiz, roomName, setQuizMod
             <div className="quiz-setup-container">
                 <div>
                     <div className="text-xl text-bold mb-1">{`Utilisateurs: (${users.length}/60)`}</div>
-                    <Grid container spacing={2} columns={6}>
+                    <Grid
+                        container
+                        spacing={2}
+                        columns={6}
+                        sx={{ overflowY: 'auto', height: '75%' }}
+                    >
                         {users.map((user, index) => (
                             <Grid item key={user.name + index} xs={1}>
                                 <Chip label={user.name} sx={{ width: '100%' }} />

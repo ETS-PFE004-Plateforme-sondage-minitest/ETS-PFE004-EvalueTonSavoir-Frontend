@@ -31,7 +31,7 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-container">
-            <div className="title">
+            <div className="title mb-1">
                 <Latex>{questionTitle}</Latex>
             </div>
             <div className="choices-wrapper mb-1">

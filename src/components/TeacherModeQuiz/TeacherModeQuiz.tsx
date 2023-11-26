@@ -6,6 +6,7 @@ import QuestionComponent from '../Questions/Question';
 import '../../pages/Student/JoinRoom/joinRoom.css';
 import { QuestionType } from '../../Types/QuestionType';
 import { QuestionService } from '../../services/QuestionService';
+import { Button } from '@mui/material';
 
 interface TeacherModeQuizProps {
     questionInfos: QuestionType;
@@ -35,10 +36,10 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
 
     return (
         <div className="question-component-container">
-            <h2 className="page-title">Question {questionInfos.question.id}</h2>
-            <button className="quit-btn" onClick={disconnectWebSocket}>
+            <Button variant="outlined" className="quit-btn" onClick={disconnectWebSocket}>
                 Déconnexion
-            </button>
+            </Button>
+            <h2 className="page-title">Question {questionInfos.question.id}</h2>
             {isAnswerSubmitted ? (
                 <div className="wait-text">En attente pour la prochaine question... </div>
             ) : (

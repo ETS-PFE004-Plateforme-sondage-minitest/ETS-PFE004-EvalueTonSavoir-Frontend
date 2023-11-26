@@ -41,7 +41,7 @@ const ReturnButton: React.FC<Props> = ({
     };
 
     return (
-        <>
+        <div>
             <Button
                 variant="text"
                 startIcon={<ChevronLeft />}
@@ -59,7 +59,7 @@ const ReturnButton: React.FC<Props> = ({
                 onCancel={() => setShowDialog(false)}
                 buttonOrderType="warning"
             />
-        </>
+        </div>
     );
 };
 

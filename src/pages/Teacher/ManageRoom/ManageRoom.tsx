@@ -38,7 +38,7 @@ const ManageRoom: React.FC = () => {
         setQuiz(QuizService.getQuizById(quizId.id));
         createWebSocketRoom();
         const temp = [];
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 70; i++) {
             temp.push({ name: `name ${i}`, id: i + '' });
         }
         setUsers(temp);
@@ -208,21 +208,25 @@ const ManageRoom: React.FC = () => {
     return (
         <div className="room-wrapper">
             <div className="room-container">
-                <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
+                <div className="mb-1">
+                    <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
+                </div>
                 {quizQuestions ? (
                     <div>
                         <div className="text-lg blue selectable-text room-name-wrapper">
                             Salle : {roomName}
                         </div>
-                        <div className="title center-h-align">{quiz?.title}</div>
+                        <div className="title center-h-align mb-1">{quiz?.title}</div>
                         {quizMode === 'teacher' && (
                             <>
-                                <QuestionNavigation
-                                    currentQuestionId={Number(currentQuestion?.question.id)}
-                                    questionsLength={quizQuestions?.length}
-                                    previousQuestion={previousQuestion}
-                                    nextQuestion={nextQuestion}
-                                />
+                                <div className="mb-1">
+                                    <QuestionNavigation
+                                        currentQuestionId={Number(currentQuestion?.question.id)}
+                                        questionsLength={quizQuestions?.length}
+                                        previousQuestion={previousQuestion}
+                                        nextQuestion={nextQuestion}
+                                    />
+                                </div>
                                 <GIFTTemplatePreview
                                     questions={
                                         displayedQuestionString ? [displayedQuestionString] : []

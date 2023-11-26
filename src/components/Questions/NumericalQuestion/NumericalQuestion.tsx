@@ -30,7 +30,7 @@ const NumericalQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-wrapper">
-            <div className="title">
+            <div className="title mb-1">
                 <Latex>{questionTitle}</Latex>
             </div>
             {showAnswer ? (

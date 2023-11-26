@@ -45,7 +45,7 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
 
     return (
         <div className="question-component-container">
-            <Button variant="contained" className="quit-btn" onClick={disconnectWebSocket}>
+            <Button variant="outlined" className="quit-btn" onClick={disconnectWebSocket}>
                 Déconnexion
             </Button>
             <QuestionNavigation
