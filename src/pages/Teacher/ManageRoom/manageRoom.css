@@ -44,6 +44,7 @@
     align-items: center;
     flex-grow: 1;
     gap: 2vh;
+    height: 80%;
 }
 
 .launch-quiz-btn {
@@ -79,7 +80,8 @@
 
 .room-container {
     position: relative;
-    max-width: 80vw;
+    width: 100%;
+    max-width: 60vw;
 }
 
 .room-wrapper {
@@ -91,7 +93,7 @@
 
 .room-name-wrapper {
     position: absolute;
-    top: 0;
+    top: 0.5rem;
     right: 0;
 }
 

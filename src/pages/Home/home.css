@@ -12,6 +12,12 @@
     height: 85%;
 }
 
+.big-title {
+    font-size: 48pt;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
 .right-component {
     display: flex;
     justify-content: flex-end;

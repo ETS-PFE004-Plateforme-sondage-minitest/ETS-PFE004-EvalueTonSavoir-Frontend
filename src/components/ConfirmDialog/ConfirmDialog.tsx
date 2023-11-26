@@ -35,7 +35,7 @@ const ConfirmDialog: React.FC<Props> = ({
 }) => {
     return (
         <Dialog open={open} onClose={onCancel}>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle sx={{ fontWeight: 'bold', fontSize: 24 }}>{title}</DialogTitle>
             <DialogContentText sx={{ padding: '0 1.5rem 0.5rem 1.5rem' }}>
                 {message}
             </DialogContentText>

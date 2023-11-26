@@ -11,11 +11,11 @@ const Home: React.FC = () => {
             <div className="btn-container">
                 <Button component={Link} to="/student/join-room" variant="contained">
                     <div className="btn-student">
-                        <h1>
+                        <div className="big-title">
                             Espace
                             <br />
                             étudiant
-                        </h1>
+                        </div>
                         <div className="right-component">
                             <img src="student.svg" width="50%" />
                         </div>
@@ -24,10 +24,10 @@ const Home: React.FC = () => {
                 <Button component={Link} to="/teacher/dashboard" variant="contained">
                     <div className="btn-teacher">
                         <img src="teacher.svg" width="50%" />
-                        <h1 className="right-component">
+                        <div className="right-component big-title">
                             Espace <br />
                             enseignant
-                        </h1>
+                        </div>
                     </div>
                 </Button>
             </div>

@@ -47,7 +47,7 @@ const ReturnButton: React.FC<Props> = ({
                 startIcon={<ChevronLeft />}
                 onClick={handleOnReturnButtonClick}
                 color="primary"
-                sx={{ marginLeft: '-0.5rem' }}
+                sx={{ marginLeft: '-0.5rem', fontSize: 16 }}
             >
                 Retour
             </Button>

@@ -48,12 +48,14 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
             <Button variant="outlined" className="quit-btn" onClick={disconnectWebSocket}>
                 Déconnexion
             </Button>
-            <QuestionNavigation
-                currentQuestionId={Number(questionInfos.question.id)}
-                questionsLength={questions.length}
-                previousQuestion={previousQuestion}
-                nextQuestion={nextQuestion}
-            />
+            <div className="mb-5">
+                <QuestionNavigation
+                    currentQuestionId={Number(questionInfos.question.id)}
+                    questionsLength={questions.length}
+                    previousQuestion={previousQuestion}
+                    nextQuestion={nextQuestion}
+                />
+            </div>
             <QuestionComponent
                 handleOnSubmitAnswer={handleOnSubmitAnswer}
                 question={questionInfos.question}

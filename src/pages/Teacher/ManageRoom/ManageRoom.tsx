@@ -213,12 +213,12 @@ const ManageRoom: React.FC = () => {
                 </div>
                 {quizQuestions ? (
                     <div>
-                        <div className="text-lg blue selectable-text room-name-wrapper">
-                            Salle : {roomName}
+                        <div className="text-lg text-bold blue selectable-text room-name-wrapper">
+                            Salle: {roomName}
                         </div>
-                        <div className="title center-h-align mb-1">{quiz?.title}</div>
+                        <div className="title center-h-align mb-5">{quiz?.title}</div>
                         {quizMode === 'teacher' && (
-                            <>
+                            <div className="mb-5">
                                 <div className="mb-1">
                                     <QuestionNavigation
                                         currentQuestionId={Number(currentQuestion?.question.id)}
@@ -233,7 +233,7 @@ const ManageRoom: React.FC = () => {
                                     }
                                     hideAnswers={true}
                                 />
-                            </>
+                            </div>
                         )}
                         <LiveResultsComponent
                             quizMode={quizMode}

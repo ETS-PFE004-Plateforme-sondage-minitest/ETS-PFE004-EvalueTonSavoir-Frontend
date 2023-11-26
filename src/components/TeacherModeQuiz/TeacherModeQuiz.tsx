@@ -39,7 +39,7 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
             <Button variant="outlined" className="quit-btn" onClick={disconnectWebSocket}>
                 Déconnexion
             </Button>
-            <h2 className="page-title">Question {questionInfos.question.id}</h2>
+            <div className="page-title mb-5">Question {questionInfos.question.id}</div>
             {isAnswerSubmitted ? (
                 <div className="wait-text">En attente pour la prochaine question... </div>
             ) : (
