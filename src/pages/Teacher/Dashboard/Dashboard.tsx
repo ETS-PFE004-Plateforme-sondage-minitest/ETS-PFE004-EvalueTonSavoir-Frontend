@@ -22,7 +22,8 @@ import {
     ListItem,
     ListItemButton,
     ListItemIcon,
-    ListItemText
+    ListItemText,
+    Divider
 } from '@mui/material';
 import {
     Search,
@@ -241,48 +242,53 @@ const Dashboard: React.FC = () => {
 
                 <List disablePadding sx={{ overflowY: 'scroll', height: '100%' }}>
                     {filteredQuizzes.map((quiz: QuizType) => (
-                        <ListItem key={quiz.id} disablePadding>
-                            <ListItemButton
-                                role={undefined}
-                                onClick={() => handleOnCheckQuiz(quiz.id)}
-                                dense
-                            >
-                                <ListItemIcon>
-                                    <Checkbox
-                                        edge="start"
-                                        checked={selectedQuizes.includes(quiz.id)}
-                                        tabIndex={-1}
-                                        disableRipple
-                                    />
-                                </ListItemIcon>
-                                <ListItemText id={quiz.id + quiz.title} primary={quiz.title} />
-                                <div className="button-group">
-                                    <Tooltip title="Modifier">
-                                        <IconButton
-                                            component={Link}
-                                            to={`/teacher/editor-quiz/${quiz.id}`}
-                                        >
-                                            <Edit />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Dupliquer">
-                                        <IconButton onClick={() => handleDuplicateQuiz(quiz.id)}>
-                                            <ContentCopy />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Lancer">
-                                        <Button
-                                            component={Link}
-                                            to={`/teacher/manage-room/${quiz.id}`}
-                                            variant="contained"
-                                            disabled={!validQuiz(quiz.questions)}
-                                        >
-                                            Lancer
-                                        </Button>
-                                    </Tooltip>
-                                </div>
-                            </ListItemButton>
-                        </ListItem>
+                        <>
+                            <Divider />
+                            <ListItem key={quiz.id} disablePadding>
+                                <ListItemButton
+                                    role={undefined}
+                                    onClick={() => handleOnCheckQuiz(quiz.id)}
+                                    dense
+                                >
+                                    <ListItemIcon>
+                                        <Checkbox
+                                            edge="start"
+                                            checked={selectedQuizes.includes(quiz.id)}
+                                            tabIndex={-1}
+                                            disableRipple
+                                        />
+                                    </ListItemIcon>
+                                    <ListItemText id={quiz.id + quiz.title} primary={quiz.title} />
+                                    <div className="button-group">
+                                        <Tooltip title="Modifier">
+                                            <IconButton
+                                                component={Link}
+                                                to={`/teacher/editor-quiz/${quiz.id}`}
+                                            >
+                                                <Edit />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Dupliquer">
+                                            <IconButton
+                                                onClick={() => handleDuplicateQuiz(quiz.id)}
+                                            >
+                                                <ContentCopy />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Lancer">
+                                            <Button
+                                                component={Link}
+                                                to={`/teacher/manage-room/${quiz.id}`}
+                                                variant="contained"
+                                                disabled={!validQuiz(quiz.questions)}
+                                            >
+                                                Lancer
+                                            </Button>
+                                        </Tooltip>
+                                    </div>
+                                </ListItemButton>
+                            </ListItem>
+                        </>
                     ))}
                 </List>
             </div>
