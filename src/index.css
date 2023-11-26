@@ -134,6 +134,10 @@ main {
     top: 1rem;
 }
 
+.overflow-auto {
+    overflow: auto;
+}
+
 .mb-1 {
     margin-bottom: 1rem;
 }

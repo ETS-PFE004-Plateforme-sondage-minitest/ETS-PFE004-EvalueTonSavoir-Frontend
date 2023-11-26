@@ -213,30 +213,32 @@ const ManageRoom: React.FC = () => {
                             Salle: {roomName}
                         </div>
                         <div className="title center-h-align mb-5">{quiz?.title}</div>
-                        {quizMode === 'teacher' && (
-                            <div className="mb-5">
-                                <div className="mb-1">
-                                    <QuestionNavigation
-                                        currentQuestionId={Number(currentQuestion?.question.id)}
-                                        questionsLength={quizQuestions?.length}
-                                        previousQuestion={previousQuestion}
-                                        nextQuestion={nextQuestion}
+                        <div className="overflow-auto">
+                            {quizMode === 'teacher' && (
+                                <div className="mb-5">
+                                    <div className="mb-1">
+                                        <QuestionNavigation
+                                            currentQuestionId={Number(currentQuestion?.question.id)}
+                                            questionsLength={quizQuestions?.length}
+                                            previousQuestion={previousQuestion}
+                                            nextQuestion={nextQuestion}
+                                        />
+                                    </div>
+                                    <GIFTTemplatePreview
+                                        questions={
+                                            displayedQuestionString ? [displayedQuestionString] : []
+                                        }
+                                        hideAnswers={true}
                                     />
                                 </div>
-                                <GIFTTemplatePreview
-                                    questions={
-                                        displayedQuestionString ? [displayedQuestionString] : []
-                                    }
-                                    hideAnswers={true}
-                                />
-                            </div>
-                        )}
-                        <LiveResultsComponent
-                            quizMode={quizMode}
-                            socket={socket}
-                            questions={quizQuestions}
-                            showSelectedQuestion={showSelectedQuestion}
-                        ></LiveResultsComponent>
+                            )}
+                            <LiveResultsComponent
+                                quizMode={quizMode}
+                                socket={socket}
+                                questions={quizQuestions}
+                                showSelectedQuestion={showSelectedQuestion}
+                            ></LiveResultsComponent>
+                        </div>
                     </div>
                 ) : (
                     <UserWaitPage

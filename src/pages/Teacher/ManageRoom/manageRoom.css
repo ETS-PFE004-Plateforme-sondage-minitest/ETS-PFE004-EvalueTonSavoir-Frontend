@@ -83,6 +83,12 @@
     max-width: 60vw;
 }
 
+@media only screen and (max-device-width: 768px) {
+    .room-container {
+        max-width: 100%;
+    }
+}
+
 .room-wrapper {
     display: flex;
     width: 100%;
