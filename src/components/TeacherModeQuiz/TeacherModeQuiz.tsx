@@ -34,24 +34,26 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
     };
 
     return (
-        <div className="question-component-container">
-            <div className="quit-btn">
-                <Button variant="outlined" onClick={disconnectWebSocket}>
-                    Déconnexion
-                </Button>
-            </div>
-            <div className="page-title mb-5">Question {questionInfos.question.id}</div>
-            {isAnswerSubmitted ? (
-                <div className="waiting-text text-xl text-bold">
-                    En attente pour la prochaine question...
+        <div className="overflow-auto">
+            <div className="question-component-container">
+                <div className="quit-btn">
+                    <Button variant="outlined" onClick={disconnectWebSocket}>
+                        Déconnexion
+                    </Button>
                 </div>
-            ) : (
-                <QuestionComponent
-                    imageUrl={imageUrl}
-                    handleOnSubmitAnswer={handleOnSubmitAnswer}
-                    question={questionInfos.question}
-                />
-            )}
+                <div className="page-title mb-5">Question {questionInfos.question.id}</div>
+                {isAnswerSubmitted ? (
+                    <div className="waiting-text text-xl text-bold">
+                        En attente pour la prochaine question...
+                    </div>
+                ) : (
+                    <QuestionComponent
+                        imageUrl={imageUrl}
+                        handleOnSubmitAnswer={handleOnSubmitAnswer}
+                        question={questionInfos.question}
+                    />
+                )}
+            </div>
         </div>
     );
 };

@@ -44,26 +44,28 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
     };
 
     return (
-        <div className="question-component-container">
-            <div className="quit-btn">
-                <Button variant="outlined" onClick={disconnectWebSocket}>
-                    Déconnexion
-                </Button>
-            </div>
-            <div className="mb-5">
-                <QuestionNavigation
-                    currentQuestionId={Number(questionInfos.question.id)}
-                    questionsLength={questions.length}
-                    previousQuestion={previousQuestion}
-                    nextQuestion={nextQuestion}
+        <div className="overflow-auto">
+            <div className="question-component-container">
+                <div className="quit-btn">
+                    <Button variant="outlined" onClick={disconnectWebSocket}>
+                        Déconnexion
+                    </Button>
+                </div>
+                <div className="mb-5">
+                    <QuestionNavigation
+                        currentQuestionId={Number(questionInfos.question.id)}
+                        questionsLength={questions.length}
+                        previousQuestion={previousQuestion}
+                        nextQuestion={nextQuestion}
+                    />
+                </div>
+                <QuestionComponent
+                    handleOnSubmitAnswer={handleOnSubmitAnswer}
+                    question={questionInfos.question}
+                    showAnswer={isAnswerSubmitted}
+                    imageUrl={imageUrl}
                 />
             </div>
-            <QuestionComponent
-                handleOnSubmitAnswer={handleOnSubmitAnswer}
-                question={questionInfos.question}
-                showAnswer={isAnswerSubmitted}
-                imageUrl={imageUrl}
-            />
         </div>
     );
 };

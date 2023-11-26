@@ -1,11 +1,12 @@
 // Question;tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { GIFTQuestion } from 'gift-pegjs';
 
 import TrueFalseQuestion from './TrueFalseQuestion/TrueFalseQuestion';
 import MultipleChoiceQuestion from './MultipleChoiceQuestion/MultipleChoiceQuestion';
 import NumericalQuestion from './NumericalQuestion/NumericalQuestion';
 import ShortAnswerQuestion from './ShortAnswerQuestion/ShortAnswerQuestion';
+import useCheckMobileScreen from '../../services/useCheckMobileScreen';
 
 interface QuestionsProps {
     question: GIFTQuestion;
@@ -19,6 +20,11 @@ const Questions: React.FC<QuestionsProps> = ({
     showAnswer,
     imageUrl
 }) => {
+    const isMobile = useCheckMobileScreen();
+    const imgWidth = useMemo(() => {
+        return isMobile ? '100%' : '20%';
+    }, [isMobile]);
+
     let questionTypeComponent = null;
     switch (question.type) {
         case 'TF':
@@ -69,7 +75,7 @@ const Questions: React.FC<QuestionsProps> = ({
             {questionTypeComponent ? (
                 <>
                     {imageUrl && (
-                        <img src={imageUrl} alt="QuestionImage" style={{ width: '12vw' }} />
+                        <img src={imageUrl} alt="QuestionImage" style={{ width: imgWidth }} />
                     )}
                     {questionTypeComponent}
                 </>
