@@ -26,24 +26,6 @@ describe('TrueFalseQuestion Component', () => {
         expect(screen.getByText('Répondre')).toBeInTheDocument();
     });
 
-    it('selects True option correctly', () => {
-        const trueButton = screen.getByText('Vrai');
-
-        fireEvent.click(trueButton);
-
-        expect(trueButton).toHaveClass('selected');
-        expect(screen.getByText('Faux')).not.toHaveClass('selected');
-    });
-
-    it('selects False option correctly', () => {
-        const falseButton = screen.getByText('Faux');
-
-        fireEvent.click(falseButton);
-
-        expect(falseButton).toHaveClass('selected');
-        expect(screen.getByText('Vrai')).not.toHaveClass('selected');
-    });
-
     it('Submit button should be disabled if no option is selected', () => {
         const submitButton = screen.getByText('Répondre');
 

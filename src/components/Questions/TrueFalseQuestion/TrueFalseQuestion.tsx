@@ -1,8 +1,8 @@
 // TrueFalseQuestion.tsx
 import React, { useState } from 'react';
 import Latex from 'react-latex';
-import SubmitButton from '../../SubmitButton/SubmitButton';
 import '../questionStyle.css';
+import { Button } from '@mui/material';
 
 interface Props {
     questionTitle: string;
@@ -19,32 +19,30 @@ const TrueFalseQuestion: React.FC<Props> = (props) => {
     const selectedFalse = answer !== undefined && !answer ? 'selected' : '';
     return (
         <div className="question-container">
-            <div className="title"><Latex>{questionTitle}</Latex></div>
-            <div className="choice-container">
-                <button
-                    className="button-wrapper"
-                    disabled={showAnswer}
-                    onClick={() => setAnswer(true)}
-                >
+            <div className="title mb-1">
+                <Latex>{questionTitle}</Latex>
+            </div>
+            <div className="choices-container">
+                <Button className="button-wrapper" onClick={() => !showAnswer && setAnswer(true)}>
                     {showAnswer && (correctAnswer ? '✅' : '❌')}
                     <div className={`circle ${selectedTrue}`}>T</div>
                     <div className={`answer-text ${selectedTrue}`}>Vrai</div>
-                </button>
-                <button
-                    className="button-wrapper"
-                    disabled={showAnswer}
-                    onClick={() => setAnswer(false)}
-                >
+                </Button>
+                <Button className="button-wrapper" onClick={() => !showAnswer && setAnswer(false)}>
                     {showAnswer && (!correctAnswer ? '✅' : '❌')}
                     <div className={`circle ${selectedFalse}`}>F</div>
                     <div className={`answer-text ${selectedFalse}`}>Faux</div>
-                </button>
+                </Button>
             </div>
-            <SubmitButton
-                hide={showAnswer}
-                onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
-                disabled={answer === undefined}
-            />
+            {!showAnswer && (
+                <Button
+                    variant="contained"
+                    onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
+                    disabled={answer === undefined}
+                >
+                    Répondre
+                </Button>
+            )}
         </div>
     );
 };

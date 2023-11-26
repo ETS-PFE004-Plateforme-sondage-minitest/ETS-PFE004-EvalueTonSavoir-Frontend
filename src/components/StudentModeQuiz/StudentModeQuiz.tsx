@@ -5,6 +5,8 @@ import QuestionComponent from '../Questions/Question';
 import '../../pages/Student/JoinRoom/joinRoom.css';
 import { QuestionType } from '../../Types/QuestionType';
 import { QuestionService } from '../../services/QuestionService';
+import { Button } from '@mui/material';
+import QuestionNavigation from '../QuestionNavigation/QuestionNavigation';
 
 interface StudentModeQuizProps {
     questions: QuestionType[];
@@ -43,22 +45,23 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
 
     return (
         <div className="question-component-container">
-            <h2 className="page-title">Question {questionInfos.question.id}</h2>
-            <button className="quit-btn" onClick={disconnectWebSocket}>
+            <Button variant="outlined" className="quit-btn" onClick={disconnectWebSocket}>
                 Déconnexion
-            </button>
-            {imageUrl ? <img src={imageUrl} alt="QuestionImage" style={{ width: '20vw' }} /> : null}
+            </Button>
+            <div className="mb-5">
+                <QuestionNavigation
+                    currentQuestionId={Number(questionInfos.question.id)}
+                    questionsLength={questions.length}
+                    previousQuestion={previousQuestion}
+                    nextQuestion={nextQuestion}
+                />
+            </div>
             <QuestionComponent
                 handleOnSubmitAnswer={handleOnSubmitAnswer}
                 question={questionInfos.question}
                 showAnswer={isAnswerSubmitted}
+                imageUrl={imageUrl}
             />
-            {Number(questionInfos.question.id) > 1 && (
-                <button onClick={previousQuestion}>Question précédente</button>
-            )}
-            {Number(questionInfos.question.id) < questions.length && (
-                <button onClick={nextQuestion}>Question suivante</button>
-            )}
         </div>
     );
 };

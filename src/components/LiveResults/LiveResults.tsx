@@ -24,6 +24,7 @@ interface LiveResultsProps {
     socket: Socket | null;
     questions: QuestionType[];
     showSelectedQuestion: (index: number) => void;
+    quizMode: 'teacher' | 'student';
 }
 
 interface Answer {
@@ -38,7 +39,12 @@ interface StudentResult {
     answers: Answer[];
 }
 
-const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion }) => {
+const LiveResults: React.FC<LiveResultsProps> = ({
+    socket,
+    questions,
+    showSelectedQuestion,
+    quizMode
+}) => {
     const [showUsernames, setShowUsernames] = useState<boolean>(false);
     const [showCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
@@ -134,11 +140,11 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
 
     return (
         <div>
-            <div className="action-bar">
-                <div className="text-lg text-bold">Résultats du quiz</div>
+            <div className="action-bar mb-1">
+                <div className="text-2xl text-bold">Résultats du quiz</div>
                 <FormGroup row>
                     <FormControlLabel
-                        label="Afficher les noms"
+                        label={<div className="text-sm">Afficher les noms</div>}
                         control={
                             <Switch
                                 value={showUsernames}
@@ -149,7 +155,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                         }
                     />
                     <FormControlLabel
-                        label="Afficher les réponses"
+                        label={<div className="text-sm">Afficher les réponses</div>}
                         control={
                             <Switch
                                 value={showCorrectAnswers}
@@ -165,20 +171,49 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
             <Table size="small" stickyHeader component={Paper}>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Nom d'utilisateur</TableCell>
+                        <TableCell
+                            sx={{
+                                borderStyle: 'solid',
+                                borderWidth: 1,
+                                borderColor: 'rgba(224, 224, 224, 1)'
+                            }}
+                        >
+                            <div className="text-base text-bold">Nom d'utilisateur</div>
+                        </TableCell>
                         {Array.from({ length: maxQuestions }, (_, index) => (
                             <TableCell
                                 key={index}
-                                sx={{ textAlign: 'center', cursor: 'pointer' }}
-                                onClick={() => showSelectedQuestion(index)}
-                            >{`Q${index + 1}`}</TableCell>
+                                sx={{
+                                    textAlign: 'center',
+                                    cursor: `${quizMode === 'teacher' ? 'pointer' : 'auto'}`,
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(224, 224, 224, 1)'
+                                }}
+                                onClick={() =>
+                                    quizMode === 'teacher' && showSelectedQuestion(index)
+                                }
+                            >
+                                {' '}
+                                <div className="text-base text-bold">{`Q${index + 1}`}</div>
+                            </TableCell>
                         ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {studentResults.map((student) => (
                         <TableRow key={student.idUser}>
-                            <TableCell>{showUsernames ? student.username : '******'}</TableCell>
+                            <TableCell
+                                sx={{
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(224, 224, 224, 1)'
+                                }}
+                            >
+                                <div className="text-base text-bold">
+                                    {showUsernames ? student.username : '******'}
+                                </div>
+                            </TableCell>
                             {Array.from({ length: maxQuestions }, (_, index) => {
                                 const answer = student.answers.find(
                                     (answer) => parseInt(answer.idQuestion.toString()) === index + 1
@@ -188,7 +223,12 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                 return (
                                     <TableCell
                                         key={index}
-                                        sx={{ textAlign: 'center' }}
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderStyle: 'solid',
+                                            borderWidth: 1,
+                                            borderColor: 'rgba(224, 224, 224, 1)'
+                                        }}
                                         className={
                                             answerText === ''
                                                 ? ''
@@ -216,7 +256,15 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                     <TableRow>
                         <TableCell>% réussite</TableCell>
                         {Array.from({ length: maxQuestions }, (_, index) => (
-                            <TableCell key={index} sx={{ textAlign: 'center' }}>
+                            <TableCell
+                                key={index}
+                                sx={{
+                                    textAlign: 'center',
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(224, 224, 224, 1)'
+                                }}
+                            >
                                 {studentResults.length > 0
                                     ? (
                                           (studentResults.filter((student) =>

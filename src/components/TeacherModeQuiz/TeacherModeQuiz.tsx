@@ -6,6 +6,7 @@ import QuestionComponent from '../Questions/Question';
 import '../../pages/Student/JoinRoom/joinRoom.css';
 import { QuestionType } from '../../Types/QuestionType';
 import { QuestionService } from '../../services/QuestionService';
+import { Button } from '@mui/material';
 
 interface TeacherModeQuizProps {
     questionInfos: QuestionType;
@@ -24,6 +25,7 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
     useEffect(() => {
         setIsAnswerSubmitted(false);
         setImageUrl(QuestionService.getImageSource(questionInfos.image));
+        console.log(imageUrl);
     }, [questionInfos]);
 
     const handleOnSubmitAnswer = (answer: string | number | boolean) => {
@@ -34,22 +36,18 @@ const TeacherModeQuiz: React.FC<TeacherModeQuizProps> = ({
 
     return (
         <div className="question-component-container">
-            <h2 className="page-title">Question {questionInfos.question.id}</h2>
-            <button className="quit-btn" onClick={disconnectWebSocket}>
+            <Button variant="outlined" className="quit-btn" onClick={disconnectWebSocket}>
                 Déconnexion
-            </button>
+            </Button>
+            <div className="page-title mb-5">Question {questionInfos.question.id}</div>
             {isAnswerSubmitted ? (
                 <div className="wait-text">En attente pour la prochaine question... </div>
             ) : (
-                <>
-                    {imageUrl ? (
-                        <img src={imageUrl} alt="QuestionImage" style={{ width: '20vw' }} />
-                    ) : null}
-                    <QuestionComponent
-                        handleOnSubmitAnswer={handleOnSubmitAnswer}
-                        question={questionInfos.question}
-                    />
-                </>
+                <QuestionComponent
+                    imageUrl={imageUrl}
+                    handleOnSubmitAnswer={handleOnSubmitAnswer}
+                    question={questionInfos.question}
+                />
             )}
         </div>
     );

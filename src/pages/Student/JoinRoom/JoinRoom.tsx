@@ -127,10 +127,10 @@ const JoinRoom: React.FC = () => {
         default:
             return (
                 <div className="join-room-container">
-                    <h1 className="title">Rejoindre une salle</h1>
+                    <h1 className="page-title mb-1">Rejoindre une salle</h1>
                     <Paper>
                         <div className="login-container">
-                            <img className="login-avatar" src="./people.svg" width={'30%'}></img>
+                            <img className="login-avatar" src="./people.svg" width={'20%'}></img>
                             <TextField
                                 label="Nom d'utilisateur"
                                 variant="outlined"

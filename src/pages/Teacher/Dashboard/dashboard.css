@@ -24,12 +24,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 80%;
-    margin: 0 0 6vw 6vw;
-    padding-top: 6vw;
+    width: 100%;
+    height: 100%;
+    max-width: 60vw;
 }
 
 .button-group {
     display: flex;
     gap: 1vw;
+    margin-left: 0.25rem;
+}
+
+.dashboard-wrapper {
+    display: flex;
+    justify-content: center;
+    height: 100%;
 }

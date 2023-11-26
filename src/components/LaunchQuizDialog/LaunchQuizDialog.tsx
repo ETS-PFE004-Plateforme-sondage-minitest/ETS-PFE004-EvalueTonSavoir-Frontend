@@ -21,7 +21,9 @@ interface Props {
 const LaunchQuizDialog: React.FC<Props> = ({ open, handleOnClose, launchQuiz, setQuizMode }) => {
     return (
         <Dialog open={open} onClose={handleOnClose}>
-            <DialogTitle>Options de lancement du quiz</DialogTitle>
+            <DialogTitle sx={{ fontWeight: 'bold', fontSize: 24 }}>
+                Options de lancement du quiz
+            </DialogTitle>
             <DialogContent>
                 <FormControl>
                     <FormLabel>Rythme du quiz</FormLabel>

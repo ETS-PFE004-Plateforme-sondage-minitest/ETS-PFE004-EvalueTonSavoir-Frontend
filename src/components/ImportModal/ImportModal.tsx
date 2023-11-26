@@ -108,8 +108,10 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
 
     return (
         <>
-            <Dialog open={open} onClose={handleOnClose}>
-                <DialogTitle sx={{ fontWeight: 'bold' }}>{'Importation de quiz'}</DialogTitle>
+            <Dialog open={open} onClose={handleOnClose} fullWidth>
+                <DialogTitle sx={{ fontWeight: 'bold', fontSize: 24 }}>
+                    {'Importation de quiz'}
+                </DialogTitle>
                 <DialogContent
                     className="import-container"
                     onDragEnter={handleDragEnter}
@@ -117,11 +119,14 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
                     onDrop={handleDrop}
                     onClick={handleBrowseButtonClick}
                 >
-                    <DialogContentText>
-                        Déposer des fichiers ici ou cliquez pour ouvrir l'explorateur des fichiers
-                    </DialogContentText>
-
-                    <Download />
+                    <div className="mb-1">
+                        <DialogContentText sx={{ textAlign: 'center' }}>
+                            Déposer des fichiers ici ou
+                            <br />
+                            cliquez pour ouvrir l'explorateur des fichiers
+                        </DialogContentText>
+                    </div>
+                    <Download color="primary" />
                 </DialogContent>
                 <DialogContent>
                     {droppedFiles.map((file) => (

@@ -14,11 +14,12 @@ import { QuizType } from '../../../Types/QuizType';
 import './manageRoom.css';
 import { ENV_VARIABLES } from '../../../constants';
 import { UserType } from '../../../Types/UserType';
-import { Button, IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
-import { Refresh, Error, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { Refresh, Error } from '@mui/icons-material';
 import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
+import QuestionNavigation from '../../../components/QuestionNavigation/QuestionNavigation';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -37,7 +38,7 @@ const ManageRoom: React.FC = () => {
         setQuiz(QuizService.getQuizById(quizId.id));
         createWebSocketRoom();
         const temp = [];
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 70; i++) {
             temp.push({ name: `name ${i}`, id: i + '' });
         }
         setUsers(temp);
@@ -205,59 +206,51 @@ const ManageRoom: React.FC = () => {
     }
 
     return (
-        <div className="room-container">
-            <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
-            {quizQuestions ? (
-                <div>
-                    <div className="text-lg blue selectable-text room-name-wrapper">
-                        Salle : {roomName}
-                    </div>
-                    <div className="title center-h-align">{quiz?.title}</div>
-                    {quizMode === 'teacher' && (
-                        <>
-                            <div className="center-h-align">
-                                <IconButton
-                                    onClick={previousQuestion}
-                                    disabled={
-                                        quizQuestions && Number(currentQuestion?.question.id) <= 1
-                                    }
-                                >
-                                    <ChevronLeft />
-                                </IconButton>
-                                <div className="text-base text-bold">
-                                    {`Questions ${currentQuestion?.question.id}/${quizQuestions.length}`}
-                                </div>
-                                <IconButton
-                                    onClick={nextQuestion}
-                                    disabled={
-                                        quizQuestions &&
-                                        Number(currentQuestion?.question.id) >=
-                                            quizQuestions?.length
-                                    }
-                                >
-                                    <ChevronRight />
-                                </IconButton>
-                            </div>
-                            <GIFTTemplatePreview
-                                questions={displayedQuestionString ? [displayedQuestionString] : []}
-                                hideAnswers={true}
-                            />
-                        </>
-                    )}
-                    <LiveResultsComponent
-                        socket={socket}
-                        questions={quizQuestions}
-                        showSelectedQuestion={showSelectedQuestion}
-                    ></LiveResultsComponent>
+        <div className="room-wrapper">
+            <div className="room-container">
+                <div className="mb-1">
+                    <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
                 </div>
-            ) : (
-                <UserWaitPage
-                    users={users}
-                    launchQuiz={launchQuiz}
-                    roomName={roomName}
-                    setQuizMode={setQuizMode}
-                />
-            )}
+                {quizQuestions ? (
+                    <div>
+                        <div className="text-lg text-bold blue selectable-text room-name-wrapper">
+                            Salle: {roomName}
+                        </div>
+                        <div className="title center-h-align mb-5">{quiz?.title}</div>
+                        {quizMode === 'teacher' && (
+                            <div className="mb-5">
+                                <div className="mb-1">
+                                    <QuestionNavigation
+                                        currentQuestionId={Number(currentQuestion?.question.id)}
+                                        questionsLength={quizQuestions?.length}
+                                        previousQuestion={previousQuestion}
+                                        nextQuestion={nextQuestion}
+                                    />
+                                </div>
+                                <GIFTTemplatePreview
+                                    questions={
+                                        displayedQuestionString ? [displayedQuestionString] : []
+                                    }
+                                    hideAnswers={true}
+                                />
+                            </div>
+                        )}
+                        <LiveResultsComponent
+                            quizMode={quizMode}
+                            socket={socket}
+                            questions={quizQuestions}
+                            showSelectedQuestion={showSelectedQuestion}
+                        ></LiveResultsComponent>
+                    </div>
+                ) : (
+                    <UserWaitPage
+                        users={users}
+                        launchQuiz={launchQuiz}
+                        roomName={roomName}
+                        setQuizMode={setQuizMode}
+                    />
+                )}
+            </div>
         </div>
     );
 };

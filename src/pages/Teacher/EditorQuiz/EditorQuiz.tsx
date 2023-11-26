@@ -98,38 +98,45 @@ const QuizForm: React.FC = () => {
     }
 
     return (
-        <div className="edit-page-container">
-            <h1 className="page-title">Éditeur de quiz</h1>
-            <ReturnButton
-                askConfirm
-                message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
-            />
-            <div className="container">
-                <div>
-                    <h2 className="subtitle">Éditeur</h2>
-                    <div className="editor-container">
-                        <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
-                        <Button variant="contained" onClick={handleSaveQuiz}>
-                            Enregistrer
-                        </Button>
+        <div className="editor-page-wrapper">
+            <div className="edit-page-container">
+                <div className="return-button-wrapper">
+                    <ReturnButton
+                        askConfirm
+                        message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
+                    />
+                </div>
+                <h1 className="page-title">Éditeur de quiz</h1>
+
+                <div className="container">
+                    <div>
+                        <h2 className="subtitle">Éditeur</h2>
+                        <div className="editor-container">
+                            <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
+                            <Button variant="contained" onClick={handleSaveQuiz}>
+                                Enregistrer
+                            </Button>
+                        </div>
+                        <GiftCheatSheet />
                     </div>
-                    <GiftCheatSheet />
+                    <div className="preview-column">
+                        <h2 className="subtitle">Prévisualisation</h2>
+                        <div>
+                            <GIFTTemplatePreview questions={filteredValue} />
+                        </div>
+                    </div>
                 </div>
-                <div className="preview-column">
-                    <h2 className="subtitle">Prévisualisation</h2>
-                    <GIFTTemplatePreview questions={filteredValue} />
-                </div>
+                <ConfirmDialog
+                    open={quizToSave}
+                    title="Sauvegarder le questionnaire"
+                    message="Entrez un titre pour votre questionnaire:"
+                    hasOptionalInput
+                    optionalInputValue={quizTitle}
+                    onOptionalInputChange={handleQuizTitleChange}
+                    onConfirm={handleQuizSave}
+                    onCancel={handleModalClose}
+                />
             </div>
-            <ConfirmDialog
-                open={quizToSave}
-                title="Sauvegarder le questionnaire"
-                message="Entrez un titre pour votre questionnaire:"
-                hasOptionalInput
-                optionalInputValue={quizTitle}
-                onOptionalInputChange={handleQuizTitleChange}
-                onConfirm={handleQuizSave}
-                onCancel={handleModalClose}
-            />
         </div>
     );
 };

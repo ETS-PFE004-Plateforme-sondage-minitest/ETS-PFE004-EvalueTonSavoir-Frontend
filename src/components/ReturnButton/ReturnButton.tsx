@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
-import { Button, IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 import { ChevronLeft } from '@mui/icons-material';
 
 interface Props {
@@ -41,15 +41,13 @@ const ReturnButton: React.FC<Props> = ({
     };
 
     return (
-        <>
+        <div>
             <Button
                 variant="text"
-                startIcon={
-                    <IconButton>
-                        <ChevronLeft />
-                    </IconButton>
-                }
+                startIcon={<ChevronLeft />}
                 onClick={handleOnReturnButtonClick}
+                color="primary"
+                sx={{ marginLeft: '-0.5rem', fontSize: 16 }}
             >
                 Retour
             </Button>
@@ -61,7 +59,7 @@ const ReturnButton: React.FC<Props> = ({
                 onCancel={() => setShowDialog(false)}
                 buttonOrderType="warning"
             />
-        </>
+        </div>
     );
 };
 
