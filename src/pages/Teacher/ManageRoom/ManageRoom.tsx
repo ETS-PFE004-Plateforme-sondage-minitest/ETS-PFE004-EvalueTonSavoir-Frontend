@@ -37,11 +37,7 @@ const ManageRoom: React.FC = () => {
     useEffect(() => {
         setQuiz(QuizService.getQuizById(quizId.id));
         createWebSocketRoom();
-        const temp = [];
-        for (let i = 0; i < 70; i++) {
-            temp.push({ name: `name ${i}`, id: i + '' });
-        }
-        setUsers(temp);
+
         return () => {
             webSocketService.disconnect();
         };

@@ -240,7 +240,7 @@ const Dashboard: React.FC = () => {
                     </Tooltip>
                 </div>
 
-                <List disablePadding sx={{ overflowY: 'scroll', height: '100%' }}>
+                <List disablePadding sx={{ overflowY: 'auto', height: '100%' }}>
                     {filteredQuizzes.map((quiz: QuizType) => (
                         <>
                             <Divider />
