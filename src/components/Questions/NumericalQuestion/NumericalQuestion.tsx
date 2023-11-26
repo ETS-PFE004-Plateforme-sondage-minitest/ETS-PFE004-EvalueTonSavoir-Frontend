@@ -14,7 +14,7 @@ type CorrectAnswer = {
 interface Props {
     questionTitle: string;
     correctAnswers: CorrectAnswer;
-    handleOnSubmitAnswer: (answer: number) => void;
+    handleOnSubmitAnswer?: (answer: number) => void;
     showAnswer?: boolean;
 }
 
@@ -48,13 +48,19 @@ const NumericalQuestion: React.FC<Props> = (props) => {
                             data-testid="number-input"
                         />
                     </div>
-                    <Button
-                        variant="contained"
-                        onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
-                        disabled={answer === undefined || isNaN(answer)}
-                    >
-                        Répondre
-                    </Button>
+                    {handleOnSubmitAnswer && (
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                answer !== undefined &&
+                                handleOnSubmitAnswer &&
+                                handleOnSubmitAnswer(answer)
+                            }
+                            disabled={answer === undefined || isNaN(answer)}
+                        >
+                            Répondre
+                        </Button>
+                    )}
                 </>
             )}
         </div>
