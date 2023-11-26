@@ -14,7 +14,7 @@ type Choices = {
 interface Props {
     questionTitle: string;
     choices: Choices[];
-    handleOnSubmitAnswer: (answer: string) => void;
+    handleOnSubmitAnswer?: (answer: string) => void;
     showAnswer?: boolean;
 }
 
@@ -55,10 +55,12 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
                     );
                 })}
             </div>
-            {!showAnswer && (
+            {!showAnswer && handleOnSubmitAnswer && (
                 <Button
                     variant="contained"
-                    onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
+                    onClick={() =>
+                        answer !== undefined && handleOnSubmitAnswer && handleOnSubmitAnswer(answer)
+                    }
                     disabled={answer === undefined}
                 >
                     Répondre

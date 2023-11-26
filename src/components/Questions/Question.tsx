@@ -8,13 +8,13 @@ import NumericalQuestion from './NumericalQuestion/NumericalQuestion';
 import ShortAnswerQuestion from './ShortAnswerQuestion/ShortAnswerQuestion';
 import useCheckMobileScreen from '../../services/useCheckMobileScreen';
 
-interface QuestionsProps {
-    question: GIFTQuestion;
-    handleOnSubmitAnswer: (answer: string | number | boolean) => void;
+interface QuestionProps {
+    question: GIFTQuestion | undefined;
+    handleOnSubmitAnswer?: (answer: string | number | boolean) => void;
     showAnswer?: boolean;
     imageUrl?: string;
 }
-const Questions: React.FC<QuestionsProps> = ({
+const Question: React.FC<QuestionProps> = ({
     question,
     handleOnSubmitAnswer,
     showAnswer,
@@ -26,7 +26,7 @@ const Questions: React.FC<QuestionsProps> = ({
     }, [isMobile]);
 
     let questionTypeComponent = null;
-    switch (question.type) {
+    switch (question?.type) {
         case 'TF':
             questionTypeComponent = (
                 <TrueFalseQuestion
@@ -86,4 +86,4 @@ const Questions: React.FC<QuestionsProps> = ({
     );
 };
 
-export default Questions;
+export default Question;

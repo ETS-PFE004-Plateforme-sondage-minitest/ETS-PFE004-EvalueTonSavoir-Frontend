@@ -7,7 +7,7 @@ import { Button } from '@mui/material';
 interface Props {
     questionTitle: string;
     correctAnswer: boolean;
-    handleOnSubmitAnswer: (answer: boolean) => void;
+    handleOnSubmitAnswer?: (answer: boolean) => void;
     showAnswer?: boolean;
 }
 
@@ -42,10 +42,12 @@ const TrueFalseQuestion: React.FC<Props> = (props) => {
                     <div className={`answer-text ${selectedFalse}`}>Faux</div>
                 </Button>
             </div>
-            {!showAnswer && (
+            {!showAnswer && handleOnSubmitAnswer && (
                 <Button
                     variant="contained"
-                    onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
+                    onClick={() =>
+                        answer !== undefined && handleOnSubmitAnswer && handleOnSubmitAnswer(answer)
+                    }
                     disabled={answer === undefined}
                 >
                     Répondre

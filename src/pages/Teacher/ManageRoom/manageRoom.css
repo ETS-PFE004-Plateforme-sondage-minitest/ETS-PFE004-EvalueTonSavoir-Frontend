@@ -6,13 +6,6 @@
     height: 100%;
 }
 
-.create-room-btn {
-    width: 20vw;
-    height: 20vh;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    margin-top: 25vh;
-}
-
 .manage-room-container {
     display: flex;
     flex-direction: column;
@@ -103,14 +96,14 @@
 .flex-column-wrapper {
     display: flex;
     flex-direction: column;
-    height: 63vh;
+    height: 85vh;
     overflow: auto;
 }
 
 .preview-and-result-container {
     display: flex;
     flex-direction: column;
-    gap: 5rem;
+    gap: 2rem;
 }
 
 .nextQuestionButton {
@@ -126,18 +119,18 @@
 
 @media only screen and (max-device-height: 1100px) {
     .flex-column-wrapper {
-        height: 53vh;
+        height: 65vh;
     }
 }
 
 @media only screen and (max-device-height: 1079px) {
     .flex-column-wrapper {
-        height: 43vh;
+        height: 60vh;
     }
 }
 
 @media only screen and (max-device-height: 741px) {
     .flex-column-wrapper {
-        height: 33vh;
+        height: 40vh;
     }
 }
