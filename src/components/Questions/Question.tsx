@@ -1,26 +1,32 @@
 // Question;tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { GIFTQuestion } from 'gift-pegjs';
 
 import TrueFalseQuestion from './TrueFalseQuestion/TrueFalseQuestion';
 import MultipleChoiceQuestion from './MultipleChoiceQuestion/MultipleChoiceQuestion';
 import NumericalQuestion from './NumericalQuestion/NumericalQuestion';
 import ShortAnswerQuestion from './ShortAnswerQuestion/ShortAnswerQuestion';
+import useCheckMobileScreen from '../../services/useCheckMobileScreen';
 
-interface QuestionsProps {
-    question: GIFTQuestion;
-    handleOnSubmitAnswer: (answer: string | number | boolean) => void;
+interface QuestionProps {
+    question: GIFTQuestion | undefined;
+    handleOnSubmitAnswer?: (answer: string | number | boolean) => void;
     showAnswer?: boolean;
     imageUrl?: string;
 }
-const Questions: React.FC<QuestionsProps> = ({
+const Question: React.FC<QuestionProps> = ({
     question,
     handleOnSubmitAnswer,
     showAnswer,
     imageUrl
 }) => {
+    const isMobile = useCheckMobileScreen();
+    const imgWidth = useMemo(() => {
+        return isMobile ? '100%' : '20%';
+    }, [isMobile]);
+
     let questionTypeComponent = null;
-    switch (question.type) {
+    switch (question?.type) {
         case 'TF':
             questionTypeComponent = (
                 <TrueFalseQuestion
@@ -69,7 +75,7 @@ const Questions: React.FC<QuestionsProps> = ({
             {questionTypeComponent ? (
                 <>
                     {imageUrl && (
-                        <img src={imageUrl} alt="QuestionImage" style={{ width: '12vw' }} />
+                        <img src={imageUrl} alt="QuestionImage" style={{ width: imgWidth }} />
                     )}
                     {questionTypeComponent}
                 </>
@@ -80,4 +86,4 @@ const Questions: React.FC<QuestionsProps> = ({
     );
 };
 
-export default Questions;
+export default Question;

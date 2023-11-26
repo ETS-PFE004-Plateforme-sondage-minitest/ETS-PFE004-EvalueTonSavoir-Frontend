@@ -126,12 +126,16 @@ main {
 .page-title {
     font-size: 36pt;
     font-weight: 600;
+    text-align: center;
 }
 .quit-btn {
-    align-self: flex-end;
     position: absolute;
-    right: 2rem;
-    top: 0;
+    right: 1rem;
+    top: 1rem;
+}
+
+.overflow-auto {
+    overflow: auto;
 }
 
 .mb-1 {
@@ -152,6 +156,10 @@ main {
 
 .mb-5 {
     margin-bottom: 5rem;
+}
+
+.text-center {
+    text-align: center;
 }
 
 .blue {

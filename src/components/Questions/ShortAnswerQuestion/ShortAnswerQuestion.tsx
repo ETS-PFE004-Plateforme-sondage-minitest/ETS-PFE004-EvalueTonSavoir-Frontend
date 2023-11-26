@@ -14,7 +14,7 @@ type Choices = {
 interface Props {
     questionTitle: string;
     choices: Choices[];
-    handleOnSubmitAnswer: (answer: string) => void;
+    handleOnSubmitAnswer?: (answer: string) => void;
     showAnswer?: boolean;
 }
 
@@ -24,7 +24,7 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-wrapper">
-            <div className="title mb-1">
+            <div className="title mb-1 text-center center-h-align">
                 <Latex>{questionTitle}</Latex>
             </div>
             {showAnswer ? (
@@ -47,13 +47,19 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                             data-testid="text-input"
                         />
                     </div>
-                    <Button
-                        variant="contained"
-                        onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
-                        disabled={answer === undefined || answer === ''}
-                    >
-                        Répondre
-                    </Button>
+                    {handleOnSubmitAnswer && (
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                answer !== undefined &&
+                                handleOnSubmitAnswer &&
+                                handleOnSubmitAnswer(answer)
+                            }
+                            disabled={answer === undefined || answer === ''}
+                        >
+                            Répondre
+                        </Button>
+                    )}
                 </>
             )}
         </div>

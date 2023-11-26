@@ -7,7 +7,7 @@ import { Button } from '@mui/material';
 interface Props {
     questionTitle: string;
     correctAnswer: boolean;
-    handleOnSubmitAnswer: (answer: boolean) => void;
+    handleOnSubmitAnswer?: (answer: boolean) => void;
     showAnswer?: boolean;
 }
 
@@ -22,22 +22,32 @@ const TrueFalseQuestion: React.FC<Props> = (props) => {
             <div className="title mb-1">
                 <Latex>{questionTitle}</Latex>
             </div>
-            <div className="choices-container">
-                <Button className="button-wrapper" onClick={() => !showAnswer && setAnswer(true)}>
+            <div className="choices-wrapper mb-1">
+                <Button
+                    className="button-wrapper"
+                    onClick={() => !showAnswer && setAnswer(true)}
+                    fullWidth
+                >
                     {showAnswer && (correctAnswer ? '✅' : '❌')}
                     <div className={`circle ${selectedTrue}`}>T</div>
                     <div className={`answer-text ${selectedTrue}`}>Vrai</div>
                 </Button>
-                <Button className="button-wrapper" onClick={() => !showAnswer && setAnswer(false)}>
+                <Button
+                    className="button-wrapper"
+                    onClick={() => !showAnswer && setAnswer(false)}
+                    fullWidth
+                >
                     {showAnswer && (!correctAnswer ? '✅' : '❌')}
                     <div className={`circle ${selectedFalse}`}>F</div>
                     <div className={`answer-text ${selectedFalse}`}>Faux</div>
                 </Button>
             </div>
-            {!showAnswer && (
+            {!showAnswer && handleOnSubmitAnswer && (
                 <Button
                     variant="contained"
-                    onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
+                    onClick={() =>
+                        answer !== undefined && handleOnSubmitAnswer && handleOnSubmitAnswer(answer)
+                    }
                     disabled={answer === undefined}
                 >
                     Répondre

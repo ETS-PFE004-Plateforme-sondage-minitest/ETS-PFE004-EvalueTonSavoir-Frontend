@@ -14,7 +14,7 @@ type Choices = {
 interface Props {
     questionTitle: string;
     choices: Choices[];
-    handleOnSubmitAnswer: (answer: string) => void;
+    handleOnSubmitAnswer?: (answer: string) => void;
     showAnswer?: boolean;
 }
 
@@ -31,7 +31,7 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-container">
-            <div className="title mb-1">
+            <div className="title mb-1 text-center align-h-center">
                 <Latex>{questionTitle}</Latex>
             </div>
             <div className="choices-wrapper mb-1">
@@ -41,6 +41,7 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
                         <div key={choice.text.text + i}>
                             <Button
                                 variant="text"
+                                fullWidth
                                 className="button-wrapper"
                                 onClick={() => !showAnswer && handleOnClickAnswer(choice.text.text)}
                             >
@@ -54,10 +55,12 @@ const MultipleChoiceQuestion: React.FC<Props> = (props) => {
                     );
                 })}
             </div>
-            {!showAnswer && (
+            {!showAnswer && handleOnSubmitAnswer && (
                 <Button
                     variant="contained"
-                    onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
+                    onClick={() =>
+                        answer !== undefined && handleOnSubmitAnswer && handleOnSubmitAnswer(answer)
+                    }
                     disabled={answer === undefined}
                 >
                     Répondre

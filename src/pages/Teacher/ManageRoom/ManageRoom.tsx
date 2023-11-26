@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import { parse } from 'gift-pegjs';
 import { QuestionType } from '../../../Types/QuestionType';
-import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
 import { QuizService } from '../../../services/QuizService';
 import { QuestionService } from '../../../services/QuestionService';
@@ -20,6 +19,7 @@ import { Refresh, Error } from '@mui/icons-material';
 import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 import QuestionNavigation from '../../../components/QuestionNavigation/QuestionNavigation';
+import Question from '../../../components/Questions/Question';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -29,7 +29,6 @@ const ManageRoom: React.FC = () => {
     const quizId = useParams<{ id: string }>();
     const [quizQuestions, setQuizQuestions] = useState<QuestionType[] | undefined>();
     const [quiz, setQuiz] = useState<QuizType>();
-    const [displayedQuestionString, setDisplayedQuestionString] = useState<string | undefined>();
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [connectingError, setConnectingError] = useState<string>('');
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | undefined>(undefined);
@@ -99,16 +98,17 @@ const ManageRoom: React.FC = () => {
         const parsedQuestions = [] as QuestionType[];
 
         quizQuestionArray.forEach((question, index) => {
-            const image = QuestionService.getImage(question);
+            const imageTag = QuestionService.getImage(question);
+            const imageUrl = QuestionService.getImageSource(imageTag);
             question = QuestionService.ignoreImgTags(question);
-            parsedQuestions.push({ question: parse(question)[0], image: image });
+            parsedQuestions.push({ question: parse(question)[0], image: imageUrl });
             parsedQuestions[index].question.id = (index + 1).toString();
+            console.log(imageUrl);
         });
         if (parsedQuestions.length === 0) return;
 
         setQuizQuestions(parsedQuestions);
         setCurrentQuestion(parsedQuestions[0]);
-        setDisplayedQuestionString(quizQuestionArray[0]);
 
         webSocketService.nextQuestion(roomName, parsedQuestions[0]);
     };
@@ -120,7 +120,6 @@ const ManageRoom: React.FC = () => {
         if (nextQuestionIndex === undefined || nextQuestionIndex > quizQuestions.length - 1) return;
 
         setCurrentQuestion(quizQuestions[nextQuestionIndex]);
-        setDisplayedQuestionString(quiz?.questions[nextQuestionIndex]);
         webSocketService.nextQuestion(roomName, quizQuestions[nextQuestionIndex]);
     };
 
@@ -132,7 +131,6 @@ const ManageRoom: React.FC = () => {
         if (prevQuestionIndex === undefined || prevQuestionIndex < 0) return;
 
         setCurrentQuestion(quizQuestions[prevQuestionIndex]);
-        setDisplayedQuestionString(quiz?.questions[prevQuestionIndex]);
         webSocketService.nextQuestion(roomName, quizQuestions[prevQuestionIndex]);
     };
 
@@ -168,9 +166,10 @@ const ManageRoom: React.FC = () => {
 
     const showSelectedQuestion = (questionIndex: number) => {
         if (quiz?.questions && quizQuestions) {
-            setDisplayedQuestionString(quiz?.questions[questionIndex]);
             setCurrentQuestion(quizQuestions[questionIndex]);
-            webSocketService.nextQuestion(roomName, quizQuestions[questionIndex]);
+            if (quizMode === 'teacher') {
+                webSocketService.nextQuestion(roomName, quizQuestions[questionIndex]);
+            }
         }
     };
 
@@ -204,39 +203,47 @@ const ManageRoom: React.FC = () => {
     return (
         <div className="room-wrapper">
             <div className="room-container">
-                <div className="mb-1">
+                <div className="mb-1 top-container">
                     <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
+                    <div className="text-lg text-bold blue selectable-text room-name-wrapper">
+                        Salle: {roomName}
+                    </div>
                 </div>
                 {quizQuestions ? (
-                    <div>
-                        <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-                            Salle: {roomName}
-                        </div>
-                        <div className="title center-h-align mb-5">{quiz?.title}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="title center-h-align mb-2">{quiz?.title}</div>
                         {quizMode === 'teacher' && (
-                            <div className="mb-5">
-                                <div className="mb-1">
-                                    <QuestionNavigation
-                                        currentQuestionId={Number(currentQuestion?.question.id)}
-                                        questionsLength={quizQuestions?.length}
-                                        previousQuestion={previousQuestion}
-                                        nextQuestion={nextQuestion}
-                                    />
-                                </div>
-                                <GIFTTemplatePreview
-                                    questions={
-                                        displayedQuestionString ? [displayedQuestionString] : []
-                                    }
-                                    hideAnswers={true}
+                            <div className="mb-1">
+                                <QuestionNavigation
+                                    currentQuestionId={Number(currentQuestion?.question.id)}
+                                    questionsLength={quizQuestions?.length}
+                                    previousQuestion={previousQuestion}
+                                    nextQuestion={nextQuestion}
                                 />
                             </div>
                         )}
-                        <LiveResultsComponent
-                            quizMode={quizMode}
-                            socket={socket}
-                            questions={quizQuestions}
-                            showSelectedQuestion={showSelectedQuestion}
-                        ></LiveResultsComponent>
+                        <div className="mb-2 flex-column-wrapper">
+                            <div className="preview-and-result-container">
+                                <Question
+                                    imageUrl={currentQuestion?.image}
+                                    showAnswer={false}
+                                    question={currentQuestion?.question}
+                                />
+                                <LiveResultsComponent
+                                    quizMode={quizMode}
+                                    socket={socket}
+                                    questions={quizQuestions}
+                                    showSelectedQuestion={showSelectedQuestion}
+                                ></LiveResultsComponent>
+                            </div>
+                        </div>
+                        {quizMode === 'teacher' && (
+                            <div className="nextQuestionButton">
+                                <Button onClick={nextQuestion} variant="contained">
+                                    prochaine question
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <UserWaitPage

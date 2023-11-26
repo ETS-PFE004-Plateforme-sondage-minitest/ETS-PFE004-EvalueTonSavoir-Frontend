@@ -39,12 +39,7 @@ interface StudentResult {
     answers: Answer[];
 }
 
-const LiveResults: React.FC<LiveResultsProps> = ({
-    socket,
-    questions,
-    showSelectedQuestion,
-    quizMode
-}) => {
+const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion }) => {
     const [showUsernames, setShowUsernames] = useState<boolean>(false);
     const [showCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
@@ -185,17 +180,14 @@ const LiveResults: React.FC<LiveResultsProps> = ({
                                 key={index}
                                 sx={{
                                     textAlign: 'center',
-                                    cursor: `${quizMode === 'teacher' ? 'pointer' : 'auto'}`,
+                                    cursor: `pointer`,
                                     borderStyle: 'solid',
                                     borderWidth: 1,
                                     borderColor: 'rgba(224, 224, 224, 1)'
                                 }}
-                                onClick={() =>
-                                    quizMode === 'teacher' && showSelectedQuestion(index)
-                                }
+                                onClick={() => showSelectedQuestion(index)}
                             >
-                                {' '}
-                                <div className="text-base text-bold">{`Q${index + 1}`}</div>
+                                <div className="text-base text-bold blue">{`Q${index + 1}`}</div>
                             </TableCell>
                         ))}
                     </TableRow>
@@ -210,7 +202,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({
                                     borderColor: 'rgba(224, 224, 224, 1)'
                                 }}
                             >
-                                <div className="text-base text-bold">
+                                <div className="text-base">
                                     {showUsernames ? student.username : '******'}
                                 </div>
                             </TableCell>
@@ -253,8 +245,10 @@ const LiveResults: React.FC<LiveResultsProps> = ({
                     ))}
                 </TableBody>
                 <TableFooter>
-                    <TableRow>
-                        <TableCell>% réussite</TableCell>
+                    <TableRow sx={{ backgroundColor: '#d3d3d34f' }}>
+                        <TableCell sx={{ color: 'black' }}>
+                            <div className="text-base text-bold">% réussite</div>
+                        </TableCell>
                         {Array.from({ length: maxQuestions }, (_, index) => (
                             <TableCell
                                 key={index}
@@ -262,7 +256,9 @@ const LiveResults: React.FC<LiveResultsProps> = ({
                                     textAlign: 'center',
                                     borderStyle: 'solid',
                                     borderWidth: 1,
-                                    borderColor: 'rgba(224, 224, 224, 1)'
+                                    borderColor: 'rgba(224, 224, 224, 1)',
+                                    fontWeight: 'bold',
+                                    color: 'rgba(0, 0, 0)'
                                 }}
                             >
                                 {studentResults.length > 0

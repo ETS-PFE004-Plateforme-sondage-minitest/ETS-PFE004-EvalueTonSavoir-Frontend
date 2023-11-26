@@ -6,13 +6,6 @@
     height: 100%;
 }
 
-.create-room-btn {
-    width: 20vw;
-    height: 20vh;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    margin-top: 25vh;
-}
-
 .manage-room-container {
     display: flex;
     flex-direction: column;
@@ -44,7 +37,6 @@
     align-items: center;
     flex-grow: 1;
     gap: 2vh;
-    height: 80%;
 }
 
 .launch-quiz-btn {
@@ -84,6 +76,12 @@
     max-width: 60vw;
 }
 
+@media only screen and (max-device-width: 768px) {
+    .room-container {
+        max-width: 100%;
+    }
+}
+
 .room-wrapper {
     display: flex;
     width: 100%;
@@ -91,12 +89,48 @@
     justify-content: center;
 }
 
-.room-name-wrapper {
-    position: absolute;
-    top: 0.5rem;
-    right: 0;
-}
-
 .user-item {
     width: 100%;
+}
+
+.flex-column-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 85vh;
+    overflow: auto;
+}
+
+.preview-and-result-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.nextQuestionButton {
+    align-self: flex-end;
+    margin-bottom: 5rem !important;
+}
+
+.top-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media only screen and (max-device-height: 1100px) {
+    .flex-column-wrapper {
+        height: 65vh;
+    }
+}
+
+@media only screen and (max-device-height: 1079px) {
+    .flex-column-wrapper {
+        height: 60vh;
+    }
+}
+
+@media only screen and (max-device-height: 741px) {
+    .flex-column-wrapper {
+        height: 40vh;
+    }
 }
