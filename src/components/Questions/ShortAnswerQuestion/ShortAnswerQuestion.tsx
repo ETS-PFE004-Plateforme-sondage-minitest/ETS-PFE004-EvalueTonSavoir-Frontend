@@ -24,7 +24,7 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-wrapper">
-            <div className="title mb-1">
+            <div className="title mb-1 text-center center-h-align">
                 <Latex>{questionTitle}</Latex>
             </div>
             {showAnswer ? (

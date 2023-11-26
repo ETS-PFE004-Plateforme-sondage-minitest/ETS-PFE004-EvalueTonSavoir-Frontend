@@ -45,9 +45,11 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
 
     return (
         <div className="question-component-container">
-            <Button variant="outlined" className="quit-btn" onClick={disconnectWebSocket}>
-                Déconnexion
-            </Button>
+            <div className="quit-btn">
+                <Button variant="outlined" onClick={disconnectWebSocket}>
+                    Déconnexion
+                </Button>
+            </div>
             <div className="mb-5">
                 <QuestionNavigation
                     currentQuestionId={Number(questionInfos.question.id)}

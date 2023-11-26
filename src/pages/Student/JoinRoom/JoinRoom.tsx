@@ -9,7 +9,7 @@ import webSocketService from '../../../services/WebsocketService';
 
 import './joinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
-import { Paper, TextField } from '@mui/material';
+import { Button, Paper, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 const JoinRoom: React.FC = () => {
@@ -99,9 +99,16 @@ const JoinRoom: React.FC = () => {
 
     if (isWaitingForTeacher) {
         return (
-            <div className="waiting-text">
-                En attente que le professeur lance le questionnaire...
-            </div>
+            <>
+                <div className="quit-btn">
+                    <Button variant="outlined" onClick={disconnect}>
+                        Déconnexion
+                    </Button>
+                </div>
+                <div className="waiting-text text-xl text-bold">
+                    En attente que le professeur lance le questionnaire...
+                </div>
+            </>
         );
     }
 
@@ -141,10 +148,11 @@ const JoinRoom: React.FC = () => {
                                 fullWidth
                             />
                             <TextField
+                                type="number"
                                 label="Numéro de la salle"
                                 variant="outlined"
                                 value={roomName}
-                                onChange={(e) => setRoomName(e.target.value.toUpperCase())}
+                                onChange={(e) => setRoomName(e.target.value)}
                                 placeholder="Nom de la salle"
                                 sx={{ marginBottom: '1rem' }}
                                 fullWidth
