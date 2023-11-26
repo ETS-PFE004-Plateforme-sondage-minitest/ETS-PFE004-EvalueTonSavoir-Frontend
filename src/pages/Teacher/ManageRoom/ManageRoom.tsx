@@ -170,7 +170,9 @@ const ManageRoom: React.FC = () => {
         if (quiz?.questions && quizQuestions) {
             setDisplayedQuestionString(quiz?.questions[questionIndex]);
             setCurrentQuestion(quizQuestions[questionIndex]);
-            webSocketService.nextQuestion(roomName, quizQuestions[questionIndex]);
+            if (quizMode === 'teacher') {
+                webSocketService.nextQuestion(roomName, quizQuestions[questionIndex]);
+            }
         }
     };
 
@@ -204,39 +206,48 @@ const ManageRoom: React.FC = () => {
     return (
         <div className="room-wrapper">
             <div className="room-container">
-                <div className="mb-1">
+                <div className="mb-1 top-container">
                     <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
+                    <div className="text-lg text-bold blue selectable-text room-name-wrapper">
+                        Salle: {roomName}
+                    </div>
                 </div>
                 {quizQuestions ? (
-                    <div>
-                        <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-                            Salle: {roomName}
-                        </div>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div className="title center-h-align mb-5">{quiz?.title}</div>
                         {quizMode === 'teacher' && (
-                            <div className="mb-5">
-                                <div className="mb-1">
-                                    <QuestionNavigation
-                                        currentQuestionId={Number(currentQuestion?.question.id)}
-                                        questionsLength={quizQuestions?.length}
-                                        previousQuestion={previousQuestion}
-                                        nextQuestion={nextQuestion}
-                                    />
-                                </div>
+                            <div className="mb-1">
+                                <QuestionNavigation
+                                    currentQuestionId={Number(currentQuestion?.question.id)}
+                                    questionsLength={quizQuestions?.length}
+                                    previousQuestion={previousQuestion}
+                                    nextQuestion={nextQuestion}
+                                />
+                            </div>
+                        )}
+                        <div className="mb-5 flex-column-wrapper">
+                            <div className="preview-and-result-container">
                                 <GIFTTemplatePreview
                                     questions={
                                         displayedQuestionString ? [displayedQuestionString] : []
                                     }
                                     hideAnswers={true}
                                 />
+                                <LiveResultsComponent
+                                    quizMode={quizMode}
+                                    socket={socket}
+                                    questions={quizQuestions}
+                                    showSelectedQuestion={showSelectedQuestion}
+                                ></LiveResultsComponent>
+                            </div>
+                        </div>
+                        {quizMode === 'teacher' && (
+                            <div className="nextQuestionButton">
+                                <Button onClick={nextQuestion} variant="contained">
+                                    prochaine question
+                                </Button>
                             </div>
                         )}
-                        <LiveResultsComponent
-                            quizMode={quizMode}
-                            socket={socket}
-                            questions={quizQuestions}
-                            showSelectedQuestion={showSelectedQuestion}
-                        ></LiveResultsComponent>
                     </div>
                 ) : (
                     <UserWaitPage
