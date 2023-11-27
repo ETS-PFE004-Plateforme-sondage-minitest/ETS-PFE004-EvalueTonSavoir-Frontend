@@ -3,7 +3,7 @@ import { render, screen, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { GIFTQuestion } from 'gift-pegjs';
 
-import TeacherModeQuiz from '../../../../pages/Student/TeacherModeQuiz/TeacherModeQuiz';
+import TeacherModeQuiz from '../../../../components/TeacherModeQuiz/TeacherModeQuiz';
 
 describe('TeacherModeQuiz', () => {
     const mockQuestion: GIFTQuestion = {
