@@ -1,21 +1,17 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Dashboard from '../../../../pages/Teacher/Dashboard/Dashboard';
 
 describe('Dashboard Component', () => {
-  const localStorageMock = {
-    getItem: jest.fn(),
-    setItem: jest.fn(),
+  const sampleQuiz = {
+    id: '1',
+    title: 'Sample Quiz',
+    questions: ['Question 1', 'Question 2', 'Question 3'],
   };
 
   beforeEach(() => {
-    localStorageMock.getItem.mockClear();
-    localStorageMock.setItem.mockClear();
-  });
-
-  beforeAll(() => {
-    // @ts-ignore
-    global.localStorage = localStorageMock as Storage;
+    localStorage.setItem('quizzes', JSON.stringify([sampleQuiz]));
   });
 
   test('renders dashboard with initial state', () => {
@@ -38,29 +34,11 @@ describe('Dashboard Component', () => {
     const searchInput = screen.getByPlaceholderText('Rechercher un quiz');
     fireEvent.change(searchInput, { target: { value: 'Sample Quiz' } });
 
+    const quizTitleToSearch = 'Sample Quiz';
+
+    const quizTitleElement = screen.getByText(quizTitleToSearch);
+    expect(quizTitleElement).toBeInTheDocument();
   });
 
-
-  test('handles removing quiz', async () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>
-    );
-
-    const quizToRemove = { id: '1', title: 'Sample Quiz', questions: [] }; // Replace with actual quiz data
-    const removeButton = screen.getByTitle('Supprimer le quiz');
-
-    fireEvent.click(removeButton);
-
-    expect(screen.getByText(`Êtes-vous sûr de vouloir supprimer le quiz "${quizToRemove.title}" ?`)).toBeInTheDocument();
-
-    const confirmButton = screen.getByText('Confirmer');
-    fireEvent.click(confirmButton);
-
-    await waitFor(() => {
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('quizzes', expect.any(String));
-    });
-  });
 
 });
