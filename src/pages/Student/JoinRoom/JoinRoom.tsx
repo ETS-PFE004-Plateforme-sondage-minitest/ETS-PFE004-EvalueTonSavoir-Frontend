@@ -53,7 +53,7 @@ const JoinRoom: React.FC = () => {
         });
         socket.on('join-failure', (message) => {
             console.log('Failed to join the room.');
-            setConnectionError(`Erreure de connexion: ${message}`);
+            setConnectionError(`Erreur de connexion : ${message}`);
             setIsConnecting(false);
         });
         socket.on('connect_error', (error) => {
