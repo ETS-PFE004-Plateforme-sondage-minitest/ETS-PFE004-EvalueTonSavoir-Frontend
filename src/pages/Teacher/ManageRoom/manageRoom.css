@@ -117,15 +117,15 @@
     align-items: center;
 }
 
-@media only screen and (max-device-height: 1100px) {
+@media only screen and (max-device-height: 4000px) {
     .flex-column-wrapper {
-        height: 65vh;
+        height: 60vh;
     }
 }
 
 @media only screen and (max-device-height: 1079px) {
     .flex-column-wrapper {
-        height: 60vh;
+        height: 50vh;
     }
 }
 
