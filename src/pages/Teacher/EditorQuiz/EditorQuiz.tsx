@@ -6,13 +6,14 @@ import { v4 as uuidv4 } from 'uuid';
 import Editor from '../../../components/Editor/Editor';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
-import GoBackButton from '../../../components/GoBackButton/GoBackButton';
-import Modal from '../../../components/Modal/Modal';
 
 import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
-import './EditorQuiz.css';
+import './editorQuiz.css';
+import { Button } from '@mui/material';
+import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
+import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 
 interface EditQuizParams {
     id: string;
@@ -86,7 +87,6 @@ const QuizForm: React.FC = () => {
             });
             localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         }
-        alert('Quiz saved!');
         handleModalClose();
         navigate('/teacher/dashboard');
     };
@@ -98,29 +98,36 @@ const QuizForm: React.FC = () => {
     }
 
     return (
-        <div>
-            <h1 className="page-title">Éditeur de quiz</h1>
-            <GoBackButton
-                askConfirm
-                message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
-            />
-            <div id="editor-preview-container" className="container">
-                <div className="editor-column">
-                    <h2 className="subtitle">Éditeur</h2>
-                    <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
-                    <div className="quiz-action-buttons">
-                        <a onClick={handleSaveQuiz}>Enregistrer</a>
-                    </div>
-                    <GiftCheatSheet />
+        <div className="editor-page-wrapper">
+            <div className="edit-page-container">
+                <div className="return-button-wrapper">
+                    <ReturnButton
+                        askConfirm
+                        message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
+                    />
                 </div>
+                <h1 className="page-title">Éditeur de quiz</h1>
 
-                <div className="preview-column">
-                    <h2 className="subtitle">Prévisualisation</h2>
-                    <GIFTTemplatePreview questions={filteredValue} />
+                <div className="container">
+                    <div>
+                        <h2 className="subtitle">Éditeur</h2>
+                        <div className="editor-container">
+                            <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
+                            <Button variant="contained" onClick={handleSaveQuiz}>
+                                Enregistrer
+                            </Button>
+                        </div>
+                        <GiftCheatSheet />
+                    </div>
+                    <div className="preview-column">
+                        <h2 className="subtitle">Prévisualisation</h2>
+                        <div>
+                            <GIFTTemplatePreview questions={filteredValue} />
+                        </div>
+                    </div>
                 </div>
-            </div>
-            {quizToSave && (
-                <Modal
+                <ConfirmDialog
+                    open={quizToSave}
                     title="Sauvegarder le questionnaire"
                     message="Entrez un titre pour votre questionnaire:"
                     hasOptionalInput
@@ -129,7 +136,7 @@ const QuizForm: React.FC = () => {
                     onConfirm={handleQuizSave}
                     onCancel={handleModalClose}
                 />
-            )}
+            </div>
         </div>
     );
 };

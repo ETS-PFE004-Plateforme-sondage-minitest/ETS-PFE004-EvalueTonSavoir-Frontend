@@ -1,7 +1,8 @@
 // ShortAnswerQuestion.tsx
 import React, { useState } from 'react';
-import SubmitButton from '../../SubmitButton/SubmitButton';
+import Latex from 'react-latex';
 import '../questionStyle.css';
+import { Button, TextField } from '@mui/material';
 
 type Choices = {
     feedback: { format: string; text: string } | null;
@@ -13,7 +14,7 @@ type Choices = {
 interface Props {
     questionTitle: string;
     choices: Choices[];
-    handleOnSubmitAnswer: (answer: string) => void;
+    handleOnSubmitAnswer?: (answer: string) => void;
     showAnswer?: boolean;
 }
 
@@ -23,7 +24,9 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
 
     return (
         <div className="question-wrapper">
-            <div className="title">{questionTitle}</div>
+            <div className="title mb-1 text-center center-h-align">
+                <Latex>{questionTitle}</Latex>
+            </div>
             {showAnswer ? (
                 <div className="correct-answer-text">
                     {choices.map((choice) => (
@@ -31,24 +34,34 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                     ))}
                 </div>
             ) : (
-                <div className="answer-wrapper">
-                    <input
-                        type="text"
-                        id={questionTitle}
-                        name={questionTitle}
-                        onChange={(e) => {
-                            setAnswer(e.target.value);
-                        }}
-                        disabled={showAnswer}
-                        data-testid="text-input"
-                    />
-                </div>
+                <>
+                    <div className="answer-wrapper mb-1">
+                        <TextField
+                            type="text"
+                            id={questionTitle}
+                            name={questionTitle}
+                            onChange={(e) => {
+                                setAnswer(e.target.value);
+                            }}
+                            disabled={showAnswer}
+                            data-testid="text-input"
+                        />
+                    </div>
+                    {handleOnSubmitAnswer && (
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                answer !== undefined &&
+                                handleOnSubmitAnswer &&
+                                handleOnSubmitAnswer(answer)
+                            }
+                            disabled={answer === undefined || answer === ''}
+                        >
+                            Répondre
+                        </Button>
+                    )}
+                </>
             )}
-            <SubmitButton
-                hide={showAnswer}
-                onClick={() => answer !== undefined && handleOnSubmitAnswer(answer)}
-                disabled={answer === undefined || answer === ''}
-            />
         </div>
     );
 };

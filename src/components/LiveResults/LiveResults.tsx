@@ -6,12 +6,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { QuestionType } from '../../Types/QuestionType';
 
-import './results.css';
+import './liveResult.css';
+import {
+    FormControlLabel,
+    FormGroup,
+    Paper,
+    Switch,
+    Table,
+    TableBody,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableRow
+} from '@mui/material';
 
 interface LiveResultsProps {
     socket: Socket | null;
     questions: QuestionType[];
     showSelectedQuestion: (index: number) => void;
+    quizMode: 'teacher' | 'student';
 }
 
 interface Answer {
@@ -27,8 +40,8 @@ interface StudentResult {
 }
 
 const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion }) => {
-    const [hideUsernames, setHideUsernames] = useState<boolean>(true);
-    const [ShowCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
+    const [showUsernames, setShowUsernames] = useState<boolean>(false);
+    const [showCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
 
     const maxQuestions = questions.length;
@@ -122,42 +135,77 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
 
     return (
         <div>
-            <h4 className="present-results-title ">Résultats du quiz</h4>
-            <div className="live-result-control-container">
-                <label className="live-result-control">
-                    Cacher les noms d'utilisateurs:
-                    <input
-                        type="checkbox"
-                        checked={hideUsernames}
-                        onChange={() => setHideUsernames((prev) => !prev)}
-                        data-testid="hide-usernames-checkbox"
+            <div className="action-bar mb-1">
+                <div className="text-2xl text-bold">Résultats du quiz</div>
+                <FormGroup row>
+                    <FormControlLabel
+                        label={<div className="text-sm">Afficher les noms</div>}
+                        control={
+                            <Switch
+                                value={showUsernames}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    setShowUsernames(e.target.checked)
+                                }
+                            />
+                        }
                     />
-                </label>
-                <label className="live-result-control">
-                    Montrer les réponses correctes:
-                    <input
-                        type="checkbox"
-                        checked={ShowCorrectAnswers}
-                        onChange={() => setShowCorrectAnswers((prev) => !prev)}
-                        data-testid="show-correct-answers-checkbox"
+                    <FormControlLabel
+                        label={<div className="text-sm">Afficher les réponses</div>}
+                        control={
+                            <Switch
+                                value={showCorrectAnswers}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    setShowCorrectAnswers(e.target.checked)
+                                }
+                            />
+                        }
                     />
-                </label>
+                </FormGroup>
             </div>
-            <table className="table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nom d'utilisateur</th>
+
+            <Table size="small" stickyHeader component={Paper}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell
+                            sx={{
+                                borderStyle: 'solid',
+                                borderWidth: 1,
+                                borderColor: 'rgba(224, 224, 224, 1)'
+                            }}
+                        >
+                            <div className="text-base text-bold">Nom d'utilisateur</div>
+                        </TableCell>
                         {Array.from({ length: maxQuestions }, (_, index) => (
-                            <th key={index} onClick={() => showSelectedQuestion(index)}>{`Q${
-                                index + 1
-                            }`}</th>
+                            <TableCell
+                                key={index}
+                                sx={{
+                                    textAlign: 'center',
+                                    cursor: `pointer`,
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(224, 224, 224, 1)'
+                                }}
+                                onClick={() => showSelectedQuestion(index)}
+                            >
+                                <div className="text-base text-bold blue">{`Q${index + 1}`}</div>
+                            </TableCell>
                         ))}
-                    </tr>
-                </thead>
-                <tbody>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                     {studentResults.map((student) => (
-                        <tr key={student.idUser}>
-                            <td>{hideUsernames ? '******' : student.username}</td>
+                        <TableRow key={student.idUser}>
+                            <TableCell
+                                sx={{
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(224, 224, 224, 1)'
+                                }}
+                            >
+                                <div className="text-base">
+                                    {showUsernames ? student.username : '******'}
+                                </div>
+                            </TableCell>
                             {Array.from({ length: maxQuestions }, (_, index) => {
                                 const answer = student.answers.find(
                                     (answer) => parseInt(answer.idQuestion.toString()) === index + 1
@@ -165,8 +213,14 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                 const answerText = answer ? answer.answer.toString() : '';
                                 const isCorrect = answer ? answer.isCorrect : false;
                                 return (
-                                    <td
+                                    <TableCell
                                         key={index}
+                                        sx={{
+                                            textAlign: 'center',
+                                            borderStyle: 'solid',
+                                            borderWidth: 1,
+                                            borderColor: 'rgba(224, 224, 224, 1)'
+                                        }}
                                         className={
                                             answerText === ''
                                                 ? ''
@@ -175,7 +229,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                                 : 'incorrect-answer'
                                         }
                                     >
-                                        {ShowCorrectAnswers ? (
+                                        {showCorrectAnswers ? (
                                             answerText
                                         ) : isCorrect ? (
                                             <FontAwesomeIcon icon={faCheck} />
@@ -184,17 +238,29 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                                 <FontAwesomeIcon icon={faCircleXmark} />
                                             )
                                         )}
-                                    </td>
+                                    </TableCell>
                                 );
                             })}
-                        </tr>
+                        </TableRow>
                     ))}
-                </tbody>
-                <tfoot>
-                    <tr className="grayed-table-row">
-                        <th>% réussite</th>
+                </TableBody>
+                <TableFooter>
+                    <TableRow sx={{ backgroundColor: '#d3d3d34f' }}>
+                        <TableCell sx={{ color: 'black' }}>
+                            <div className="text-base text-bold">% réussite</div>
+                        </TableCell>
                         {Array.from({ length: maxQuestions }, (_, index) => (
-                            <th key={index}>
+                            <TableCell
+                                key={index}
+                                sx={{
+                                    textAlign: 'center',
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(224, 224, 224, 1)',
+                                    fontWeight: 'bold',
+                                    color: 'rgba(0, 0, 0)'
+                                }}
+                            >
                                 {studentResults.length > 0
                                     ? (
                                           (studentResults.filter((student) =>
@@ -209,11 +275,11 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                       ).toFixed(0)
                                     : 0}
                                 %
-                            </th>
+                            </TableCell>
                         ))}
-                    </tr>
-                </tfoot>
-            </table>
+                    </TableRow>
+                </TableFooter>
+            </Table>
         </div>
     );
 };

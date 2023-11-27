@@ -1,21 +1,34 @@
 // Question;tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { GIFTQuestion } from 'gift-pegjs';
 
 import TrueFalseQuestion from './TrueFalseQuestion/TrueFalseQuestion';
 import MultipleChoiceQuestion from './MultipleChoiceQuestion/MultipleChoiceQuestion';
 import NumericalQuestion from './NumericalQuestion/NumericalQuestion';
 import ShortAnswerQuestion from './ShortAnswerQuestion/ShortAnswerQuestion';
+import useCheckMobileScreen from '../../services/useCheckMobileScreen';
 
-interface QuestionsProps {
-    question: GIFTQuestion;
-    handleOnSubmitAnswer: (answer: string | number | boolean) => void;
+interface QuestionProps {
+    question: GIFTQuestion | undefined;
+    handleOnSubmitAnswer?: (answer: string | number | boolean) => void;
     showAnswer?: boolean;
+    imageUrl?: string;
 }
-const Questions: React.FC<QuestionsProps> = ({ question, handleOnSubmitAnswer, showAnswer }) => {
-    switch (question.type) {
+const Question: React.FC<QuestionProps> = ({
+    question,
+    handleOnSubmitAnswer,
+    showAnswer,
+    imageUrl
+}) => {
+    const isMobile = useCheckMobileScreen();
+    const imgWidth = useMemo(() => {
+        return isMobile ? '100%' : '20%';
+    }, [isMobile]);
+
+    let questionTypeComponent = null;
+    switch (question?.type) {
         case 'TF':
-            return (
+            questionTypeComponent = (
                 <TrueFalseQuestion
                     questionTitle={question.stem.text}
                     correctAnswer={question.isTrue}
@@ -23,8 +36,9 @@ const Questions: React.FC<QuestionsProps> = ({ question, handleOnSubmitAnswer, s
                     showAnswer={showAnswer}
                 />
             );
+            break;
         case 'MC':
-            return (
+            questionTypeComponent = (
                 <MultipleChoiceQuestion
                     questionTitle={question.stem.text}
                     choices={question.choices}
@@ -32,9 +46,10 @@ const Questions: React.FC<QuestionsProps> = ({ question, handleOnSubmitAnswer, s
                     showAnswer={showAnswer}
                 />
             );
+            break;
         case 'Numerical':
             if (question.choices && !Array.isArray(question.choices)) {
-                return (
+                questionTypeComponent = (
                     <NumericalQuestion
                         questionTitle={question.stem.text}
                         correctAnswers={question.choices}
@@ -45,7 +60,7 @@ const Questions: React.FC<QuestionsProps> = ({ question, handleOnSubmitAnswer, s
             }
             break;
         case 'Short':
-            return (
+            questionTypeComponent = (
                 <ShortAnswerQuestion
                     questionTitle={question.stem.text}
                     choices={question.choices}
@@ -53,9 +68,22 @@ const Questions: React.FC<QuestionsProps> = ({ question, handleOnSubmitAnswer, s
                     showAnswer={showAnswer}
                 />
             );
-        default:
-            return <div>Question de type inconnu</div>;
+            break;
     }
+    return (
+        <div className="question-container">
+            {questionTypeComponent ? (
+                <>
+                    {imageUrl && (
+                        <img src={imageUrl} alt="QuestionImage" style={{ width: imgWidth }} />
+                    )}
+                    {questionTypeComponent}
+                </>
+            ) : (
+                <div>Question de type inconnue</div>
+            )}
+        </div>
+    );
 };
 
-export default Questions;
+export default Question;
