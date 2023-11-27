@@ -61,7 +61,7 @@ const ManageRoom: React.FC = () => {
             webSocketService.createRoom();
         });
         socket.on('connect_error', (error) => {
-            setConnectingError('Erreure lors de la connexion... Veuillez réessayer');
+            setConnectingError('Erreur lors de la connexion... Veuillez réessayer');
             console.error('WebSocket connection error:', error);
         });
         socket.on('create-success', (roomName: string) => {
