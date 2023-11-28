@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { QuestionType } from '../../../../Types/QuestionType';
-import StudentModeQuiz from '../../../../pages/Student/StudentModeQuiz/StudentModeQuiz';
+import StudentModeQuiz from '../../../../components/StudentModeQuiz/StudentModeQuiz';
 
 describe('StudentModeQuiz', () => {
     const mockQuestions: QuestionType[] = [
@@ -49,7 +49,7 @@ describe('StudentModeQuiz', () => {
             />
         );
 
-        expect(screen.getByText('Question 1')).toBeInTheDocument();
+        expect(screen.getByText('Sample Question 1')).toBeInTheDocument();
     });
 
     test('handles disconnect button click', () => {
