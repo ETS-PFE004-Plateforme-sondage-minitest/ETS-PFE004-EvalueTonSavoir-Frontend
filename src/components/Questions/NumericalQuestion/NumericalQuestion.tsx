@@ -45,7 +45,7 @@ const NumericalQuestion: React.FC<Props> = (props) => {
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 setAnswer(e.target.valueAsNumber);
                             }}
-                            data-testid="number-input"
+                            inputProps={{ 'data-testid': 'number-input' }}
                         />
                     </div>
                     {handleOnSubmitAnswer && (

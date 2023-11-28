@@ -44,7 +44,7 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                                 setAnswer(e.target.value);
                             }}
                             disabled={showAnswer}
-                            data-testid="text-input"
+                            inputProps={{ 'data-testid': 'text-input' }}
                         />
                     </div>
                     {handleOnSubmitAnswer && (
