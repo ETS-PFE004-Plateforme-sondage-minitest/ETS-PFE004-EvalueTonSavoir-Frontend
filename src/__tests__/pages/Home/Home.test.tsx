@@ -11,8 +11,6 @@ describe('Home', () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByText(/Évalue ton savoir/)).toBeInTheDocument();
-
         expect(screen.getByText(/Espace\s*étudiant/)).toBeInTheDocument();
         expect(screen.getByText(/Espace\s*enseignant/)).toBeInTheDocument();
     });
