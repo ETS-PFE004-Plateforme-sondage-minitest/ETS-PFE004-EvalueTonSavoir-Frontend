@@ -157,7 +157,6 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
                 style={{ display: 'none' }}
                 onChange={handleFileInputChange}
                 multiple
-                aria-label="file input"
             />
         </>
     );
