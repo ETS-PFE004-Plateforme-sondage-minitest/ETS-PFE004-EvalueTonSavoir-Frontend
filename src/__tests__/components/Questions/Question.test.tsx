@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import Questions from '../../../components/Questions/Question';
 import { GIFTQuestion } from 'gift-pegjs';
 
+//
 describe('Questions Component', () => {
     const mockHandleSubmitAnswer = jest.fn();
 
@@ -42,9 +43,9 @@ describe('Questions Component', () => {
     const sampleShortAnswerQuestion: GIFTQuestion = {
         type: 'Short',
         stem: { format: 'plain', text: 'Sample short answer question' },
-        title: 'Short Answer Question Title', 
-        hasEmbeddedAnswers: false, 
-        globalFeedback: null, 
+        title: 'Short Answer Question Title',
+        hasEmbeddedAnswers: false,
+        globalFeedback: null,
         choices: [
             {
                 feedback: { format: 'html', text: 'Correct answer feedback' },
@@ -117,7 +118,7 @@ describe('Questions Component', () => {
 
     it('renders correctly for Short Answer question', () => {
         renderComponent(sampleShortAnswerQuestion);
-    
+
         expect(screen.getByText('Sample short answer question')).toBeInTheDocument();
         expect(screen.getByTestId('text-input')).toBeInTheDocument();
         expect(screen.getByText('Répondre')).toBeInTheDocument();
