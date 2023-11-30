@@ -103,7 +103,6 @@ const ManageRoom: React.FC = () => {
             question = QuestionService.ignoreImgTags(question);
             parsedQuestions.push({ question: parse(question)[0], image: imageUrl });
             parsedQuestions[index].question.id = (index + 1).toString();
-            console.log(imageUrl);
         });
         if (parsedQuestions.length === 0) return;
 
@@ -205,9 +204,11 @@ const ManageRoom: React.FC = () => {
             <div className="room-container">
                 <div className="mb-1 top-container">
                     <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
-                    <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-                        Salle: {roomName}
-                    </div>
+                    {quizQuestions && (
+                        <div className="text-lg text-bold blue selectable-text room-name-wrapper">
+                            Salle: {roomName}
+                        </div>
+                    )}
                 </div>
                 {quizQuestions ? (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -240,7 +241,7 @@ const ManageRoom: React.FC = () => {
                         {quizMode === 'teacher' && (
                             <div className="nextQuestionButton">
                                 <Button onClick={nextQuestion} variant="contained">
-                                    prochaine question
+                                    Prochaine question
                                 </Button>
                             </div>
                         )}
