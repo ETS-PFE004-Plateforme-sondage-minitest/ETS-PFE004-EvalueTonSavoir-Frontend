@@ -1,4 +1,4 @@
-import React, { useState, DragEvent, useRef } from 'react';
+import React, { useState, DragEvent, useRef, useEffect } from 'react';
 import './importModal.css';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -28,6 +28,12 @@ interface Props {
 const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) => {
     const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        return () => {
+            setDroppedFiles([]);
+        };
+    }, []);
 
     const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -66,15 +72,26 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
                 reader.onload = (event) => {
                     if (event.target && event.target.result) {
                         const fileContent: string = event.target.result as string;
+                        console.log(fileContent);
+                        if (fileContent.trim() === '') {
+                            resolve(null);
+                        }
+
                         const questions = fileContent.split(/(?<=^|[^\\]}.*)\r?\n/);
-                        if (questions[questions.length - 1] === '') questions.pop(); // Remove last empty line
+
+                        if (questions[questions.length - 1] === '') {
+                            questions.pop();
+                        }
+
                         const newQuiz = {
                             id: uuidv4(),
                             title: droppedFile.name.slice(0, -4) || 'Untitled quiz',
                             questions
                         };
+
                         resolve(newQuiz);
                     }
+                    resolve(null);
                 };
 
                 reader.readAsText(droppedFile.file);
@@ -82,9 +99,14 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
         });
 
         Promise.all(quizzesToImportPromises).then((quizzesToImport) => {
-            const updatedQuizzes = [...storedQuizzes, ...quizzesToImport];
+            const verifiedQuizzesToImport = quizzesToImport.filter((quiz) => {
+                return quiz !== null;
+            });
+
+            const updatedQuizzes = [...storedQuizzes, ...verifiedQuizzesToImport];
             localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
 
+            setDroppedFiles([]);
             handleOnImport();
         });
     };
@@ -106,9 +128,14 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
         }
     };
 
+    const handleOnCancel = () => {
+        setDroppedFiles([]);
+        handleOnClose();
+    };
+
     return (
         <>
-            <Dialog open={open} onClose={handleOnClose} fullWidth>
+            <Dialog open={open} onClose={handleOnCancel} fullWidth>
                 <DialogTitle sx={{ fontWeight: 'bold', fontSize: 24 }}>
                     {'Importation de quiz'}
                 </DialogTitle>
@@ -130,7 +157,7 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
                 </DialogContent>
                 <DialogContent>
                     {droppedFiles.map((file) => (
-                        <div key={file.id} className="file-container">
+                        <div key={file.id + file.name} className="file-container">
                             <span>{file.icon}</span>
                             <span>{file.name}</span>
                             <IconButton
@@ -143,7 +170,7 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
                     ))}
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" onClick={handleOnClose}>
+                    <Button variant="outlined" onClick={handleOnCancel}>
                         Annuler
                     </Button>
                     <Button variant="contained" onClick={handleOnSave}>
