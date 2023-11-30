@@ -1,4 +1,4 @@
-import React, { useState, DragEvent, useRef } from 'react';
+import React, { useState, DragEvent, useRef, useEffect } from 'react';
 import './importModal.css';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -28,6 +28,12 @@ interface Props {
 const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) => {
     const [droppedFiles, setDroppedFiles] = useState<DroppedFile[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        return () => {
+            setDroppedFiles([]);
+        };
+    }, []);
 
     const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -85,6 +91,7 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
             const updatedQuizzes = [...storedQuizzes, ...quizzesToImport];
             localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
 
+            setDroppedFiles([]);
             handleOnImport();
         });
     };
@@ -106,9 +113,14 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
         }
     };
 
+    const handleOnCancel = () => {
+        setDroppedFiles([]);
+        handleOnClose();
+    };
+
     return (
         <>
-            <Dialog open={open} onClose={handleOnClose} fullWidth>
+            <Dialog open={open} onClose={handleOnCancel} fullWidth>
                 <DialogTitle sx={{ fontWeight: 'bold', fontSize: 24 }}>
                     {'Importation de quiz'}
                 </DialogTitle>
@@ -143,7 +155,7 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
                     ))}
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" onClick={handleOnClose}>
+                    <Button variant="outlined" onClick={handleOnCancel}>
                         Annuler
                     </Button>
                     <Button variant="contained" onClick={handleOnSave}>
