@@ -9,7 +9,7 @@
 }
 
 .primary-blue {
-    background-color: #5271ff;
+    background-color: var(--main-color);
     color: #ffffff;
 }
 

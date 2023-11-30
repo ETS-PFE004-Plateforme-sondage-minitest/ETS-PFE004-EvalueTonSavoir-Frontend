@@ -13,6 +13,7 @@ interface Props {
 
 const UserWaitPage: React.FC<Props> = ({ users, launchQuiz, roomName, setQuizMode }) => {
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
     return (
         <div className="manage-room-container">
             <div className="end-h-align w-full">
@@ -30,21 +31,23 @@ const UserWaitPage: React.FC<Props> = ({ users, launchQuiz, roomName, setQuizMod
                 </div>
             </div>
             <div className="quiz-setup-container">
-                <div>
-                    <div className="text-xl text-bold mb-1">{`Utilisateurs: (${users.length}/60)`}</div>
-                    <Grid
-                        container
-                        spacing={2}
-                        columns={6}
-                        sx={{ overflowY: 'auto', height: '85%' }}
-                    >
-                        {users.map((user, index) => (
-                            <Grid item key={user.name + index} xs={1}>
-                                <Chip label={user.name} sx={{ width: '100%' }} />
-                            </Grid>
-                        ))}
-                    </Grid>
-                </div>
+                <div className="text-xl text-bold mb-1">{`Utilisateurs: (${users.length}/60)`}</div>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        overflowY: 'auto',
+                        width: '100%',
+                        paddingRight: '1rem',
+                        paddingTop: '1rem'
+                    }}
+                >
+                    {users.map((user, index) => (
+                        <Grid item key={user.name + index} xs={2}>
+                            <Chip label={user.name} sx={{ width: '100%' }} />
+                        </Grid>
+                    ))}
+                </Grid>
             </div>
             <LaunchQuizDialog
                 open={isDialogOpen}

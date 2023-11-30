@@ -1,5 +1,5 @@
 // LiveResults.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { GIFTQuestion } from 'gift-pegjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -83,6 +83,51 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
             };
         }
     }, [socket]);
+
+    const getStudentGrade = (student: StudentResult): number => {
+        if (student.answers.length === 0) {
+            return 0;
+        }
+
+        const uniqueQuestions = new Set();
+        let correctAnswers = 0;
+
+        for (const answer of student.answers) {
+            const { idQuestion, isCorrect } = answer;
+
+            if (!uniqueQuestions.has(idQuestion)) {
+                uniqueQuestions.add(idQuestion);
+
+                if (isCorrect) {
+                    correctAnswers++;
+                }
+            }
+        }
+
+        return (correctAnswers / questions.length) * 100;
+    };
+
+    const classAverage: number = useMemo(() => {
+        let classTotal = 0;
+        studentResults.forEach((student) => {
+            classTotal += getStudentGrade(student);
+        });
+
+        return classTotal / studentResults.length;
+    }, [studentResults]);
+
+    const getCorrectAnswersPerQuestion = (index: number): number => {
+        return (
+            (studentResults.filter((student) =>
+                student.answers.some(
+                    (answer) =>
+                        parseInt(answer.idQuestion.toString()) === index + 1 && answer.isCorrect
+                )
+            ).length /
+                studentResults.length) *
+            100
+        );
+    };
 
     function checkIfIsCorrect(answer: string | number | boolean, idQuestion: number): boolean {
         const questionInfo = questions.find((q) =>
@@ -190,6 +235,16 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                 <div className="text-base text-bold blue">{`Q${index + 1}`}</div>
                             </TableCell>
                         ))}
+                        <TableCell
+                            sx={{
+                                textAlign: 'center',
+                                borderStyle: 'solid',
+                                borderWidth: 1,
+                                borderColor: 'rgba(224, 224, 224, 1)'
+                            }}
+                        >
+                            <div className="text-base text-bold">% réussite</div>
+                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -241,6 +296,18 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                     </TableCell>
                                 );
                             })}
+                            <TableCell
+                                sx={{
+                                    textAlign: 'center',
+                                    borderStyle: 'solid',
+                                    borderWidth: 1,
+                                    borderColor: 'rgba(224, 224, 224, 1)',
+                                    fontWeight: 'bold',
+                                    color: 'rgba(0, 0, 0)'
+                                }}
+                            >
+                                {getStudentGrade(student).toFixed()} %
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -262,21 +329,23 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                 }}
                             >
                                 {studentResults.length > 0
-                                    ? (
-                                          (studentResults.filter((student) =>
-                                              student.answers.some(
-                                                  (answer) =>
-                                                      parseInt(answer.idQuestion.toString()) ===
-                                                          index + 1 && answer.isCorrect
-                                              )
-                                          ).length /
-                                              studentResults.length) *
-                                          100
-                                      ).toFixed(0)
-                                    : 0}
-                                %
+                                    ? `${getCorrectAnswersPerQuestion(index).toFixed()} %`
+                                    : '-'}
                             </TableCell>
                         ))}
+                        <TableCell
+                            sx={{
+                                textAlign: 'center',
+                                borderStyle: 'solid',
+                                borderWidth: 1,
+                                borderColor: 'rgba(224, 224, 224, 1)',
+                                fontWeight: 'bold',
+                                fontSize: '1rem',
+                                color: 'rgba(0, 0, 0)'
+                            }}
+                        >
+                            {studentResults.length > 0 ? `${classAverage.toFixed()} %` : '-'}
+                        </TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>
