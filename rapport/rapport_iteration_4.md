@@ -39,11 +39,12 @@ Les objectifs clés de cette itération sont les suivants:
 
 ## Problèmes principaux rencontrés
 
-| Problème                                                                             | Notes                                                                                                                                                                                                                |
-| ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Support de l'image dans l'éditeur de quiz                                            | Le support de l'image fonctionne mais nous pensons qu'il peut être amélioré, surtout si on se détache de l'éditeur de questionnaire sous forme de texte                                                              |
-| choix de librairie pour les composants visuel                                        | Nous avons longtemps hésiter d'utiliser une librairie pour le coté visuel (bootstrap ou autre). Nous avons finalement décidé d'utiliser Material UI. Cela nous permet d'avoir un visuel beaucoup plus professionnel. |
-| choix du composant pour l'affichage des questions et choix de réponses coté étudiant | Nous hésitons entre utiliser le composant GIFTTemplate, ou créer un composant spécifique. La seconde solution serait plus intéressante car plus personnalisable mais ajoute de la complexité au developpement.       |
+| Problème                                                                                                                 | Notes                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Support de l'image dans l'éditeur de quiz                                                                                | Le support de l'image fonctionne mais nous pensons qu'il peut être amélioré, surtout si on se détache de l'éditeur de questionnaire sous forme de texte                                                              |
+| choix de librairie pour les composants visuel                                                                            | Nous avons longtemps hésiter d'utiliser une librairie pour le coté visuel (bootstrap ou autre). Nous avons finalement décidé d'utiliser Material UI. Cela nous permet d'avoir un visuel beaucoup plus professionnel. |
+| choix du composant pour l'affichage des questions et choix de réponses coté étudiant                                     | Nous hésitons entre utiliser le composant GIFTTemplate, ou créer un composant spécifique. La seconde solution serait plus intéressante car plus personnalisable mais ajoute de la complexité au developpement.       |
+| Les utilisateurs sur téléphones sont déconnecté s'ils sont trop longtemps inactifs et que le téléphone se met en veille. |
 
 ## Critères d'évaluation
 
