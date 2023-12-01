@@ -36,7 +36,10 @@ const NumericalQuestion: React.FC<Props> = (props) => {
                 <Latex>{questionTitle}</Latex>
             </div>
             {showAnswer ? (
-                <div className="correct-answer-text">{correctAnswer}</div>
+                <>
+                    <div className="correct-answer-text mb-2">{correctAnswer}</div>
+                    {globalFeedback && <div className="global-feedback mb-2">{globalFeedback}</div>}
+                </>
             ) : (
                 <>
                     <div className="answer-wrapper mb-1">

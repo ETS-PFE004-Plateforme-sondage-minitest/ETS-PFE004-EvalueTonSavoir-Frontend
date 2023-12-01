@@ -168,65 +168,7 @@ main {
 .blue {
     color: #5271ff;
 }
-/* :root {
-    --selected: rgb(201, 61, 40, 0.2);
-    --submit: rgb(201, 61, 40, 0.7);
-    --submit-hover: rgb(201, 61, 40, 1);
+
+.w-12 {
+    width: 13rem;
 }
-
-
-
-a,
-button {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 0 4px;
-    background-color: #439cfa;
-    color: #000;
-    border-radius: 4px;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: top;
-    margin-top: 2rem;
-}
-
-.page-title {
-    font-size: 4rem;
-    font-weight: 500;
-    margin: 1rem;
-    color: #3a3a3a;
-    text-align: center;
-}
-
-.centered {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
- 
-
-
-
-.big-btn-general-style {
-    display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 2rem;
-    border-radius: 8px;
-    background-color: #86abe7;
-    color: #4b4b4b;
-    border: none;
-    cursor: pointer;
-}
-
-.selectable-text {
-    user-select: text;
-} */

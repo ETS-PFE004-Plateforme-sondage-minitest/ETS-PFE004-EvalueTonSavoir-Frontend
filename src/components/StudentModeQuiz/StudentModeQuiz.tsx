@@ -7,6 +7,7 @@ import { QuestionType } from '../../Types/QuestionType';
 import { QuestionService } from '../../services/QuestionService';
 import { Button } from '@mui/material';
 import QuestionNavigation from '../QuestionNavigation/QuestionNavigation';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 interface StudentModeQuizProps {
     questions: QuestionType[];
@@ -65,6 +66,30 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
                     showAnswer={isAnswerSubmitted}
                     imageUrl={imageUrl}
                 />
+                <div className="center-h-align mt-1/2">
+                    <div className="w-12">
+                        <Button
+                            variant="outlined"
+                            onClick={previousQuestion}
+                            fullWidth
+                            startIcon={<ChevronLeft />}
+                            disabled={Number(questionInfos.question.id) <= 1}
+                        >
+                            Question précédente
+                        </Button>
+                    </div>
+                    <div className="w-12">
+                        <Button
+                            variant="outlined"
+                            onClick={nextQuestion}
+                            fullWidth
+                            endIcon={<ChevronRight />}
+                            disabled={Number(questionInfos.question.id) >= questions.length}
+                        >
+                            Question suivante
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     );

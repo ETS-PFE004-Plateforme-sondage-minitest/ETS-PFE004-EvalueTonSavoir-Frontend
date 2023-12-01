@@ -79,7 +79,11 @@ const Question: React.FC<QuestionProps> = ({
             {questionTypeComponent ? (
                 <>
                     {imageUrl && (
-                        <img src={imageUrl} alt="QuestionImage" style={{ width: imgWidth }} />
+                        <img
+                            src={imageUrl}
+                            alt="QuestionImage"
+                            style={{ width: imgWidth, marginBottom: '2rem' }}
+                        />
                     )}
                     {questionTypeComponent}
                 </>

@@ -29,11 +29,14 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                 <Latex>{questionTitle}</Latex>
             </div>
             {showAnswer ? (
-                <div className="correct-answer-text">
-                    {choices.map((choice) => (
-                        <div>{choice.text.text}</div>
-                    ))}
-                </div>
+                <>
+                    <div className="correct-answer-text mb-1">
+                        {choices.map((choice) => (
+                            <div className="mb-1">{choice.text.text}</div>
+                        ))}
+                    </div>
+                    {globalFeedback && <div className="global-feedback mb-2">{globalFeedback}</div>}
+                </>
             ) : (
                 <>
                     <div className="answer-wrapper mb-1">
@@ -48,9 +51,6 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                             data-testid="text-input"
                         />
                     </div>
-                    {globalFeedback && showAnswer && (
-                        <div className="global-feedback mb-2">{globalFeedback}</div>
-                    )}
                     {handleOnSubmitAnswer && (
                         <Button
                             variant="contained"

@@ -203,12 +203,18 @@ const ManageRoom: React.FC = () => {
 
     return (
         <div className="room-wrapper">
+            <div className="quit-btn">
+                <Button variant="outlined" onClick={handleReturn}>
+                    Déconnexion
+                </Button>
+            </div>
             <div className="room-container">
                 <div className="mb-1 top-container">
                     <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
                     {quizQuestions && (
                         <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-                            Salle: {roomName}
+                            <div>Salle: {roomName}</div>
+                            <div>Utilisateurs: {users.length}/60</div>
                         </div>
                     )}
                 </div>
