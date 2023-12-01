@@ -89,6 +89,11 @@
     justify-content: center;
 }
 
+.room-name-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
 .user-item {
     width: 100%;
 }

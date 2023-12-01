@@ -208,7 +208,8 @@ const ManageRoom: React.FC = () => {
                     <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
                     {quizQuestions && (
                         <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-                            Salle: {roomName}
+                            <div>Salle: {roomName}</div>
+                            <div>Utilisateurs: {users.length}/60</div>
                         </div>
                     )}
                 </div>
