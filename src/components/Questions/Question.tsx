@@ -40,6 +40,7 @@ const Question: React.FC<QuestionProps> = ({
         case 'MC':
             questionTypeComponent = (
                 <MultipleChoiceQuestion
+                    globalFeedback={question.globalFeedback?.text}
                     questionTitle={question.stem.text}
                     choices={question.choices}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
