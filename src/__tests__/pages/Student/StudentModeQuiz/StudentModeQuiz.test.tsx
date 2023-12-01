@@ -23,24 +23,24 @@ describe('StudentModeQuiz', () => {
         {
             question: {
                 id: '2',
-                type: 'MC',
+                type: 'TF',
                 stem: { format: 'plain', text: 'Sample Question 2' },
-                title: 'Sample Question 2',
+                isTrue: true,
+                incorrectFeedback: null,
+                correctFeedback: null,
+                title: 'Question 2',
                 hasEmbeddedAnswers: false,
                 globalFeedback: null,
-                choices: [
-                    { text: { format: 'plain', text: 'Option C' }, isCorrect: true, weight: 1, feedback: null },
-                    { text: { format: 'plain', text: 'Option D' }, isCorrect: false, weight: 0, feedback: null },
-                ],
             },
-            image: '',
+            image: 'sample-image-url-2',
         },
     ];
 
     const mockSubmitAnswer = jest.fn();
     const mockDisconnectWebSocket = jest.fn();
 
-    test('renders the initial question', () => {
+
+    test('renders the initial question', async () => {
         render(
             <StudentModeQuiz
                 questions={mockQuestions}
@@ -50,6 +50,26 @@ describe('StudentModeQuiz', () => {
         );
 
         expect(screen.getByText('Sample Question 1')).toBeInTheDocument();
+        expect(screen.getByText('Option A')).toBeInTheDocument();
+        expect(screen.getByText('Option B')).toBeInTheDocument();
+        expect(screen.getByText('Déconnexion')).toBeInTheDocument();
+
+    });
+
+    test('handles answer submission text', () => {
+
+        render(
+            <StudentModeQuiz
+                questions={mockQuestions}
+                submitAnswer={mockSubmitAnswer}
+                disconnectWebSocket={mockDisconnectWebSocket}
+            />
+        );
+
+        fireEvent.click(screen.getByText('Option A'));
+        fireEvent.click(screen.getByText('Répondre'));
+
+        expect(mockSubmitAnswer).toHaveBeenCalledWith('Option A', '1');
     });
 
     test('handles disconnect button click', () => {
@@ -60,10 +80,47 @@ describe('StudentModeQuiz', () => {
                 disconnectWebSocket={mockDisconnectWebSocket}
             />
         );
-
         fireEvent.click(screen.getByText('Déconnexion'));
 
         expect(mockDisconnectWebSocket).toHaveBeenCalled();
     });
 
+    test('navigates to the next question', () => {
+        render(
+            <StudentModeQuiz
+                questions={mockQuestions}
+                submitAnswer={mockSubmitAnswer}
+                disconnectWebSocket={mockDisconnectWebSocket}
+            />
+        );
+
+        fireEvent.click(screen.getByText('Option A'));
+        fireEvent.click(screen.getByText('Répondre'));
+
+        fireEvent.click(screen.getByTestId('ChevronRightIcon'));
+
+        expect(screen.getByText('Sample Question 2')).toBeInTheDocument();
+        expect(screen.getByText('T')).toBeInTheDocument();
+    });
+
+    test('navigates to the previous question', () => {
+
+        render(
+            <StudentModeQuiz
+                questions={mockQuestions}
+                submitAnswer={mockSubmitAnswer}
+                disconnectWebSocket={mockDisconnectWebSocket}
+            />
+        );
+
+        fireEvent.click(screen.getByText('Option A'));
+        fireEvent.click(screen.getByText('Répondre'));
+
+        fireEvent.click(screen.getByTestId('ChevronLeftIcon'));
+
+        expect(screen.getByText('Sample Question 1')).toBeInTheDocument();
+        expect(screen.getByText('Option B')).toBeInTheDocument();
+    });
+
 });
+
