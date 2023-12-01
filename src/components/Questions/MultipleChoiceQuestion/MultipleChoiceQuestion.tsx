@@ -14,7 +14,7 @@ type Choices = {
 interface Props {
     questionTitle: string;
     choices: Choices[];
-    globalFeedback: string | undefined;
+    globalFeedback?: string | undefined;
     handleOnSubmitAnswer?: (answer: string) => void;
     showAnswer?: boolean;
 }

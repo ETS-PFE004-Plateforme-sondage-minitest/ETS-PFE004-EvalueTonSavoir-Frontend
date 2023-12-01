@@ -14,12 +14,13 @@ type Choices = {
 interface Props {
     questionTitle: string;
     choices: Choices[];
+    globalFeedback?: string | undefined;
     handleOnSubmitAnswer?: (answer: string) => void;
     showAnswer?: boolean;
 }
 
 const ShortAnswerQuestion: React.FC<Props> = (props) => {
-    const { questionTitle, choices, showAnswer, handleOnSubmitAnswer } = props;
+    const { questionTitle, choices, showAnswer, handleOnSubmitAnswer, globalFeedback } = props;
     const [answer, setAnswer] = useState<string>();
 
     return (
@@ -47,6 +48,9 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                             data-testid="text-input"
                         />
                     </div>
+                    {globalFeedback && showAnswer && (
+                        <div className="global-feedback mb-2">{globalFeedback}</div>
+                    )}
                     {handleOnSubmitAnswer && (
                         <Button
                             variant="contained"
