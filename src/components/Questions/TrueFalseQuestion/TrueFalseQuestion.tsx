@@ -7,12 +7,14 @@ import { Button } from '@mui/material';
 interface Props {
     questionTitle: string;
     correctAnswer: boolean;
+    globalFeedback?: string | undefined;
     handleOnSubmitAnswer?: (answer: boolean) => void;
     showAnswer?: boolean;
 }
 
 const TrueFalseQuestion: React.FC<Props> = (props) => {
-    const { questionTitle, correctAnswer, showAnswer, handleOnSubmitAnswer } = props;
+    const { questionTitle, correctAnswer, showAnswer, handleOnSubmitAnswer, globalFeedback } =
+        props;
     const [answer, setAnswer] = useState<boolean>();
 
     const selectedTrue = answer ? 'selected' : '';
@@ -42,6 +44,9 @@ const TrueFalseQuestion: React.FC<Props> = (props) => {
                     <div className={`answer-text ${selectedFalse}`}>Faux</div>
                 </Button>
             </div>
+            {globalFeedback && showAnswer && (
+                <div className="global-feedback mb-2">{globalFeedback}</div>
+            )}
             {!showAnswer && handleOnSubmitAnswer && (
                 <Button
                     variant="contained"

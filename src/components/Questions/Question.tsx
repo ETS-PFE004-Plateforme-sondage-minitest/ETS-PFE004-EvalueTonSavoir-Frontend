@@ -34,17 +34,18 @@ const Question: React.FC<QuestionProps> = ({
                     correctAnswer={question.isTrue}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
                     showAnswer={showAnswer}
+                    globalFeedback={question.globalFeedback?.text}
                 />
             );
             break;
         case 'MC':
             questionTypeComponent = (
                 <MultipleChoiceQuestion
-                    globalFeedback={question.globalFeedback?.text}
                     questionTitle={question.stem.text}
                     choices={question.choices}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
                     showAnswer={showAnswer}
+                    globalFeedback={question.globalFeedback?.text}
                 />
             );
             break;
@@ -56,6 +57,7 @@ const Question: React.FC<QuestionProps> = ({
                         correctAnswers={question.choices}
                         handleOnSubmitAnswer={handleOnSubmitAnswer}
                         showAnswer={showAnswer}
+                        globalFeedback={question.globalFeedback?.text}
                     />
                 );
             }
@@ -67,6 +69,7 @@ const Question: React.FC<QuestionProps> = ({
                     choices={question.choices}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
                     showAnswer={showAnswer}
+                    globalFeedback={question.globalFeedback?.text}
                 />
             );
             break;
