@@ -10,7 +10,7 @@ import { QuestionService } from '../../../services/QuestionService';
 
 import './dashboard.css';
 import ImportModal from '../../../components/ImportModal/ImportModal';
-//import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
+
 import {
     TextField,
     IconButton,
@@ -49,7 +49,6 @@ const Dashboard: React.FC = () => {
     const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
-        // Fetch quizzes from local storage
         const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
         setQuizzes(storedQuizzes);
     }, []);
