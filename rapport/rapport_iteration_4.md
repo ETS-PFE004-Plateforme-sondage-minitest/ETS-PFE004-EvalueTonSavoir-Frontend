@@ -39,12 +39,14 @@ Les objectifs clés de cette itération sont les suivants:
 
 ## Problèmes principaux rencontrés
 
-| Problème                                                                                                                 | Notes                                                                                                                                                                                                                |
-| ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Support de l'image dans l'éditeur de quiz                                                                                | Le support de l'image fonctionne mais nous pensons qu'il peut être amélioré, surtout si on se détache de l'éditeur de questionnaire sous forme de texte                                                              |
-| choix de librairie pour les composants visuel                                                                            | Nous avons longtemps hésiter d'utiliser une librairie pour le coté visuel (bootstrap ou autre). Nous avons finalement décidé d'utiliser Material UI. Cela nous permet d'avoir un visuel beaucoup plus professionnel. |
-| choix du composant pour l'affichage des questions et choix de réponses coté étudiant                                     | Nous hésitons entre utiliser le composant GIFTTemplate, ou créer un composant spécifique. La seconde solution serait plus intéressante car plus personnalisable mais ajoute de la complexité au developpement.       |
-| Les utilisateurs sur téléphones sont déconnecté s'ils sont trop longtemps inactifs et que le téléphone se met en veille. |
+| Problème                                                                                                                 | Notes                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Support de l'image dans l'éditeur de quiz                                                                                | Le support de l'image fonctionne mais nous pensons qu'il peut être amélioré, surtout si on se détache de l'éditeur de questionnaire sous forme de texte                                                               |
+| choix de librairie pour les composants visuel                                                                            | Nous avons longtemps hésiter d'utiliser une librairie pour le coté visuel (bootstrap ou autre). Nous avons finalement décidé d'utiliser Material UI. Cela nous permet d'avoir un visuel beaucoup plus professionnel.  |
+| choix du composant pour l'affichage des questions et choix de réponses coté étudiant                                     | Nous hésitons entre utiliser le composant GIFTTemplate, ou créer un composant spécifique. La seconde solution serait plus intéressante car plus personnalisable mais ajoute de la complexité au developpement.        |
+| Les utilisateurs sur téléphones sont déconnecté s'ils sont trop longtemps inactifs et que le téléphone se met en veille. | L'équipe hésite sur le fait que cette fonctionnalité soit un problème ou non. Nous avons décidé de laisser le comportement tel quel pour le moment. Cela permet de fermet au maximum le nombre de connexions ouvertes |
+| Certaines des adresses d'images ne fonctionnent pas                                                                      | Nous n'avons pas eu le temps d'investiguer ce problème                                                                                                                                                                |
+| Support de l'exportation des documents sous format pdf                                                                   | Nous n'avons pas eu le temps de supporter cette fonctionnalité                                                                                                                                                        |
 
 ## Critères d'évaluation
 
@@ -74,6 +76,31 @@ Enfin, nous avons intégré un système de déploiement continue pour le backend
 ## Autres préoccupations et écarts
 
 ## Retour des promoteurs suite à la démo
+
+## Propositions d'amélioration
+
+Lors de cette session, notre équipe s'est concentrée sur l'implémentation des fonctionnalités éssentielles de l'application. Notre objectif principal était de livrer un produit fonctionnel, bien qu'imparfait. Cela permettra aux promoteurs de tester l'application avec des utilisateurs réels et donner un retour sur les améliorations à apporter et les bug rencontrés.
+
+Le produit que nous livrons est donc un prototype fonctionnel. Nous avons donc laissé de coté certaines fonctionnalités qui pourraient être intéressantes pour la prochaine équipe. Voici une liste de ces fonctionnalités et nos commentaires sur leur importance:
+
+| amélioration                                           | Commentaire                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| support de tous les types de question                  | Pour le moment on ne supporte que 4 types de question (composants \components\Questions ). Il serait intéressant de supporter tous les types de GIFT ce qui permettrait une meilleur portabilité des quiz. En effet les promoteurs pourrait avoir envie d'importer un quiz depuis moodle vers notre solution.                                                                                                                                                                                                          |
+| Refactoring de de la page EditorQuiz                   | Actuellement l'application propose a l'utilisateur de créer les quiz en écrivant directement sous format GIFT dans un éditeur de text. Il serait intéressant de se débarrasser de cet éditeur et de permettre a l'utilisateur de créer des quiz, d'ajouter des question, choisir leurs types et d'ajouter des réponses seulement en cliquant sur des boutons. De sorte qu'ils n'aient pas a se soucier du format.                                                                                                      |
+| Refactoring l'interface graphique                      | Pour le moment l'interface graphique est correct, mais il serait intéressant de la poffiner afin de présenter un produit final plus poussé. Nous avons choisit de ne pas utiliser bootstrap dans un soucis de clarification du code et pour des question de futur performance. Nous n'avons pas non plus utilisés tailwind css dans l'optique de garder notre code HTML aussi clair que possible. Si un changement est envisagé au niveau de la technologie du UI. Nous conseillons Tailwind css plutot que Bootstrap. |
+| Support de l'exportation des documents sous format pdf | Nous n'avons pas eu le temps de supporter cette fonctionnalité. Cependant, nous pensons que c'est une fonctionnalité importante. En effet, cela permettrait aux professeurs de pouvoir imprimer les quiz et de les distribuer aux étudiants.                                                                                                                                                                                                                                                                           |
+
+## Discussion sur le déploiement Backend (glitch ou Azure)
+
+Cette décision a été compliqué pour notre équipe. Tout d'abord le fait que nous utilisons les websocket restreint les options de déploiement.
+
+-   Notre premiere option a été Glitch, qui fournis une plateforme gratuite. Le déploiement continu a été implémenté pour cette plateforme. Le principal problème de cette plateforme est la mise en veille de notre backend après 5 minutes d'inactivité. L'avantage de Glitch par contre est que la plateforme permet d'héberger notre backend gratuitement.
+-   D'un autre coté, Azure est aussi une plateforme intéréssante en raison de l'entente entre l'école et la plateforme. Aucun d'entre nous n'avais d'experience avec la plateforme, mais nous avons réussit a déployer grace a l'extension Azure sur VScode. L'option gratuite ne permettait que la connexion de 5 personnes en meme temps. Nous avons donc opté pour le plan Basic B1.
+
+## Discussion sur le déploiement Frontend
+
+Pour le frontend de notre application, nous avons hésité entre Héroku, GithubPages et Vercel. Au final nous avons choisi Vercel pour sa simplicité d'utilisation et son intégration avec Github. Nous avons aussi implémenté le déploiement continu pour le frontend.
+Cependant après quelques temps d'utilisations nous avons remarqués quelques problèmes en raison de la gratuité de la plateforme. En effet, ce plan ne permet pas la création d'équipe pour gérer le projet et nous avons donc du désigner un membre de l'équipe pour gérer le projet.
 
 # Principaux diagrammes
 
