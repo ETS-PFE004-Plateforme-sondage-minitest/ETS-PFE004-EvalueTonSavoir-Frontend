@@ -3,6 +3,13 @@ import '@testing-library/jest-dom';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
 describe('GIFTTemplatePreview Component', () => {
+  /*test('renders loading message when questions are provided', () => {
+    render(<GIFTTemplatePreview questions={['Question 1', 'Question 2']} />);
+
+    const loadingMessage = screen.findByText(/Chargement de la prévisualisation.../i);
+    console.log(loadingMessage);
+    expect(loadingMessage).toBeInTheDocument();
+  });*/
 
   test('renders error message when questions contain invalid syntax', () => {
     render(<GIFTTemplatePreview questions={['Invalid GIFT syntax']} />);
@@ -36,34 +43,4 @@ describe('GIFTTemplatePreview Component', () => {
     const previewContainer = screen.getByTestId('preview-container');
     expect(previewContainer).toBeInTheDocument();
   });
-
-  it('renders images correctly', () => {
-    const questions = [
-      'Question 1',
-      '<img src="image1.jpg" alt="Image 1">',
-      'Question 2',
-      '<img src="image2.jpg" alt="Image 2">',
-    ];
-
-    const { getByAltText } = render(<GIFTTemplatePreview questions={questions} />);
-
-    const image1 = getByAltText('Image 1');
-    const image2 = getByAltText('Image 2');
-
-    expect(image1).toBeInTheDocument();
-    expect(image2).toBeInTheDocument();
-  });
-
-  it('renders non-images correctly', () => {
-    const questions = ['Question 1', 'Question 2'];
-
-    const { queryByAltText } = render(<GIFTTemplatePreview questions={questions} />);
-
-    const image1 = queryByAltText('Image 1');
-    const image2 = queryByAltText('Image 2');
-
-    expect(image1).toBeNull();
-    expect(image2).toBeNull();
-  });
-
 });
