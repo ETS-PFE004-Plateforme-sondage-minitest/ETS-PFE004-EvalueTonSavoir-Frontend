@@ -42,12 +42,12 @@ const ConfirmDialog: React.FC<Props> = ({
             {hasOptionalInput && (
                 <DialogContent>
                     <TextField
-                        id="optional-input"
-                        inputProps={{ 'data-testid': 'optional-input' }}
+                        //id="optional-input"
                         focused
                         fullWidth
                         value={optionalInputValue || ''}
                         onChange={onOptionalInputChange}
+                        inputProps={{ 'data-testid': 'optional-input' }}
                     />
                 </DialogContent>
             )}
