@@ -14,12 +14,14 @@ type CorrectAnswer = {
 interface Props {
     questionTitle: string;
     correctAnswers: CorrectAnswer;
+    globalFeedback?: string | undefined;
     handleOnSubmitAnswer?: (answer: number) => void;
     showAnswer?: boolean;
 }
 
 const NumericalQuestion: React.FC<Props> = (props) => {
-    const { questionTitle, correctAnswers, showAnswer, handleOnSubmitAnswer } = props;
+    const { questionTitle, correctAnswers, showAnswer, handleOnSubmitAnswer, globalFeedback } =
+        props;
 
     const [answer, setAnswer] = useState<number>();
 
@@ -34,7 +36,10 @@ const NumericalQuestion: React.FC<Props> = (props) => {
                 <Latex>{questionTitle}</Latex>
             </div>
             {showAnswer ? (
-                <div className="correct-answer-text">{correctAnswer}</div>
+                <>
+                    <div className="correct-answer-text mb-2">{correctAnswer}</div>
+                    {globalFeedback && <div className="global-feedback mb-2">{globalFeedback}</div>}
+                </>
             ) : (
                 <>
                     <div className="answer-wrapper mb-1">
@@ -48,6 +53,9 @@ const NumericalQuestion: React.FC<Props> = (props) => {
                             data-testid="number-input"
                         />
                     </div>
+                    {globalFeedback && showAnswer && (
+                        <div className="global-feedback mb-2">{globalFeedback}</div>
+                    )}
                     {handleOnSubmitAnswer && (
                         <Button
                             variant="contained"

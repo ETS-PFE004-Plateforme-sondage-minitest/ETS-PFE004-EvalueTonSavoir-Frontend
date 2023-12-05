@@ -34,6 +34,7 @@ const Question: React.FC<QuestionProps> = ({
                     correctAnswer={question.isTrue}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
                     showAnswer={showAnswer}
+                    globalFeedback={question.globalFeedback?.text}
                 />
             );
             break;
@@ -44,6 +45,7 @@ const Question: React.FC<QuestionProps> = ({
                     choices={question.choices}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
                     showAnswer={showAnswer}
+                    globalFeedback={question.globalFeedback?.text}
                 />
             );
             break;
@@ -55,6 +57,7 @@ const Question: React.FC<QuestionProps> = ({
                         correctAnswers={question.choices}
                         handleOnSubmitAnswer={handleOnSubmitAnswer}
                         showAnswer={showAnswer}
+                        globalFeedback={question.globalFeedback?.text}
                     />
                 );
             }
@@ -66,6 +69,7 @@ const Question: React.FC<QuestionProps> = ({
                     choices={question.choices}
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
                     showAnswer={showAnswer}
+                    globalFeedback={question.globalFeedback?.text}
                 />
             );
             break;
@@ -75,7 +79,11 @@ const Question: React.FC<QuestionProps> = ({
             {questionTypeComponent ? (
                 <>
                     {imageUrl && (
-                        <img src={imageUrl} alt="QuestionImage" style={{ width: imgWidth }} />
+                        <img
+                            src={imageUrl}
+                            alt="QuestionImage"
+                            style={{ width: imgWidth, marginBottom: '2rem' }}
+                        />
                     )}
                     {questionTypeComponent}
                 </>

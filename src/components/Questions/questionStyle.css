@@ -11,12 +11,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
     margin-bottom: 0.75rem;
-}
-
-.choices-wrapper {
-    width: 100%;
 }
 
 .answer-wrapper {
@@ -29,7 +24,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
 }
 
 .circle {
@@ -78,10 +72,21 @@
     color: white;
 }
 
-input {
-    width: 30vw;
-    height: 2rem;
+.choice-container {
+    display: flex;
+    flex-direction: column;
 }
-input[type='radio'] {
-    width: 10%;
+
+.feedback-container {
+    margin-left: 1.1rem;
+}
+
+.global-feedback {
+    position: relative;
+    padding: 0 1rem;
+    background-color: hsl(43, 100%, 94%);
+    color: hsl(43, 95%, 9%);
+    border: hsl(36, 84%, 93%) 1px solid;
+    border-radius: 6px;
+    box-shadow: 0px 2px 5px hsl(0, 0%, 74%);
 }

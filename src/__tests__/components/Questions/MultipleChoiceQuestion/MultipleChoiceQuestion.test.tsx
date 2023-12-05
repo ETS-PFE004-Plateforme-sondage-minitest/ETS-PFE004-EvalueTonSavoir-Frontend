@@ -12,6 +12,7 @@ describe('MultipleChoiceQuestion', () => {
     beforeEach(() => {
         render(
             <MultipleChoiceQuestion
+                globalFeedback="feedback"
                 questionTitle="Test Question"
                 choices={choices}
                 handleOnSubmitAnswer={mockHandleOnSubmitAnswer}

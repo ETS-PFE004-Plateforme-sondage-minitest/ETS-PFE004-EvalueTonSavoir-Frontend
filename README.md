@@ -6,7 +6,14 @@ To run the project: `npm run dev`
 
 To run tests: `npm run test`
 
-## Forked code for GIFT template preview
+## Environment variables
+
+Create a .env file at the root of the project with the following variables:
+
+```
+VITE_BACKEND_URL="https://ets-glitch-backend.glitch.me/"
+VITE_AZURE_BACKEND_URL="https://evaluetonsavoirbackend.azurewebsites.net/"
+```
 
 ### Original code
 
@@ -36,3 +43,7 @@ In order to reuse the code, we had to install the following NPM packages:
 -   TextType.ts: replaced the `marked` call by `marked.parse` and fixed SyntaxError: ambiguous indirect export: default for `{ marked }`.
 
 -   Put `Template` and `ErrorTemplate` functions apart from index.ts to dedicated `.ts` files.
+
+```
+
+```

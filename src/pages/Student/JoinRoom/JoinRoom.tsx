@@ -72,6 +72,7 @@ const JoinRoom: React.FC = () => {
     };
 
     const disconnect = () => {
+        webSocketService.disconnect();
         setSocket(null);
         setQuestion(undefined);
         setIsWaitingForTeacher(false);
