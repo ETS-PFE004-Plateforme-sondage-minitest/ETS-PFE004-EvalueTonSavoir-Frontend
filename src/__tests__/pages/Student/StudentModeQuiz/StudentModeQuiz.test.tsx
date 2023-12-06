@@ -96,8 +96,8 @@ describe('StudentModeQuiz', () => {
 
         fireEvent.click(screen.getByText('Option A'));
         fireEvent.click(screen.getByText('Répondre'));
+        fireEvent.click(screen.getByText('Question suivante'));
 
-        fireEvent.click(screen.getByTestId('ChevronRightIcon'));
 
         expect(screen.getByText('Sample Question 2')).toBeInTheDocument();
         expect(screen.getByText('T')).toBeInTheDocument();
@@ -116,7 +116,8 @@ describe('StudentModeQuiz', () => {
         fireEvent.click(screen.getByText('Option A'));
         fireEvent.click(screen.getByText('Répondre'));
 
-        fireEvent.click(screen.getByTestId('ChevronLeftIcon'));
+        fireEvent.click(screen.getByText('Question précédente'));
+
 
         expect(screen.getByText('Sample Question 1')).toBeInTheDocument();
         expect(screen.getByText('Option B')).toBeInTheDocument();
