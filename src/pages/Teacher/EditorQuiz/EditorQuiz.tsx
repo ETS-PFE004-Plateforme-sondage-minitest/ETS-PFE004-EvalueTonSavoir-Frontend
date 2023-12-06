@@ -91,10 +91,8 @@ const QuizForm: React.FC = () => {
         navigate('/teacher/dashboard');
     };
 
-    if (!isNewQuiz) {
-        if (!quiz) {
-            return <div>Chargement...</div>;
-        }
+    if (!isNewQuiz && !quiz) {
+        return <div>Chargement...</div>;
     }
 
     return (

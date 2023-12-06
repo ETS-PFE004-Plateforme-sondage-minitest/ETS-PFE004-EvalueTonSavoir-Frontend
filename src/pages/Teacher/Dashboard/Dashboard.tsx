@@ -10,7 +10,7 @@ import { QuestionService } from '../../../services/QuestionService';
 
 import './dashboard.css';
 import ImportModal from '../../../components/ImportModal/ImportModal';
-//import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
+
 import {
     TextField,
     IconButton,
@@ -49,7 +49,6 @@ const Dashboard: React.FC = () => {
     const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
-        // Fetch quizzes from local storage
         const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
         setQuizzes(storedQuizzes);
     }, []);
@@ -224,15 +223,15 @@ const Dashboard: React.FC = () => {
                     />
                 </div>
                 <div className="button-group">
-                    <Tooltip title="Tout sélectionner">
+                    <Tooltip title="Tout sélectionner" placement="top">
                         <Checkbox checked={isSelectAll} onChange={handleSelectAll} />
                     </Tooltip>
-                    <Tooltip title="Exporter">
+                    <Tooltip title="Exporter" placement="top">
                         <IconButton color="secondary" onClick={downloadTxtFile}>
                             <FileDownload />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Supprimer">
+                    <Tooltip title="Supprimer" placement="top">
                         <IconButton
                             color="secondary"
                             onClick={() => handleRemoveQuiz(selectedQuizes)}
@@ -244,7 +243,7 @@ const Dashboard: React.FC = () => {
 
                 <List disablePadding sx={{ overflowY: 'auto', height: '100%' }}>
                     {filteredQuizzes.map((quiz: QuizType) => (
-                        <>
+                        <div key={`key-${quiz.id}`}>
                             <Divider />
                             <ListItem key={quiz.id} disablePadding>
                                 <ListItemButton
@@ -262,7 +261,7 @@ const Dashboard: React.FC = () => {
                                     </ListItemIcon>
                                     <ListItemText id={quiz.id + quiz.title} primary={quiz.title} />
                                     <div className="button-group">
-                                        <Tooltip title="Modifier">
+                                        <Tooltip title="Modifier" placement="top">
                                             <IconButton
                                                 component={Link}
                                                 to={`/teacher/editor-quiz/${quiz.id}`}
@@ -270,14 +269,14 @@ const Dashboard: React.FC = () => {
                                                 <Edit />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Dupliquer">
+                                        <Tooltip title="Dupliquer" placement="top">
                                             <IconButton
                                                 onClick={() => handleDuplicateQuiz(quiz.id)}
                                             >
                                                 <ContentCopy />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Lancer">
+                                        <Tooltip title="Lancer" placement="top">
                                             <Button
                                                 component={Link}
                                                 to={`/teacher/manage-room/${quiz.id}`}
@@ -290,7 +289,7 @@ const Dashboard: React.FC = () => {
                                     </div>
                                 </ListItemButton>
                             </ListItem>
-                        </>
+                        </div>
                     ))}
                 </List>
             </div>

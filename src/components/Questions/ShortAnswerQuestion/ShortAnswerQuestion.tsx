@@ -14,12 +14,13 @@ type Choices = {
 interface Props {
     questionTitle: string;
     choices: Choices[];
+    globalFeedback?: string | undefined;
     handleOnSubmitAnswer?: (answer: string) => void;
     showAnswer?: boolean;
 }
 
 const ShortAnswerQuestion: React.FC<Props> = (props) => {
-    const { questionTitle, choices, showAnswer, handleOnSubmitAnswer } = props;
+    const { questionTitle, choices, showAnswer, handleOnSubmitAnswer, globalFeedback } = props;
     const [answer, setAnswer] = useState<string>();
 
     return (
@@ -28,11 +29,14 @@ const ShortAnswerQuestion: React.FC<Props> = (props) => {
                 <Latex>{questionTitle}</Latex>
             </div>
             {showAnswer ? (
-                <div className="correct-answer-text">
-                    {choices.map((choice) => (
-                        <div>{choice.text.text}</div>
-                    ))}
-                </div>
+                <>
+                    <div className="correct-answer-text mb-1">
+                        {choices.map((choice) => (
+                            <div className="mb-1">{choice.text.text}</div>
+                        ))}
+                    </div>
+                    {globalFeedback && <div className="global-feedback mb-2">{globalFeedback}</div>}
+                </>
             ) : (
                 <>
                     <div className="answer-wrapper mb-1">

@@ -92,26 +92,6 @@ const ManageRoom: React.FC = () => {
         setSocket(socket);
     };
 
-    const initializeQuizQuestion = () => {
-        const quizQuestionArray = quiz?.questions;
-        if (!quizQuestionArray) return;
-        const parsedQuestions = [] as QuestionType[];
-
-        quizQuestionArray.forEach((question, index) => {
-            const imageTag = QuestionService.getImage(question);
-            const imageUrl = QuestionService.getImageSource(imageTag);
-            question = QuestionService.ignoreImgTags(question);
-            parsedQuestions.push({ question: parse(question)[0], image: imageUrl });
-            parsedQuestions[index].question.id = (index + 1).toString();
-            console.log(imageUrl);
-        });
-        if (parsedQuestions.length === 0) return;
-
-        setQuizQuestions(parsedQuestions);
-        setCurrentQuestion(parsedQuestions[0]);
-
-        webSocketService.nextQuestion(roomName, parsedQuestions[0]);
-    };
     const nextQuestion = () => {
         if (!quizQuestions || !currentQuestion || !quiz?.questions) return;
 
@@ -134,21 +114,41 @@ const ManageRoom: React.FC = () => {
         webSocketService.nextQuestion(roomName, quizQuestions[prevQuestionIndex]);
     };
 
-    const launchStudentMode = () => {
+    const initializeQuizQuestion = () => {
         const quizQuestionArray = quiz?.questions;
-        if (!quizQuestionArray) return;
+        if (!quizQuestionArray) return null;
         const parsedQuestions = [] as QuestionType[];
-        quizQuestionArray.forEach((question, index) => {
-            const image = QuestionService.getImage(question);
-            question = QuestionService.ignoreImgTags(question);
 
-            parsedQuestions.push({ question: parse(question)[0], image: image });
+        quizQuestionArray.forEach((question, index) => {
+            const imageTag = QuestionService.getImage(question);
+            const imageUrl = QuestionService.getImageSource(imageTag);
+            question = QuestionService.ignoreImgTags(question);
+            parsedQuestions.push({ question: parse(question)[0], image: imageUrl });
             parsedQuestions[index].question.id = (index + 1).toString();
         });
-        if (parsedQuestions.length === 0) return;
+        if (parsedQuestions.length === 0) return null;
 
         setQuizQuestions(parsedQuestions);
-        webSocketService.launchStudentModeQuiz(roomName, parsedQuestions);
+        return parsedQuestions;
+    };
+
+    const launchTeacherMode = () => {
+        const quizQuestions = initializeQuizQuestion();
+
+        if (!quizQuestions) return;
+
+        setCurrentQuestion(quizQuestions[0]);
+        webSocketService.nextQuestion(roomName, quizQuestions[0]);
+    };
+
+    const launchStudentMode = () => {
+        const quizQuestions = initializeQuizQuestion();
+
+        if (!quizQuestions) {
+            return;
+        }
+
+        webSocketService.launchStudentModeQuiz(roomName, quizQuestions);
     };
 
     const launchQuiz = () => {
@@ -160,13 +160,14 @@ const ManageRoom: React.FC = () => {
             case 'student':
                 return launchStudentMode();
             case 'teacher':
-                return initializeQuizQuestion();
+                return launchTeacherMode();
         }
     };
 
     const showSelectedQuestion = (questionIndex: number) => {
         if (quiz?.questions && quizQuestions) {
             setCurrentQuestion(quizQuestions[questionIndex]);
+            console.log(quizQuestions[questionIndex]);
             if (quizMode === 'teacher') {
                 webSocketService.nextQuestion(roomName, quizQuestions[questionIndex]);
             }
@@ -202,12 +203,20 @@ const ManageRoom: React.FC = () => {
 
     return (
         <div className="room-wrapper">
+            <div className="quit-btn">
+                <Button variant="outlined" onClick={handleReturn}>
+                    Déconnexion
+                </Button>
+            </div>
             <div className="room-container">
                 <div className="mb-1 top-container">
                     <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
-                    <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-                        Salle: {roomName}
-                    </div>
+                    {quizQuestions && (
+                        <div className="text-lg text-bold blue selectable-text room-name-wrapper">
+                            <div>Salle: {roomName}</div>
+                            <div>Utilisateurs: {users.length}/60</div>
+                        </div>
+                    )}
                 </div>
                 {quizQuestions ? (
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -224,11 +233,13 @@ const ManageRoom: React.FC = () => {
                         )}
                         <div className="mb-2 flex-column-wrapper">
                             <div className="preview-and-result-container">
-                                <Question
-                                    imageUrl={currentQuestion?.image}
-                                    showAnswer={false}
-                                    question={currentQuestion?.question}
-                                />
+                                {currentQuestion && (
+                                    <Question
+                                        imageUrl={currentQuestion?.image}
+                                        showAnswer={false}
+                                        question={currentQuestion?.question}
+                                    />
+                                )}
                                 <LiveResultsComponent
                                     quizMode={quizMode}
                                     socket={socket}
@@ -240,7 +251,7 @@ const ManageRoom: React.FC = () => {
                         {quizMode === 'teacher' && (
                             <div className="nextQuestionButton">
                                 <Button onClick={nextQuestion} variant="contained">
-                                    prochaine question
+                                    Prochaine question
                                 </Button>
                             </div>
                         )}

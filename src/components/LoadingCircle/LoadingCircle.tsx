@@ -9,8 +9,8 @@ interface Props {
 const LoadingCircle: React.FC<Props> = ({ text }) => {
     return (
         <div className="loading-circle">
-            <CircularProgress />
             <div className="text-base">{text}</div>
+            <CircularProgress />
         </div>
     );
 };
