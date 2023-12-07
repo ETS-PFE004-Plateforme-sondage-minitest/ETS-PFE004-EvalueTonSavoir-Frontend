@@ -21,7 +21,7 @@ export default function TrueFalse({
         {
             text: {
                 format: 'moodle',
-                text: 'True'
+                text: 'Vrai'
             },
             isCorrect: isTrue,
             weight: null,
@@ -30,7 +30,7 @@ export default function TrueFalse({
         {
             text: {
                 format: 'moodle',
-                text: 'False'
+                text: 'Faux'
             },
             isCorrect: !isTrue,
             weight: null,
