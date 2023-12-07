@@ -19,6 +19,7 @@ import {
     TableHead,
     TableRow
 } from '@mui/material';
+import Latex from 'react-latex';
 
 interface LiveResultsProps {
     socket: Socket | null;
@@ -304,7 +305,7 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                                         }
                                     >
                                         {showCorrectAnswers ? (
-                                            answerText
+                                            <Latex>{answerText}</Latex>
                                         ) : isCorrect ? (
                                             <FontAwesomeIcon icon={faCheck} />
                                         ) : (
