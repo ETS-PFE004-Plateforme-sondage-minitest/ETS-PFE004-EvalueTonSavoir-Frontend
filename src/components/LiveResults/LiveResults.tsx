@@ -161,13 +161,32 @@ const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelect
                             );
                         }
                     }
-                    if (question.choices.type === 'simple' && question.choices.number) {
+                }
+                if (question.choices && Array.isArray(question.choices)) {
+                    if (
+                        question.choices[0].text.type === 'range' &&
+                        question.choices[0].text.number &&
+                        question.choices[0].text.range
+                    ) {
                         const answerNumber = parseFloat(answerText);
+                        const range = question.choices[0].text.range;
+                        const correctAnswer = question.choices[0].text.number;
                         if (!isNaN(answerNumber)) {
-                            return answerNumber === question.choices.number;
+                            return (
+                                answerNumber <= correctAnswer + range &&
+                                answerNumber >= correctAnswer - range
+                            );
                         }
                     }
-                    //TODO add support for type range ?
+                    if (
+                        question.choices[0].text.type === 'simple' &&
+                        question.choices[0].text.number
+                    ) {
+                        const answerNumber = parseFloat(answerText);
+                        if (!isNaN(answerNumber)) {
+                            return answerNumber === question.choices[0].text.number;
+                        }
+                    }
                 }
             } else if (question.type === 'Short') {
                 return question.choices.some(
