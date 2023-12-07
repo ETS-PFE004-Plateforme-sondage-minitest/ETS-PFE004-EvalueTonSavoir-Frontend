@@ -5,6 +5,10 @@ on:
     branches:
       - main
       - develop
+
+on:
+  push:
+    branches:
       - pipeline
 
 jobs:
