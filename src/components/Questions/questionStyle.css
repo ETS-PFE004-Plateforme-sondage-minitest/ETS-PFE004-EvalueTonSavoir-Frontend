@@ -90,3 +90,7 @@
     border-radius: 6px;
     box-shadow: 0px 2px 5px hsl(0, 0%, 74%);
 }
+
+.choices-wrapper {
+    width: 90%;
+}
