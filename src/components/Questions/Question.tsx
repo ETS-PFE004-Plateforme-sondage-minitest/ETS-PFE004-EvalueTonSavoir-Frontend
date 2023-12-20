@@ -50,16 +50,28 @@ const Question: React.FC<QuestionProps> = ({
             );
             break;
         case 'Numerical':
-            if (question.choices && !Array.isArray(question.choices)) {
-                questionTypeComponent = (
-                    <NumericalQuestion
-                        questionTitle={question.stem.text}
-                        correctAnswers={question.choices}
-                        handleOnSubmitAnswer={handleOnSubmitAnswer}
-                        showAnswer={showAnswer}
-                        globalFeedback={question.globalFeedback?.text}
-                    />
-                );
+            if (question.choices) {
+                if (!Array.isArray(question.choices)) {
+                    questionTypeComponent = (
+                        <NumericalQuestion
+                            questionTitle={question.stem.text}
+                            correctAnswers={question.choices}
+                            handleOnSubmitAnswer={handleOnSubmitAnswer}
+                            showAnswer={showAnswer}
+                            globalFeedback={question.globalFeedback?.text}
+                        />
+                    );
+                } else {
+                    questionTypeComponent = (
+                        <NumericalQuestion
+                            questionTitle={question.stem.text}
+                            correctAnswers={question.choices[0].text}
+                            handleOnSubmitAnswer={handleOnSubmitAnswer}
+                            showAnswer={showAnswer}
+                            globalFeedback={question.globalFeedback?.text}
+                        />
+                    );
+                }
             }
             break;
         case 'Short':
