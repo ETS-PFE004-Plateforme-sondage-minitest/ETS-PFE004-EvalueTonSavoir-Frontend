@@ -43,7 +43,7 @@ const ConfirmDialog: React.FC<Props> = ({
                 <DialogContent>
                     <TextField
                         id="optional-input"
-                        data-testid="optional-input"
+                        inputProps={{ 'data-testid': 'optional-input' }}
                         focused
                         fullWidth
                         value={optionalInputValue || ''}

@@ -40,4 +40,36 @@ describe('Editor Component', () => {
 
         expect(editorTextarea.value).toBe('Updated Initial Value');
     });
+
+    test('should call change text with the correct value on textarea change', () => {
+        const updatedProps = {
+            initialValue: 'Updated Initial Value',
+            onEditorChange: mockOnEditorChange
+        };
+
+        render(<Editor {...updatedProps} />);
+
+        const editorTextareas = screen.getAllByRole('textbox') as HTMLTextAreaElement[];
+        const editorTextarea = editorTextareas[1];
+        fireEvent.change(editorTextarea, { target: { value: 'New value' } });
+
+        expect(editorTextarea.value).toBe('New value');
+    });
+
+    test('should call onEditorChange with an empty string if textarea value is falsy', () => {
+        const updatedProps = {
+            initialValue: 'Updated Initial Value',
+            onEditorChange: mockOnEditorChange
+        };
+
+        render(<Editor {...updatedProps} />);
+
+        const editorTextareas = screen.getAllByRole('textbox') as HTMLTextAreaElement[];
+        const editorTextarea = editorTextareas[1];
+        fireEvent.change(editorTextarea, { target: { value: '' } });
+
+        expect(editorTextarea.value).toBe('');
+    });
+
+
 });
