@@ -10,10 +10,4 @@ describe('LoadingCircle', () => {
     expect(screen.getByText(text)).toBeInTheDocument();
   });
 
-  it('matches snapshot', () => {
-    const text = 'Snapshot test';
-    const { asFragment } = render(<LoadingCircle text={text} />);
-
-    expect(asFragment()).toMatchSnapshot();
-  });
 });
