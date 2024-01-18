@@ -1,4 +1,4 @@
-# Document de Recueil de User Stories
+# Document de Recueil de User Stories 2
 
 ## User story 1 : Connexion d'un étudiant a un quizz
 - **En tant que :** étudiant
