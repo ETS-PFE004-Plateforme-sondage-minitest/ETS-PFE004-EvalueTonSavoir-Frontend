@@ -43,7 +43,3 @@ In order to reuse the code, we had to install the following NPM packages:
 -   TextType.ts: replaced the `marked` call by `marked.parse` and fixed SyntaxError: ambiguous indirect export: default for `{ marked }`.
 
 -   Put `Template` and `ErrorTemplate` functions apart from index.ts to dedicated `.ts` files.
-
-```
-
-```
