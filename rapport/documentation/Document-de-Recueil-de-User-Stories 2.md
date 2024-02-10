@@ -17,9 +17,9 @@ Auteurs:
 - **Je veux :** pouvoir accéder à un quiz après qu'il soit commencé
 - **Pour que :** je puisse répondre aux questions du quiz
 
-### User story 2 : Imprimer un quiz
+### User story 2 : Imprimer un quiz et son solutionnaire
 - **En tant que :** professeur
-- **Je veux :** pouvoir exporter un quiz
+- **Je veux :** pouvoir exporter un quiz ainsi que son solutionnaire 
 - **Pour que :** je puisse l'imprimer
 
 ### User story 3 : Upload images directement dans un quiz
@@ -77,6 +77,10 @@ Auteurs:
 - **Je veux :** pouvoir créer des dossiers pour classer mes quiz
 - **Pour que :** il soit plus facile de trouver les quiz par cours
 
+### User story 14 : Monitorer l'utilisation
+- **En tant que :** professeur
+- **Je veux :** pouvoir consulter un tableau avec les noms des d'enseignants-utilisateurs, nombre de quiz lancés par semaine ou par mois, le nombre de connexions totales
+- **Pour que :** je puisse justifier le maintien des serveurs et le support informatique au besoin
 
 ## Priorisation des user stories
 
@@ -84,7 +88,7 @@ Auteurs:
 | ------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------- |
 | User story *: Création d'un serveur                           | 🔴        |                                                                                               |
 | User story 1: Connexion d'un étudiant a un quiz en cours      | 🔴        |                                                                                               |
-| User story 2: Imprimer un quiz                                | 🟡        | Geneviève: Important avec des images + j'imprime pour la révision des étudiants               |
+| User story 2: Imprimer un quiz et son solutionnaire           | 🟡        | Geneviève: Important avec des images + j'imprime pour la révision des étudiants               |
 | User story 3: Upload images directement dans un quiz          | 🔴        |                                                                                               |
 | User story 4: Performance                                     | 🔴        | Servir de 5 à 10 profs en même temps, ayant des classes de 60 personnes                       |
 | User story 5: Sauvegarde de quiz                              | 🔴        | Tout est dans le cloud donc pas besoin de trainer les quiz avec nous                          |
@@ -96,6 +100,7 @@ Auteurs:
 | User story 11: Utiliser la palette de couleurs de l'ETS       | 🟢        | https://www.etsmtl.ca/ets/gouvernance/logos-et-identite-visuelle                              |
 | User story 12: Copier/Coller à partir de template de question | 🟠        |                                                                                               |
 | User story 13: Création de dossiers de quiz                   | 🟡        |                                                                                               |
+| User story 14: Monitorer l'utilisation                        | 🟡        |                                                                                               |
 
 > Légende :
 > 
