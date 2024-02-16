@@ -7,7 +7,7 @@ export function isQuizValid(quiz: QuizType): boolean {
 describe('isQuizValid function', () => {
     it('returns true for a valid quiz', () => {
         const validQuiz: QuizType = {
-            id: '1',
+            _id: '1',
             title: 'Sample Quiz',
             questions: ['Question 1', 'Question 2'],
         };
@@ -18,7 +18,7 @@ describe('isQuizValid function', () => {
 
     it('returns false for an invalid quiz with an empty title', () => {
         const invalidQuiz: QuizType = {
-            id: '2',
+            _id: '2',
             title: '',
             questions: ['Question 1', 'Question 2'],
         };
@@ -29,7 +29,7 @@ describe('isQuizValid function', () => {
 
     it('returns false for an invalid quiz with no questions', () => {
         const invalidQuiz: QuizType = {
-            id: '3',
+            _id: '3',
             title: 'Sample Quiz',
             questions: [],
         };

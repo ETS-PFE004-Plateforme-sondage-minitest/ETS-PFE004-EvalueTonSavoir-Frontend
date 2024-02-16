@@ -7,19 +7,21 @@ import Editor from '../../../components/Editor/Editor';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
-import { QuizService } from '../../../services/QuizService';
+//import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
 import './editorQuiz.css';
 import { Button } from '@mui/material';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
+import axios from 'axios'; // Import Axios for HTTP requests
 
 interface EditQuizParams {
     id: string;
     [key: string]: string | undefined;
 }
-
+const api = "http://localhost:4400/";
+const iduser = "65c92c3462badbf6d78cf406";
 const QuizForm: React.FC = () => {
     const { id } = useParams<EditQuizParams>();
     const [value, setValue] = useState('');
@@ -31,14 +33,22 @@ const QuizForm: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const quizToEdit = QuizService.getQuizById(id);
-        if (!!quizToEdit) {
-            setQuiz(quizToEdit);
-            setFilteredValue(quizToEdit.questions);
-            setValue(quizToEdit.questions.join('\n\n'));
-            setQuizTitle(quizToEdit.title);
-        } else {
+        const fetchQuiz = async () => {
+            try {
+                const response = await axios.get(api + `quiz/getById/${id}`);
+                setQuiz(response.data.results);
+                setFilteredValue(response.data.results.questions);
+                setValue(response.data.results.questions.join('\n\n'));
+                setQuizTitle(response.data.results.title);
+            } catch (error) {
+                console.error('Error fetching quiz:', error);
+            }
+        };
+
+        if (id === 'new') {
             setNewQuiz(true);
+        } else {
+            fetchQuiz();
         }
     }, [id]);
 
@@ -50,8 +60,8 @@ const QuizForm: React.FC = () => {
         if (value !== '') {
             handleEditorChange(value);
         }
-        const linesArray = value.split(/(?<=^|[^\\]}.*)[\n]+/); // Split at next line breaks after closing curly brace not preceded by a backslash
-        if (linesArray[linesArray.length - 1] === '') linesArray.pop(); // Remove last empty line
+        const linesArray = value.split(/(?<=^|[^\\]}.*)[\n]+/);
+        if (linesArray[linesArray.length - 1] === '') linesArray.pop();
         setFilteredValue(linesArray);
     }
 
@@ -68,27 +78,23 @@ const QuizForm: React.FC = () => {
         setQuizTitle('');
     };
 
-    const handleQuizSave = () => {
-        const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-        if (isNewQuiz) {
-            const newQuiz = {
-                id: uuidv4(),
-                title: quizTitle || 'Untitled quiz',
-                questions: filteredValue
-            };
-            const updatedQuizzes = [...storedQuizzes, newQuiz];
-            localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
-        } else {
-            const updatedQuizzes = storedQuizzes.map((q: QuizType) => {
-                if (q.id === id) {
-                    return { ...q, title: quizTitle, questions: filteredValue };
-                }
-                return q;
-            });
-            localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+    const handleQuizSave = async () => {
+        try {
+            if (isNewQuiz) {
+                const newQuiz = {
+                    id: uuidv4(),
+                    title: quizTitle || 'Untitled quiz',
+                    questions: filteredValue
+                };
+                await axios.post(api + 'quiz/create', { userId: iduser, quiz: newQuiz });
+            } else {
+                await axios.put(api + `quiz/update/${id}`, { userId: iduser,  title: quizTitle, questions: filteredValue });
+            }
+            handleModalClose();
+            navigate('/teacher/dashboard');
+        } catch (error) {
+            console.error('Error saving quiz:', error);
         }
-        handleModalClose();
-        navigate('/teacher/dashboard');
     };
 
     if (!isNewQuiz && !quiz) {

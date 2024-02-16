@@ -9,7 +9,7 @@ export class QuizService {
         }
 
         const storedQuizzes = JSON.parse(storage.getItem('quizzes') || '[]');
-        const quiz = storedQuizzes.find((q: QuizType) => q.id === id);
+        const quiz = storedQuizzes.find((q: QuizType) => q._id === id);
         return quiz;
     }
 }

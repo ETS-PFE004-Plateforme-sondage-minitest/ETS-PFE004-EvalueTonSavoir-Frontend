@@ -30,8 +30,8 @@ Object.defineProperty(window, 'localStorage', {
 
 describe('QuizService', () => {
     const mockQuizzes: QuizType[] = [
-        { id: 'quiz1', title: 'Quiz One', questions: ['Q1', 'Q2'] },
-        { id: 'quiz2', title: 'Quiz Two', questions: ['Q3', 'Q4'] }
+        { _id: 'quiz1', title: 'Quiz One', questions: ['Q1', 'Q2'] },
+        { _id: 'quiz2', title: 'Quiz Two', questions: ['Q3', 'Q4'] }
     ];
 
     beforeEach(() => {
