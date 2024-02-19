@@ -21,6 +21,7 @@
         "@mui/lab": "^5.0.0-alpha.153",
         "@mui/material": "^5.14.18",
         "@types/uuid": "^9.0.7",
+        "axios": "^1.6.7",
         "gift-pegjs": "^0.2.1",
         "jest-environment-jsdom": "^29.7.0",
         "katex": "^0.16.9",
