@@ -22,6 +22,11 @@ interface EditQuizParams {
 }
 const api = "http://localhost:4400/";
 const iduser = "65c92c3462badbf6d78cf406";
+function getAuthToken(): string | null {
+
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1yb3lzdGFnZUBvdXRsb29rLmNvbSIsImlhdCI6MTcwODY1NTI1N30.xG-IumR_R4CKe4DvSJP2ZNraLoBUD1rgmbmOIFOVJBE";
+    return token;
+}
 const QuizForm: React.FC = () => {
     const { id } = useParams<EditQuizParams>();
     const [value, setValue] = useState('');
@@ -35,7 +40,13 @@ const QuizForm: React.FC = () => {
     useEffect(() => {
         const fetchQuiz = async () => {
             try {
-                const response = await axios.get(api + `quiz/getById/${id}`);
+                const token = getAuthToken();
+                const headers = {
+                    Authorization: `Bearer ${token}`
+                };
+                const response = await axios.get(api + `quiz/getById/${id}`, {
+                    headers: headers
+                });
                 setQuiz(response.data.results);
                 setFilteredValue(response.data.results.questions);
                 setValue(response.data.results.questions.join('\n\n'));
@@ -51,6 +62,94 @@ const QuizForm: React.FC = () => {
             fetchQuiz();
         }
     }, [id]);
+
+    async function handleFiles(files: FileList) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            try {
+                const id = await uploadImage(file);
+                console.log('File uploaded successfully. ID:', id);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        }
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const fileInput = document.getElementById('file-input');
+
+        // Event listener for file input change
+        fileInput?.addEventListener('change', (event) => {
+            const files = (event.target as HTMLInputElement).files;
+            console.log("here");
+            if (files) {
+                handleFiles(files);
+            }
+        });
+    });
+
+    useEffect(() => {
+        const dropZone = document.getElementById('drop-zone');
+
+        const handleDrop = (event: DragEvent) => {
+            event.preventDefault();
+            const files = event.dataTransfer?.files;
+            if (files) {
+                handleFiles(files);
+            }
+        };
+
+        dropZone?.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone?.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone?.addEventListener('drop', handleDrop);
+
+        return () => {
+            dropZone?.removeEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+            dropZone?.removeEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+            dropZone?.removeEventListener('drop', handleDrop);
+        };
+    }, []);
+
+
+
+
+
+
+    async function uploadImage(file: File): Promise<string> {
+        const formData = new FormData();
+        formData.append('image', file);
+        const token = getAuthToken();
+        const headers = {
+            Authorization: `Bearer ${token}`
+        };
+        const response = await fetch(api + `image/upload`, {
+            method: 'POST',
+            headers: headers,
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to upload image');
+        }
+
+        const data = await response.json();
+        return data.id; // Assuming the backend returns the ID of the uploaded image
+    }
+
 
     function handleEditorChange(value: string) {
         setValue(value);
@@ -80,15 +179,23 @@ const QuizForm: React.FC = () => {
 
     const handleQuizSave = async () => {
         try {
+            const token = getAuthToken();
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
             if (isNewQuiz) {
                 const newQuiz = {
                     id: uuidv4(),
                     title: quizTitle || 'Untitled quiz',
                     questions: filteredValue
                 };
-                await axios.post(api + 'quiz/create', { userId: iduser, quiz: newQuiz });
+                await axios.post(api + 'quiz/create', { userId: iduser, quiz: newQuiz }, {
+                    headers: headers
+                });
             } else {
-                await axios.put(api + `quiz/update/${id}`, { userId: iduser,  title: quizTitle, questions: filteredValue });
+                await axios.put(api + `quiz/update/${id}`, { userId: iduser, title: quizTitle, questions: filteredValue }, {
+                    headers: headers
+                });
             }
             handleModalClose();
             navigate('/teacher/dashboard');
@@ -120,6 +227,10 @@ const QuizForm: React.FC = () => {
                             <Button variant="contained" onClick={handleSaveQuiz}>
                                 Enregistrer
                             </Button>
+                        </div>
+                        {/* Drag and drop file input */}
+                        <div id="drop-zone" className="drop-zone">
+                            <input type="file" id="file-input" className="file-input" accept="image/*" multiple />
                         </div>
                         <GiftCheatSheet />
                     </div>

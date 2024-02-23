@@ -39,6 +39,11 @@ import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 const api = "http://localhost:4400/";
 const iduser = "65c92c3462badbf6d78cf406";
+function getAuthToken(): string | null {
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1yb3lzdGFnZUBvdXRsb29rLmNvbSIsImlhdCI6MTcwODY1NTI1N30.xG-IumR_R4CKe4DvSJP2ZNraLoBUD1rgmbmOIFOVJBE";
+    return token;
+}
+//const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1yb3lzdGFnZUBvdXRsb29rLmNvbSIsImlhdCI6MTcwODY1NDAzM30.1TdXVUJMvuaE0cZ_oBihT6AddzyQlCRcek9iKnhlTkA";
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -53,7 +58,14 @@ const Dashboard: React.FC = () => {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const response = await axios.get(api + 'quiz/getAllByUserId/' + iduser);
+                const token = getAuthToken();
+                const headers = {
+                    Authorization: `Bearer ${token}`
+                };
+                const response = await axios.get(api + `quiz/getAllByUserId/` + iduser, {
+                    headers: headers
+                });
+                //const response = await axios.get(api + 'quiz/getAllByUserId/' + iduser);
                 setQuizzes(response.data.quizzes);
             } catch (error) {
                 console.error('Error fetching quizzes:', error);
@@ -70,20 +82,26 @@ const Dashboard: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-   /* const handleRemoveQuiz = (quizIds: string[]) => {
-        setQuizIdsToRemove(quizIds);
-        if (quizIds.length === 1) {
-            const selectedQuiz = quizzes.find((quiz) => quizIds[0] === quiz._id);
-            setQuizTitleToRemove(selectedQuiz?.title || '');
-        }
-    };*/
+    /* const handleRemoveQuiz = (quizIds: string[]) => {
+         setQuizIdsToRemove(quizIds);
+         if (quizIds.length === 1) {
+             const selectedQuiz = quizzes.find((quiz) => quizIds[0] === quiz._id);
+             setQuizTitleToRemove(selectedQuiz?.title || '');
+         }
+     };*/
     const handleRemoveQuiz = async (quizIds: string[]) => {
         try {
             // Send DELETE request for each quiz to be removed
             for (const quizId of quizIds) {
-                await axios.delete(api + 'quiz/delete/' + quizId);
+                const token = getAuthToken();
+                const headers = {
+                    Authorization: `Bearer ${token}`
+                };
+                await axios.delete(api + 'quiz/delete/' + quizId, {
+                    headers: headers
+                });
             }
-    
+
             // Update the state to remove the deleted quizzes
             const updatedQuizzes = quizzes.filter((quiz) => !quizIds.includes(quiz._id));
             setQuizzes(updatedQuizzes);
@@ -127,7 +145,13 @@ const Dashboard: React.FC = () => {
                 _id: uuidv4(),
                 title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz'
             };
-            const response = await axios.post(api + 'quiz/duplicate/' + id, { iduser: iduser, quiz: duplicatedQuiz });
+            const token = getAuthToken();
+            const headers = {
+                Authorization: `Bearer ${token}`
+            };
+            const response = await axios.post(api + 'quiz/duplicate/' + id, { iduser: iduser, quiz: duplicatedQuiz }, {
+                headers: headers
+            });
             setQuizzes([...quizzes, response.data]);
             window.location.reload();
         } catch (error) {
@@ -144,6 +168,7 @@ const Dashboard: React.FC = () => {
 
     const handleOnImport = () => {
         setShowImportModal(true);
+
     };
 
     const validQuiz = (questions: string[]) => {
@@ -178,9 +203,40 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    const downloadTxtFile = () => {
-        // Handle download logic here
+    const downloadTxtFile = async (quizIds: string[]) => {
+        try {
+            const selectedQuizzes = quizzes.filter((quiz) => quizIds.includes(quiz._id));
+
+            selectedQuizzes.forEach((quiz, index) => {
+                const { title, questions } = quiz;
+                let quizContent = '';
+
+                questions.forEach((question, qIndex) => {
+                    const formattedQuestion = question.trim();
+                    if (formattedQuestion !== '') {
+                        quizContent += formattedQuestion;
+                        if (qIndex !== questions.length - 1) {
+                            quizContent += '\n';
+                        }
+                    }
+                });
+
+                const blob = new Blob([quizContent], { type: 'text/plain' });
+                const a = document.createElement('a');
+                const filename = title || `quiz_${index}`;
+                a.download = `${filename}.txt`;
+                a.href = window.URL.createObjectURL(blob);
+                a.click();
+            });
+        } catch (error) {
+            console.error('Error exporting selected quizzes:', error);
+        }
     };
+
+
+
+
+
 
     const handleSelectAll = () => {
         if (isSelectAll) {
@@ -243,7 +299,7 @@ const Dashboard: React.FC = () => {
                         <Checkbox checked={isSelectAll} onChange={handleSelectAll} />
                     </Tooltip>
                     <Tooltip title="Exporter" placement="top">
-                        <IconButton color="secondary" onClick={downloadTxtFile}>
+                        <IconButton color="secondary" onClick={() => downloadTxtFile(selectedQuizes)}>
                             <FileDownload />
                         </IconButton>
                     </Tooltip>
