@@ -15,11 +15,7 @@ const GiftCheatSheet: React.FC = () => {
                 <h4>1. Questions Vrai/Faux</h4>
                 <pre>
                     <code className="selectable-text">
-                        {'2+2 \\= 4 ? {T}'}
-                        <br />
-                        <span className="code-comment">
-                            {'// Vous pouvez utiliser les valeurs {T}, {F}, {TRUE} et {FALSE}'}
-                        </span>
+                        {'2+2 \\= 4 ? {T\n}// Vous pouvez utiliser les valeurs {T}, {F}, {TRUE} et {FALSE}'}
                     </code>
                 </pre>
             </div>
@@ -29,10 +25,8 @@ const GiftCheatSheet: React.FC = () => {
                 <pre>
                     <code className="question-code-block selectable-text">
                         {
-                            'Quelle ville est la capitale du Canada? {\n~ Toronto\n~ Montréal\n= Ottawa #Bonne réponse!\n}'
+                            'Quelle ville est la capitale du Canada? {\n~ Toronto\n~ Montréal\n= Ottawa #Bonne réponse!\n}// La bonne réponse est Ottawa'
                         }
-                        <br />
-                        <span className="code-comment">{'// La bonne réponse est Ottawa'}</span>
                     </code>
                 </pre>
             </div>
@@ -41,16 +35,8 @@ const GiftCheatSheet: React.FC = () => {
                 <pre>
                     <code className="question-code-block selectable-text">
                         {
-                            'Quelles villes trouve-t-on au Canada? { \n~ %33.3% Montréal \n~ %33.3% Ottawa \n~ %33.3% Vancouver \n~ %-100% New York \n~ %-100% Paris \n#### La bonne réponse est Montréal, Ottawa et Vancouver \n}'
+                            'Quelles villes trouve-t-on au Canada? { \n~ %33.3% Montréal \n~ %33.3% Ottawa \n~ %33.3% Vancouver \n~ %-100% New York \n~ %-100% Paris \n#### La bonne réponse est Montréal, Ottawa et Vancouver \n} //On utilise le signe ~ pour toutes les réponses. On doit indiquer le pourcentage de chaque réponse'
                         }
-                        <br />
-                        <span className="code-comment">
-                            {'// On utilise le signe ~ pour toutes les réponses'}
-                        </span>
-                        <br />
-                        <span className="code-comment">
-                            {'// On doit indiquer le pourcentage de chaque réponse'}
-                        </span>
                     </code>
                 </pre>
             </div>
@@ -59,15 +45,7 @@ const GiftCheatSheet: React.FC = () => {
                 <h4>4. Questions à reponse courte</h4>
                 <pre>
                     <code className="question-code-block selectable-text">
-                        {'Avec quoi ouvre-t-on une porte? { \n= clé \n= clef \n}'}
-                        <br />
-                        <span className="code-comment">
-                            {'// Permet de fournir plusieurs bonnes réponses.'}
-                        </span>
-                        <br />
-                        <span className="code-comment">
-                            {'// Note: Les majuscules ne sont pas prises en compte.'}
-                        </span>
+                        {'Avec quoi ouvre-t-on une porte? { \n= clé \n= clef \n}// Permet de fournir plusieurs bonnes réponses. Note: Les majuscules ne sont pas prises en compte.'}
                     </code>
                 </pre>
             </div>
@@ -77,14 +55,8 @@ const GiftCheatSheet: React.FC = () => {
                 <pre>
                     <code className="question-code-block selectable-text">
                         {
-                            'Question {#=Nombre} //OU \nQuestion {#=Nombre:Tolérance} //OU \nQuestion {#=PetitNombre..GrandNombre}'
+                            'Question {#=Nombre\n} //OU \nQuestion {#=Nombre:Tolérance\n} //OU \nQuestion {#=PetitNombre..GrandNombre\n} // La tolérance est un pourcentage. La réponse doit être comprise entre PetitNombre et GrandNombre'
                         }
-                        <br />
-                        <span className="code-comment">{'// La tolérance est un pourcentage'}</span>
-                        <br />
-                        <span className="code-comment">
-                            {'// La réponse doit être comprise entre PetitNombre et GrandNombre'}
-                        </span>
                     </code>
                 </pre>
             </div>
@@ -153,7 +125,7 @@ const GiftCheatSheet: React.FC = () => {
                 <pre>
                     <code className="question-code-block">
                         {'<img '}
-                        <span className="code-comment">{`un URL d'image`}</span>
+                        <span className="code-comment">{`un_URL_d_image`}</span>
                         {' >'}
                     </code>
                 </pre>
