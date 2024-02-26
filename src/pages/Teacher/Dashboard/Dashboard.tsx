@@ -1,4 +1,5 @@
 // Dashboard.tsx
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
@@ -40,6 +41,7 @@ import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 
 const Dashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [quizIdsToRemove, setQuizIdsToRemove] = useState<string[]>([]);
@@ -55,7 +57,10 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            await ApiService.login("123@123.com", "temp123");
+            if (!await ApiService.isLogedIn()) {
+                navigate("/teacher/login");
+            }
+            
             const userFolders = await ApiService.getUserFolders();
             setFolders(userFolders);
         };

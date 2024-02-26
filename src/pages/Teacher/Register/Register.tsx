@@ -1,19 +1,19 @@
+
 import { useNavigate } from 'react-router-dom';
 
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
 
-import './Login.css';
+import './Register.css';
 import { Paper, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-import { Link } from 'react-router-dom';
 
 
 import ApiService from '../../../services/ApiService';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -26,23 +26,21 @@ const Login: React.FC = () => {
         };
     }, []);
 
-    const login = async () => {
-        const result = await ApiService.login(email, password);
+    const register = async () => {
+        const result = await ApiService.register(email, password);
 
         if (result != true) {
             setConnectionError(result);
             return;
         }
-        else {
-            navigate("/teacher/Dashboard")
-        }
 
+        navigate("/teacher/login")
     };
 
 
     return (
         <div className="join-room-container">
-            <h1 className="page-title mb-1">Login</h1>
+            <h1 className="page-title mb-1">Register</h1>
 
             <Paper>
 
@@ -71,27 +69,15 @@ const Login: React.FC = () => {
 
                     <LoadingButton
                         loading={isConnecting}
-                        onClick={login}
+                        onClick={register}
                         variant="contained"
                         sx={{ marginBottom: `${connectionError && '2rem'}` }}
                         disabled={!email || !password}
                     >
-                        Login
+                        Register
                     </LoadingButton>
 
                     <div className="error-text text-base">{connectionError}</div>
-
-                    <Link to="/teacher/register">
-                        <div>
-                            Register
-                        </div>
-                    </Link>
-
-                    <Link to="/teacher/resetPassword">
-                        <div>
-                            Reset Password
-                        </div>
-                    </Link>
                 </div>
             </Paper>
         </div>

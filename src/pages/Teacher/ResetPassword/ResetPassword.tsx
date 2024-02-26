@@ -1,21 +1,20 @@
+
 import { useNavigate } from 'react-router-dom';
 
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
 
-import './Login.css';
+import './ResetPassword.css';
 import { Paper, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-
-import { Link } from 'react-router-dom';
 
 
 import ApiService from '../../../services/ApiService';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
     const [connectionError, setConnectionError] = useState<string>('');
     const [isConnecting] = useState<boolean>(false);
@@ -26,23 +25,21 @@ const Login: React.FC = () => {
         };
     }, []);
 
-    const login = async () => {
-        const result = await ApiService.login(email, password);
+    const reset = async () => {
+        const result = await ApiService.resetPassword(email);
 
         if (result != true) {
             setConnectionError(result);
             return;
         }
-        else {
-            navigate("/teacher/Dashboard")
-        }
 
+        navigate("/teacher/login")
     };
 
 
     return (
         <div className="join-room-container">
-            <h1 className="page-title mb-1">Login</h1>
+            <h1 className="page-title mb-1">Reset Password</h1>
 
             <Paper>
 
@@ -59,39 +56,17 @@ const Login: React.FC = () => {
                         fullWidth
                     />
 
-                    <TextField
-                        label="Mot de passe"
-                        variant="outlined"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Nom de la salle"
-                        sx={{ marginBottom: '1rem' }}
-                        fullWidth
-                    />
-
                     <LoadingButton
                         loading={isConnecting}
-                        onClick={login}
+                        onClick={reset}
                         variant="contained"
                         sx={{ marginBottom: `${connectionError && '2rem'}` }}
-                        disabled={!email || !password}
+                        disabled={!email}
                     >
-                        Login
+                        Reset
                     </LoadingButton>
 
                     <div className="error-text text-base">{connectionError}</div>
-
-                    <Link to="/teacher/register">
-                        <div>
-                            Register
-                        </div>
-                    </Link>
-
-                    <Link to="/teacher/resetPassword">
-                        <div>
-                            Reset Password
-                        </div>
-                    </Link>
                 </div>
             </Paper>
         </div>

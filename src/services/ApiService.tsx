@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { QuizType } from '../Types/QuizType';
 import { FolderType } from '../Types/FolderType';
 //import { Quiz } from '@mui/icons-material';
@@ -23,23 +23,51 @@ class ApiService {
         return localStorage.getItem("jwt");
     }
 
-    // User Routes
-    public async register(email: string, password: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/user/register`;
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            email: email,
-            password: password
-        };
+    public isLogedIn(): boolean {
+        const token = this.getToken()
 
-        const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+        if (token == null) {
+            return false;
+        }
+
+        return true;
     }
 
-    public async login(email: string, password: string): Promise<boolean> {
+    public logout(): void {
+        return localStorage.removeItem("jwt");
+    }
+
+    // User Routes
+    public async register(email: string, password: string): Promise<any> {
+        try {
+            const url: string = `${this.BASE_URL}/user/register`;
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            const body = {
+                email: email,
+                password: password
+            };
+
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+
+            if (result.data.code != 200) return result.data.message;
+
+            return true;
+
+        } catch (error) {
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { message: string } | undefined;
+                return data?.message;
+            }
+        }
+    }
+
+    public async login(email: string, password: string): Promise<any> {
         try {
             const url: string = `${this.BASE_URL}/user/login`;
 
@@ -54,29 +82,48 @@ class ApiService {
 
             const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
-            if (result.data.code != 200) return false;
+            if (result.data.code != 200) return result.data.message;
 
             this.saveToken(result.data.results.token);
 
             return true;
+
         } catch (error) {
-            console.log(error);
-            return false;
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { message: string } | undefined;
+                return data?.message;
+            }
         }
     }
 
-    public async resetPassword(email: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/user/reset-password`;
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            email: email
-        };
+    public async resetPassword(email: string): Promise<any> {
+        try {
+            const url: string = `${this.BASE_URL}/user/reset-password`;
 
-        const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            const body = {
+                email: email
+            };
+
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+
+            if (result.data.code != 200) return result.data.message;
+
+            return true;
+
+        } catch (error) {
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { message: string } | undefined;
+                return data?.message;
+            }
+        }
     }
 
     public async changePassword(email: string, oldPassword: string, newPassword: string): Promise<void> {
