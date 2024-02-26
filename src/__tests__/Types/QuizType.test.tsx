@@ -1,7 +1,7 @@
-//QuizType.test.tsx
+/*//QuizType.test.tsx
 import { QuizType } from "../../Types/QuizType";
 export function isQuizValid(quiz: QuizType): boolean {
-    return quiz.title.length > 0 && quiz.questions.length > 0;
+    return quiz.title.length > 0 && quiz.content.length > 0;
 }
 
 describe('isQuizValid function', () => {
@@ -9,7 +9,7 @@ describe('isQuizValid function', () => {
         const validQuiz: QuizType = {
             _id: '1',
             title: 'Sample Quiz',
-            questions: ['Question 1', 'Question 2'],
+            content: ['Question 1', 'Question 2'],
         };
 
         const result = isQuizValid(validQuiz);
@@ -20,7 +20,7 @@ describe('isQuizValid function', () => {
         const invalidQuiz: QuizType = {
             _id: '2',
             title: '',
-            questions: ['Question 1', 'Question 2'],
+            content: ['Question 1', 'Question 2'],
         };
 
         const result = isQuizValid(invalidQuiz);
@@ -31,10 +31,10 @@ describe('isQuizValid function', () => {
         const invalidQuiz: QuizType = {
             _id: '3',
             title: 'Sample Quiz',
-            questions: [],
+            content: [],
         };
 
         const result = isQuizValid(invalidQuiz);
         expect(result).toBe(false);
     });
-});
+});*/

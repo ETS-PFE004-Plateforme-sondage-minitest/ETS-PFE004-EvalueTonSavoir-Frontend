@@ -2,15 +2,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
-import { v4 as uuidv4 } from 'uuid';
 
 import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
+import { FolderType } from '../../../Types/FolderType';
 import { QuestionService } from '../../../services/QuestionService';
+import ApiService from '../../../services/ApiService';
 
 import './dashboard.css';
 import ImportModal from '../../../components/ImportModal/ImportModal';
-import axios from 'axios';
+//import axios from 'axios';
 
 import {
     TextField,
@@ -37,13 +38,7 @@ import {
 } from '@mui/icons-material';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
-const api = "http://localhost:4400/";
-const iduser = "65c92c3462badbf6d78cf406";
-function getAuthToken(): string | null {
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1yb3lzdGFnZUBvdXRsb29rLmNvbSIsImlhdCI6MTcwODY1NTI1N30.xG-IumR_R4CKe4DvSJP2ZNraLoBUD1rgmbmOIFOVJBE";
-    return token;
-}
-//const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1yb3lzdGFnZUBvdXRsb29rLmNvbSIsImlhdCI6MTcwODY1NDAzM30.1TdXVUJMvuaE0cZ_oBihT6AddzyQlCRcek9iKnhlTkA";
+
 const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -53,26 +48,36 @@ const Dashboard: React.FC = () => {
     const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
     const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
 
+    const [folders, setFolders] = useState<FolderType[]>([]);
+    const [selectedFolder, setSelectedFolder] = useState<string>(''); // Selected folder
+
     const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
-        const fetchQuizzes = async () => {
-            try {
-                const token = getAuthToken();
-                const headers = {
-                    Authorization: `Bearer ${token}`
-                };
-                const response = await axios.get(api + `quiz/getAllByUserId/` + iduser, {
-                    headers: headers
-                });
-                //const response = await axios.get(api + 'quiz/getAllByUserId/' + iduser);
-                setQuizzes(response.data.quizzes);
-            } catch (error) {
-                console.error('Error fetching quizzes:', error);
+        const fetchData = async () => {
+            await ApiService.login("123@123.com", "temp123");
+            const userFolders = await ApiService.getUserFolders();
+            setFolders(userFolders);
+        };
+
+        fetchData();
+    }, []);
+
+    const handleSelectFolder = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedFolder(event.target.value);
+    };
+
+
+    useEffect(() => {
+        const fetchQuizzesForFolder = async () => {            
+            if (selectedFolder) {
+                const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
+                setQuizzes(folderQuizzes);
             }
         };
-        fetchQuizzes();
-    }, []);
+
+        fetchQuizzesForFolder();
+    }, [selectedFolder]);
 
     useEffect(() => {
         if (selectedQuizes.length === 0) setIsSelectAll(false);
@@ -82,24 +87,11 @@ const Dashboard: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-    /* const handleRemoveQuiz = (quizIds: string[]) => {
-         setQuizIdsToRemove(quizIds);
-         if (quizIds.length === 1) {
-             const selectedQuiz = quizzes.find((quiz) => quizIds[0] === quiz._id);
-             setQuizTitleToRemove(selectedQuiz?.title || '');
-         }
-     };*/
     const handleRemoveQuiz = async (quizIds: string[]) => {
         try {
             // Send DELETE request for each quiz to be removed
             for (const quizId of quizIds) {
-                const token = getAuthToken();
-                const headers = {
-                    Authorization: `Bearer ${token}`
-                };
-                await axios.delete(api + 'quiz/delete/' + quizId, {
-                    headers: headers
-                });
+                await ApiService.deleteQuiz(quizId);
             }
 
             // Update the state to remove the deleted quizzes
@@ -110,6 +102,7 @@ const Dashboard: React.FC = () => {
             setQuizTitleToRemove('');
         } catch (error) {
             console.error('Error removing quizzes:', error);
+            throw error; // Optional: rethrow the error to handle it elsewhere
         }
     };
 
@@ -127,35 +120,50 @@ const Dashboard: React.FC = () => {
         setQuizIdsToRemove([]);
     };
 
-    const handleDuplicateQuiz = async (id: string) => {
+    /* const handleDuplicateQuiz = async (id: string) => {
+         try {
+             const quizToDuplicate = quizzes.find((quiz: QuizType) => quiz._id === id);
+             if (!quizToDuplicate) return;
+ 
+             const existingQuizzesWithTitle = quizzes.filter(
+                 (quiz: QuizType) =>
+                     quiz.title === quizToDuplicate.title ||
+                     quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
+             );
+             const titleSuffix =
+                 existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
+ 
+             const duplicatedQuiz: QuizType = {
+                 ...quizToDuplicate,
+                 _id: uuidv4(),
+                 title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz'
+             };
+             const token = getAuthToken();
+             const headers = {
+                 Authorization: `Bearer ${token}`
+             };
+             const response = await axios.post(api + 'quiz/duplicate/' + id, { iduser: iduser, quiz: duplicatedQuiz }, {
+                 headers: headers
+             });
+             setQuizzes([...quizzes, response.data]);
+             window.location.reload();
+         } catch (error) {
+             console.error('Error duplicating quiz:', error);
+         }
+     };*/
+    const handleDuplicateQuiz = async (quizId: string) => {
         try {
-            const quizToDuplicate = quizzes.find((quiz: QuizType) => quiz._id === id);
-            if (!quizToDuplicate) return;
+            const quizToDuplicate = quizzes.find((quiz) => quiz._id === quizId);
+            if (!quizToDuplicate) {
+                console.error(`Quiz with ID ${quizId} not found.`);
+                return;
+            }
 
-            const existingQuizzesWithTitle = quizzes.filter(
-                (quiz: QuizType) =>
-                    quiz.title === quizToDuplicate.title ||
-                    quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
-            );
-            const titleSuffix =
-                existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
-
-            const duplicatedQuiz: QuizType = {
-                ...quizToDuplicate,
-                _id: uuidv4(),
-                title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz'
-            };
-            const token = getAuthToken();
-            const headers = {
-                Authorization: `Bearer ${token}`
-            };
-            const response = await axios.post(api + 'quiz/duplicate/' + id, { iduser: iduser, quiz: duplicatedQuiz }, {
-                headers: headers
-            });
-            setQuizzes([...quizzes, response.data]);
-            window.location.reload();
+            const selectedFolderId = selectedFolder;
+            await ApiService.duplicateQuiz(quizId, selectedFolderId);
         } catch (error) {
             console.error('Error duplicating quiz:', error);
+            throw error;
         }
     };
 
@@ -172,7 +180,7 @@ const Dashboard: React.FC = () => {
     };
 
     const validQuiz = (questions: string[]) => {
-        if (questions.length === 0) {
+        if (!questions || questions.length === 0) {
             return false;
         }
 
@@ -208,14 +216,14 @@ const Dashboard: React.FC = () => {
             const selectedQuizzes = quizzes.filter((quiz) => quizIds.includes(quiz._id));
 
             selectedQuizzes.forEach((quiz, index) => {
-                const { title, questions } = quiz;
+                const { title, content } = quiz;
                 let quizContent = '';
 
-                questions.forEach((question, qIndex) => {
+                content.forEach((question, qIndex) => {
                     const formattedQuestion = question.trim();
                     if (formattedQuestion !== '') {
                         quizContent += formattedQuestion;
-                        if (qIndex !== questions.length - 1) {
+                        if (qIndex !== content.length - 1) {
                             quizContent += '\n';
                         }
                     }
@@ -232,10 +240,6 @@ const Dashboard: React.FC = () => {
             console.error('Error exporting selected quizzes:', error);
         }
     };
-
-
-
-
 
 
     const handleSelectAll = () => {
@@ -312,6 +316,15 @@ const Dashboard: React.FC = () => {
                         </IconButton>
                     </Tooltip>
                 </div>
+                <div>
+                    <select value={selectedFolder} onChange={handleSelectFolder} required>
+                        <option value="" disabled>Select a folder</option>
+                        {folders.map((folder) => (
+                            <option key={folder._id} value={folder._id}>{folder.title}</option>
+                        ))}
+                    </select>
+                </div>
+
 
                 <List disablePadding sx={{ overflowY: 'auto', height: '100%' }}>
                     {filteredQuizzes.map((quiz: QuizType) => (
@@ -353,7 +366,7 @@ const Dashboard: React.FC = () => {
                                                 component={Link}
                                                 to={`/teacher/manage-room/${quiz._id}`}
                                                 variant="contained"
-                                                disabled={!validQuiz(quiz.questions)}
+                                                disabled={!validQuiz(quiz.content)}
                                             >
                                                 Lancer
                                             </Button>
@@ -365,6 +378,7 @@ const Dashboard: React.FC = () => {
                     ))}
                 </List>
             </div>
+
             <ConfirmDialog
                 open={quizIdsToRemove.length > 0}
                 title="Confirmation"

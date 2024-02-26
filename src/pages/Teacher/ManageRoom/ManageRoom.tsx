@@ -93,7 +93,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const nextQuestion = () => {
-        if (!quizQuestions || !currentQuestion || !quiz?.questions) return;
+        if (!quizQuestions || !currentQuestion || !quiz?.content) return;
 
         const nextQuestionIndex = Number(currentQuestion?.question.id);
 
@@ -104,7 +104,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const previousQuestion = () => {
-        if (!quizQuestions || !currentQuestion || !quiz?.questions) return;
+        if (!quizQuestions || !currentQuestion || !quiz?.content) return;
 
         const prevQuestionIndex = Number(currentQuestion?.question.id) - 2; // -2 because question.id starts at index 1
 
@@ -115,7 +115,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const initializeQuizQuestion = () => {
-        const quizQuestionArray = quiz?.questions;
+        const quizQuestionArray = quiz?.content;
         if (!quizQuestionArray) return null;
         const parsedQuestions = [] as QuestionType[];
 
@@ -152,7 +152,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const launchQuiz = () => {
-        if (!socket || !roomName || quiz?.questions.length === 0) {
+        if (!socket || !roomName || quiz?.content.length === 0) {
             console.log('Error launching quiz. No socket, room name or no questions.');
             return;
         }
@@ -165,7 +165,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const showSelectedQuestion = (questionIndex: number) => {
-        if (quiz?.questions && quizQuestions) {
+        if (quiz?.content && quizQuestions) {
             setCurrentQuestion(quizQuestions[questionIndex]);
             console.log(quizQuestions[questionIndex]);
             if (quizMode === 'teacher') {
