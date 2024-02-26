@@ -39,20 +39,30 @@ class ApiService {
         // code == 200
     }
 
-    public async login(email: string, password: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/user/login`;
-        const headers = {
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            email: email,
-            password: password
-        };
+    public async login(email: string, password: string): Promise<boolean> {
+        try {
+            const url: string = `${this.BASE_URL}/user/login`;
 
-        const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-        //  console.log(result);
-        this.saveToken(result.data.results.token);
+            const headers = {
+                'Content-Type': 'application/json'
+            };
 
+            const body = {
+                email: email,
+                password: password
+            };
+
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+
+            if (result.data.code != 200) return false;
+
+            this.saveToken(result.data.results.token);
+
+            return true;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
     }
 
     public async resetPassword(email: string): Promise<void> {
@@ -244,7 +254,7 @@ class ApiService {
             const result: AxiosResponse = await axios.get(url, { headers: headers });
             //console.log(result);
             // Assuming result.data contains the quiz information
-            
+
             return result.data.results as QuizType;
         } catch (error) {
             console.error('Error getting quiz:', error);
@@ -326,7 +336,7 @@ class ApiService {
 
         const id = result.data.results.id; // Assuming the response contains the ID of the uploaded image
 
-        return `${this.BASE_URL}/image/get/`+id;
+        return `${this.BASE_URL}/image/get/` + id;
     }
     // Images Route
     public async getImage(imageId: string): Promise<string> {
