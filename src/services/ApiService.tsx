@@ -206,7 +206,7 @@ class ApiService {
             const response: AxiosResponse = await axios.get(url, { headers: headers });
             if (response.status === 200) {
                 // Assuming the response contains a list of quizzes
-                return response.data.results.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title }));
+                return response.data.results.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
             } else {
                 throw new Error('Failed to fetch folder content');
             }
