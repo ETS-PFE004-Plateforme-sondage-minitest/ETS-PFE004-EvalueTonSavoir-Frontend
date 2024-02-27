@@ -11,6 +11,7 @@ import {
     IconButton
 } from '@mui/material';
 import { Clear, Download } from '@mui/icons-material';
+import axios from 'axios'; // Import Axios for HTTP requests
 
 type DroppedFile = {
     id: number;
@@ -63,25 +64,31 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
         setDroppedFiles((prevFiles) => [...prevFiles, ...newDroppedFiles]);
     };
 
-    const handleOnSave = () => {
+    const api = "http://localhost:4400/";
+    const iduser = "65c92c3462badbf6d78cf406";
+    function getAuthToken(): string | null {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1yb3lzdGFnZUBvdXRsb29rLmNvbSIsImlhdCI6MTcwODY1NTI1N30.xG-IumR_R4CKe4DvSJP2ZNraLoBUD1rgmbmOIFOVJBE";
+        return token;
+    }
+
+    const handleOnSave = async () => {
         const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
         const quizzesToImportPromises = droppedFiles.map((droppedFile) => {
             return new Promise((resolve) => {
                 const reader = new FileReader();
 
-                reader.onload = (event) => {
+                reader.onload = async (event) => {
                     if (event.target && event.target.result) {
-                        const fileContent: string = event.target.result as string;
+                        const fileContent = event.target.result as string;
                         console.log(fileContent);
                         if (fileContent.trim() === '') {
                             resolve(null);
                         }
-
-                        const questions = fileContent.split(/(?<=^|[^\\]}.*)\r?\n/);
-
-                        if (questions[questions.length - 1] === '') {
-                            questions.pop();
-                        }
+                        const questions = fileContent.split(/\r?\n/)
+                            .map(question => {
+                                const sanitizedQuestion = question.replace(/\\\\/g, '\\');
+                                return sanitizedQuestion.trim();
+                            });
 
                         const newQuiz = {
                             id: uuidv4(),
@@ -89,9 +96,20 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
                             questions
                         };
 
-                        resolve(newQuiz);
+                        try {
+                            await axios.post(api + 'quiz/create', { userId: iduser, quiz: newQuiz }, {
+                                headers: {
+                                    Authorization: `Bearer ${getAuthToken()}`
+                                }
+                            });
+                            resolve(newQuiz);
+                        } catch (error) {
+                            console.error('Error saving quiz:', error);
+                            resolve(null);
+                        }
+                    } else {
+                        resolve(null);
                     }
-                    resolve(null);
                 };
 
                 reader.readAsText(droppedFile.file);
@@ -108,8 +126,16 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
 
             setDroppedFiles([]);
             handleOnImport();
+            handleOnClose();
+            window.location.reload();
         });
     };
+
+
+
+
+
+
 
     const handleRemoveFile = (id: number) => {
         setDroppedFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));

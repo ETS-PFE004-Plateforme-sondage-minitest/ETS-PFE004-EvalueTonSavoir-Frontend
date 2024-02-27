@@ -34,3 +34,19 @@
 .preview-column {
     width: 30vw;
 }
+
+
+  .file-label {
+    display: block;
+    padding: 10px;
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.file-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+}

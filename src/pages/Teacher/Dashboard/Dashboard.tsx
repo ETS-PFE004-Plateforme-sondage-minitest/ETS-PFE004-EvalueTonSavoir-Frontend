@@ -1,15 +1,18 @@
 // Dashboard.tsx
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
-import { v4 as uuidv4 } from 'uuid';
 
 import Template from '../../../components/GiftTemplate/templates';
 import { QuizType } from '../../../Types/QuizType';
+import { FolderType } from '../../../Types/FolderType';
 import { QuestionService } from '../../../services/QuestionService';
+import ApiService from '../../../services/ApiService';
 
 import './dashboard.css';
 import ImportModal from '../../../components/ImportModal/ImportModal';
+//import axios from 'axios';
 
 import {
     TextField,
@@ -38,6 +41,7 @@ import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 
 const Dashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [quizIdsToRemove, setQuizIdsToRemove] = useState<string[]>([]);
@@ -46,12 +50,46 @@ const Dashboard: React.FC = () => {
     const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
     const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
 
+    const [folders, setFolders] = useState<FolderType[]>([]);
+    const [selectedFolder, setSelectedFolder] = useState<string>(''); // Selected folder
+
     const isMobile = useCheckMobileScreen();
 
     useEffect(() => {
-        const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-        setQuizzes(storedQuizzes);
+        const fetchData = async () => {
+            if (!ApiService.isLogedIn()) {
+                navigate("/teacher/login");
+            }
+            else {
+                let userFolders = await ApiService.getUserFolders();
+                if (userFolders.length < 1) {
+                    console.log("user has no folders: we created default one");
+                    await ApiService.createFolder("default");
+                    userFolders = await ApiService.getUserFolders();
+                }
+                setFolders(userFolders);
+            }
+
+        };
+
+        fetchData();
     }, []);
+
+    const handleSelectFolder = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedFolder(event.target.value);
+    };
+
+
+    useEffect(() => {
+        const fetchQuizzesForFolder = async () => {            
+            if (selectedFolder) {
+                const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
+                setQuizzes(folderQuizzes);
+            }
+        };
+
+        fetchQuizzesForFolder();
+    }, [selectedFolder]);
 
     useEffect(() => {
         if (selectedQuizes.length === 0) setIsSelectAll(false);
@@ -61,19 +99,29 @@ const Dashboard: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-    const handleRemoveQuiz = (quizIds: string[]) => {
-        setQuizIdsToRemove(quizIds);
-        if (quizIds.length === 1) {
-            const selectedQuiz = quizzes.find((quiz) => quizIds[0] === quiz.id);
-            setQuizTitleToRemove(selectedQuiz?.title || '');
+    const handleRemoveQuiz = async (quizIds: string[]) => {
+        try {
+            // Send DELETE request for each quiz to be removed
+            for (const quizId of quizIds) {
+                await ApiService.deleteQuiz(quizId);
+            }
+
+            // Update the state to remove the deleted quizzes
+            const updatedQuizzes = quizzes.filter((quiz) => !quizIds.includes(quiz._id));
+            setQuizzes(updatedQuizzes);
+            setSelectedQuizes([]);
+            setQuizIdsToRemove([]);
+            setQuizTitleToRemove('');
+        } catch (error) {
+            console.error('Error removing quizzes:', error);
+            throw error; // Optional: rethrow the error to handle it elsewhere
         }
     };
 
     const handleConfirmRemoveQuiz = () => {
         const updatedQuizzes = quizzes.filter(
-            (quiz: QuizType) => !quizIdsToRemove.includes(quiz.id)
+            (quiz: QuizType) => !quizIdsToRemove.includes(quiz._id)
         );
-        localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
         setQuizzes(updatedQuizzes);
         setSelectedQuizes([]);
         setQuizIdsToRemove([]);
@@ -84,26 +132,51 @@ const Dashboard: React.FC = () => {
         setQuizIdsToRemove([]);
     };
 
-    const handleDuplicateQuiz = (id: string) => {
-        const quizToDuplicate = quizzes.find((quiz: QuizType) => quiz.id === id);
-        if (!quizToDuplicate) return;
+    /* const handleDuplicateQuiz = async (id: string) => {
+         try {
+             const quizToDuplicate = quizzes.find((quiz: QuizType) => quiz._id === id);
+             if (!quizToDuplicate) return;
+ 
+             const existingQuizzesWithTitle = quizzes.filter(
+                 (quiz: QuizType) =>
+                     quiz.title === quizToDuplicate.title ||
+                     quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
+             );
+             const titleSuffix =
+                 existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
+ 
+             const duplicatedQuiz: QuizType = {
+                 ...quizToDuplicate,
+                 _id: uuidv4(),
+                 title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz'
+             };
+             const token = getAuthToken();
+             const headers = {
+                 Authorization: `Bearer ${token}`
+             };
+             const response = await axios.post(api + 'quiz/duplicate/' + id, { iduser: iduser, quiz: duplicatedQuiz }, {
+                 headers: headers
+             });
+             setQuizzes([...quizzes, response.data]);
+             window.location.reload();
+         } catch (error) {
+             console.error('Error duplicating quiz:', error);
+         }
+     };*/
+    const handleDuplicateQuiz = async (quizId: string) => {
+        try {
+            const quizToDuplicate = quizzes.find((quiz) => quiz._id === quizId);
+            if (!quizToDuplicate) {
+                console.error(`Quiz with ID ${quizId} not found.`);
+                return;
+            }
 
-        const existingQuizzesWithTitle = Object.values(quizzes).filter(
-            (quiz: QuizType) =>
-                quiz.title === quizToDuplicate.title ||
-                quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
-        );
-        const titleSuffix =
-            existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
-
-        const duplicatedQuiz: QuizType = {
-            ...quizToDuplicate,
-            id: uuidv4(),
-            title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz'
-        };
-        const updatedQuizzes: QuizType[] = [...quizzes, duplicatedQuiz];
-        localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
-        setQuizzes(updatedQuizzes);
+            const selectedFolderId = selectedFolder;
+            await ApiService.duplicateQuiz(quizId, selectedFolderId);
+        } catch (error) {
+            console.error('Error duplicating quiz:', error);
+            throw error;
+        }
     };
 
     const filteredQuizzes = useMemo(() => {
@@ -114,13 +187,12 @@ const Dashboard: React.FC = () => {
     }, [quizzes, searchTerm]);
 
     const handleOnImport = () => {
-        const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-        setQuizzes(storedQuizzes);
-        setShowImportModal(false);
+        setShowImportModal(true);
+
     };
 
     const validQuiz = (questions: string[]) => {
-        if (questions.length === 0) {
+        if (!questions || questions.length === 0) {
             return false;
         }
 
@@ -151,20 +223,36 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    const downloadTxtFile = () => {
-        quizzes
-            .filter((quiz) => selectedQuizes.includes(quiz.id))
-            .forEach((quiz) => {
-                const quizQuestionsString = quiz.questions.join('\n');
-                const blob = new Blob([quizQuestionsString], { type: 'text/plain' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `${quiz.title}.txt`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+    const downloadTxtFile = async (quizIds: string[]) => {
+        try {
+            const selectedQuizzes = quizzes.filter((quiz) => quizIds.includes(quiz._id));
+
+            selectedQuizzes.forEach((quiz, index) => {
+                const { title, content } = quiz;
+                let quizContent = '';
+
+                content.forEach((question, qIndex) => {
+                    const formattedQuestion = question.trim();
+                    if (formattedQuestion !== '') {
+                        quizContent += formattedQuestion;
+                        if (qIndex !== content.length - 1) {
+                            quizContent += '\n';
+                        }
+                    }
+                });
+
+                const blob = new Blob([quizContent], { type: 'text/plain' });
+                const a = document.createElement('a');
+                const filename = title || `quiz_${index}`;
+                a.download = `${filename}.txt`;
+                a.href = window.URL.createObjectURL(blob);
+                a.click();
             });
+        } catch (error) {
+            console.error('Error exporting selected quizzes:', error);
+        }
     };
+
 
     const handleSelectAll = () => {
         if (isSelectAll) {
@@ -172,7 +260,7 @@ const Dashboard: React.FC = () => {
             setSelectedQuizes([]);
         } else {
             setIsSelectAll(true);
-            setSelectedQuizes(quizzes.map((quiz) => quiz.id));
+            setSelectedQuizes(quizzes.map((quiz) => quiz._id));
         }
     };
 
@@ -199,7 +287,7 @@ const Dashboard: React.FC = () => {
                         <Button
                             variant="outlined"
                             startIcon={<Upload />}
-                            onClick={() => setShowImportModal(true)}
+                            onClick={handleOnImport}
                         >
                             Importer
                         </Button>
@@ -227,7 +315,7 @@ const Dashboard: React.FC = () => {
                         <Checkbox checked={isSelectAll} onChange={handleSelectAll} />
                     </Tooltip>
                     <Tooltip title="Exporter" placement="top">
-                        <IconButton color="secondary" onClick={downloadTxtFile}>
+                        <IconButton color="secondary" onClick={() => downloadTxtFile(selectedQuizes)}>
                             <FileDownload />
                         </IconButton>
                     </Tooltip>
@@ -240,38 +328,47 @@ const Dashboard: React.FC = () => {
                         </IconButton>
                     </Tooltip>
                 </div>
+                <div>
+                    <select value={selectedFolder} onChange={handleSelectFolder} required>
+                        <option value="" disabled>Select a folder</option>
+                        {folders.map((folder) => (
+                            <option key={folder._id} value={folder._id}>{folder.title}</option>
+                        ))}
+                    </select>
+                </div>
+
 
                 <List disablePadding sx={{ overflowY: 'auto', height: '100%' }}>
                     {filteredQuizzes.map((quiz: QuizType) => (
-                        <div key={`key-${quiz.id}`}>
+                        <div key={`key-${quiz._id}`}>
                             <Divider />
-                            <ListItem key={quiz.id} disablePadding>
+                            <ListItem key={quiz._id} disablePadding>
                                 <ListItemButton
                                     role={undefined}
-                                    onClick={() => handleOnCheckQuiz(quiz.id)}
+                                    onClick={() => handleOnCheckQuiz(quiz._id)}
                                     dense
                                 >
                                     <ListItemIcon>
                                         <Checkbox
                                             edge="start"
-                                            checked={selectedQuizes.includes(quiz.id)}
+                                            checked={selectedQuizes.includes(quiz._id)}
                                             tabIndex={-1}
                                             disableRipple
                                         />
                                     </ListItemIcon>
-                                    <ListItemText id={quiz.id + quiz.title} primary={quiz.title} />
+                                    <ListItemText id={quiz._id + quiz.title} primary={quiz.title} />
                                     <div className="button-group">
                                         <Tooltip title="Modifier" placement="top">
                                             <IconButton
                                                 component={Link}
-                                                to={`/teacher/editor-quiz/${quiz.id}`}
+                                                to={`/teacher/editor-quiz/${quiz._id}`}
                                             >
                                                 <Edit />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Dupliquer" placement="top">
                                             <IconButton
-                                                onClick={() => handleDuplicateQuiz(quiz.id)}
+                                                onClick={() => handleDuplicateQuiz(quiz._id)}
                                             >
                                                 <ContentCopy />
                                             </IconButton>
@@ -279,9 +376,9 @@ const Dashboard: React.FC = () => {
                                         <Tooltip title="Lancer" placement="top">
                                             <Button
                                                 component={Link}
-                                                to={`/teacher/manage-room/${quiz.id}`}
+                                                to={`/teacher/manage-room/${quiz._id}`}
                                                 variant="contained"
-                                                disabled={!validQuiz(quiz.questions)}
+                                                disabled={!validQuiz(quiz.content)}
                                             >
                                                 Lancer
                                             </Button>
@@ -293,6 +390,7 @@ const Dashboard: React.FC = () => {
                     ))}
                 </List>
             </div>
+
             <ConfirmDialog
                 open={quizIdsToRemove.length > 0}
                 title="Confirmation"
