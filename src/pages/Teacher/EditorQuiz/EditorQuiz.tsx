@@ -109,11 +109,9 @@ const QuizForm: React.FC = () => {
         try {
             if (isNewQuiz) {
                 if (!selectedFolder) {
-                    // If no folder is selected, display a message to the user
                     alert("Veuillez choisir un dossier");
-                    return; // Exit the function early
+                    return; 
                 }
-                // Call the createQuiz method with the appropriate parameters
                 await ApiService.createQuiz(quizTitle || 'Untitled quiz', filteredValue, selectedFolder);
             } else {
                 console.log(quiz);
@@ -125,7 +123,6 @@ const QuizForm: React.FC = () => {
             navigate('/teacher/dashboard');
         } catch (error) {
             console.error('Error saving quiz:', error);
-            // Handle error here (e.g., show error message to user)
         }
     };
 

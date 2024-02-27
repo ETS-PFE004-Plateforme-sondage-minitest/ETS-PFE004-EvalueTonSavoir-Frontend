@@ -5,7 +5,6 @@ import { Socket } from 'socket.io-client';
 import { parse } from 'gift-pegjs';
 import { QuestionType } from '../../../Types/QuestionType';
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
-import { QuizService } from '../../../services/QuizService';
 import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
 import { QuizType } from '../../../Types/QuizType';
@@ -20,6 +19,7 @@ import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
 import QuestionNavigation from '../../../components/QuestionNavigation/QuestionNavigation';
 import Question from '../../../components/Questions/Question';
+import ApiService from '../../../services/ApiService';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -28,19 +28,33 @@ const ManageRoom: React.FC = () => {
     const [users, setUsers] = useState<UserType[]>([]);
     const quizId = useParams<{ id: string }>();
     const [quizQuestions, setQuizQuestions] = useState<QuestionType[] | undefined>();
-    const [quiz, setQuiz] = useState<QuizType>();
+    const [quiz, setQuiz] = useState<QuizType | null>(null);
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [connectingError, setConnectingError] = useState<string>('');
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | undefined>(undefined);
 
     useEffect(() => {
-        setQuiz(QuizService.getQuizById(quizId.id));
-        createWebSocketRoom();
-
-        return () => {
-            webSocketService.disconnect();
-        };
-    }, [quizId.id]);
+        if (quizId.id) { 
+            const fetchquiz = async () => {
+                const quiz = await ApiService.getQuiz(quizId.id as string);
+                if (!quiz) {
+                    console.error('Quiz non Trouvé:', quizId.id);
+                    return;
+                }
+                setQuiz(quiz);
+                if (!socket) {
+                    createWebSocketRoom();
+                  }
+    
+                return () => {
+                  //  webSocketService.disconnect();
+                };
+            };    
+            fetchquiz();
+        } else {
+            console.error('quizId.id is undefined');
+        }
+    }, [quizId]);
 
     const disconnectWebSocket = () => {
         if (socket) {
@@ -57,6 +71,7 @@ const ManageRoom: React.FC = () => {
     const createWebSocketRoom = () => {
         setConnectingError('');
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
+        console.log(socket);
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
