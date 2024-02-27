@@ -40,7 +40,6 @@ const QuizForm: React.FC = () => {
     };
     useEffect(() => {
         const fetchData = async () => {
-            await ApiService.login("123@123.com", "temp123");
             const userFolders = await ApiService.getUserFolders();
             setFolders(userFolders);
         };

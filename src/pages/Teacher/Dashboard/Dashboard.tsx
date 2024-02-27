@@ -61,7 +61,12 @@ const Dashboard: React.FC = () => {
                 navigate("/teacher/login");
             }
             else {
-                const userFolders = await ApiService.getUserFolders();
+                let userFolders = await ApiService.getUserFolders();
+                if (userFolders.length < 1) {
+                    console.log("user has no folders: we created default one");
+                    await ApiService.createFolder("default");
+                    userFolders = await ApiService.getUserFolders();
+                }
                 setFolders(userFolders);
             }
 
