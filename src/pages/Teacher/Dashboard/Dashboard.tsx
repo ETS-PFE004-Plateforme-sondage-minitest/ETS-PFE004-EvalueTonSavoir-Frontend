@@ -57,12 +57,14 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!await ApiService.isLogedIn()) {
+            if (!ApiService.isLogedIn()) {
                 navigate("/teacher/login");
             }
-            
-            const userFolders = await ApiService.getUserFolders();
-            setFolders(userFolders);
+            else {
+                const userFolders = await ApiService.getUserFolders();
+                setFolders(userFolders);
+            }
+
         };
 
         fetchData();

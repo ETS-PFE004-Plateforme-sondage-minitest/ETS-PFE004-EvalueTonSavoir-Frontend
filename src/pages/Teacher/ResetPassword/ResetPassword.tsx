@@ -11,7 +11,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import ApiService from '../../../services/ApiService';
 
-const Login: React.FC = () => {
+const ResetPassword: React.FC = () => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
@@ -49,6 +49,7 @@ const Login: React.FC = () => {
                     <TextField
                         label="Email"
                         variant="outlined"
+                        type="password"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Nom d'utilisateur"
@@ -73,4 +74,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default ResetPassword;

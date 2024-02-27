@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
@@ -7,13 +7,12 @@ import './Login.css';
 import { Paper, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import { Link } from 'react-router-dom';
-
 
 import ApiService from '../../../services/ApiService';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+    
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -62,6 +61,7 @@ const Login: React.FC = () => {
                     <TextField
                         label="Mot de passe"
                         variant="outlined"
+                        type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Nom de la salle"
