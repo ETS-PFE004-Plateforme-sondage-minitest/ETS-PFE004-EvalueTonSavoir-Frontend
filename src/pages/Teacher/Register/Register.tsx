@@ -61,6 +61,7 @@ const Register: React.FC = () => {
                         label="Mot de passe"
                         variant="outlined"
                         value={password}
+                        type="password"
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Nom de la salle"
                         sx={{ marginBottom: '1rem' }}

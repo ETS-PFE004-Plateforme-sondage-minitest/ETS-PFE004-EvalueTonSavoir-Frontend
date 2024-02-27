@@ -49,7 +49,6 @@ const ResetPassword: React.FC = () => {
                     <TextField
                         label="Email"
                         variant="outlined"
-                        type="password"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Nom d'utilisateur"
