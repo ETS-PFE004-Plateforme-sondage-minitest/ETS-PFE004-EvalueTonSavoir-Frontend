@@ -11,7 +11,8 @@ import {
     IconButton
 } from '@mui/material';
 import { Clear, Download } from '@mui/icons-material';
-import axios from 'axios'; // Import Axios for HTTP requests
+import axios from 'axios'; // Import Axios for HTTP request
+import { ENV_VARIABLES } from '../../constants';
 
 type DroppedFile = {
     id: number;
@@ -64,7 +65,7 @@ const DragAndDrop: React.FC<Props> = ({ handleOnClose, handleOnImport, open }) =
         setDroppedFiles((prevFiles) => [...prevFiles, ...newDroppedFiles]);
     };
 
-    const api = "http://localhost:4400/";
+    const api = ENV_VARIABLES.VITE_BACKEND_URL;
     const iduser = "65c92c3462badbf6d78cf406";
     function getAuthToken(): string | null {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1yb3lzdGFnZUBvdXRsb29rLmNvbSIsImlhdCI6MTcwODY1NTI1N30.xG-IumR_R4CKe4DvSJP2ZNraLoBUD1rgmbmOIFOVJBE";

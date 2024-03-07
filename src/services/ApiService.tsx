@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { QuizType } from '../Types/QuizType';
 import { FolderType } from '../Types/FolderType';
+import { ENV_VARIABLES } from '../constants';
 //import { Quiz } from '@mui/icons-material';
 
 //import { v4 as uuidv4 } from 'uuid';
@@ -11,7 +12,7 @@ class ApiService {
     private BASE_URL: string;
 
     constructor() {
-        this.BASE_URL = `http://localhost:4400`;
+        this.BASE_URL = ENV_VARIABLES.VITE_BACKEND_URL;
     }
 
     // Helpers
@@ -36,6 +37,10 @@ class ApiService {
     public logout(): void {
         return localStorage.removeItem("jwt");
     }
+
+
+
+
 
     // User Routes
     public async register(email: string, password: string): Promise<any> {
