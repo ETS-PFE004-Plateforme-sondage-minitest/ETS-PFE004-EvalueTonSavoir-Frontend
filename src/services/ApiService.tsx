@@ -15,6 +15,24 @@ class ApiService {
         this.BASE_URL = ENV_VARIABLES.VITE_BACKEND_URL;
     }
 
+    private constructRequestUrl(endpoint: string): string {
+        return `${this.BASE_URL}${endpoint}`;
+    }
+
+    private constructRequestHeaders(): any {
+        if (this.isLogedIn()) {
+            return {
+                Authorization: `Bearer ${this.getToken()}`,
+                'Content-Type': 'application/json'
+            };
+        }
+        else {
+            return {
+                'Content-Type': 'application/json'
+            };
+        }
+    }
+
     // Helpers
     private saveToken(token: string): void {
         localStorage.setItem("jwt", token);
@@ -45,61 +63,67 @@ class ApiService {
     // User Routes
     public async register(email: string, password: string): Promise<any> {
         try {
-            const url: string = `${this.BASE_URL}/user/register`;
 
-            const headers = {
-                'Content-Type': 'application/json'
-            };
+            // Validate that email and password are not empty or throw an error
+            if (!email || !password) {
+                throw new Error(`L'email et le mot de passe sont requis.`);
+            }
 
-            const body = {
-                email: email,
-                password: password
-            };
+            const url: string = this.constructRequestUrl(`/user/register`);
+            const headers = this.constructRequestHeaders();
+            const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+            const result: AxiosResponse = await axios.post(url, body, headers);
 
-            if (result.data.code != 200) return result.data.message;
+            // Check if the request has a status code of 200 or throw an error
+            if (result.status !== 200) {
+                throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
+            }
 
             return true;
 
         } catch (error) {
-
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
-                const data = err.response?.data as { message: string } | undefined;
-                return data?.message;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur inconnue lors de la requête.';
             }
+
+            return `Une erreur inattendue s'est produite. ${error}`;
         }
     }
 
     public async login(email: string, password: string): Promise<any> {
         try {
-            const url: string = `${this.BASE_URL}/user/login`;
 
-            const headers = {
-                'Content-Type': 'application/json'
-            };
+            // Validate that email and password are not empty or throw an error
+            if (!email || !password) {
+                throw new Error(`L'email et le mot de passe sont requis.`);
+            }
 
-            const body = {
-                email: email,
-                password: password
-            };
+            const url: string = this.constructRequestUrl(`/user/login`);
+            const headers = this.constructRequestHeaders();
+            const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+            const result: AxiosResponse = await axios.post(url, body, headers);
 
-            if (result.data.code != 200) return result.data.message;
+            // Check if the request has a status code of 200 or throw an error
+            if (result.status !== 200) {
+                throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
+            }
 
             this.saveToken(result.data.results.token);
 
             return true;
 
         } catch (error) {
-
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
-                const data = err.response?.data as { message: string } | undefined;
-                return data?.message;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur inconnue lors de la requête.';
             }
+
+            return `Une erreur inattendue s'est produite. ${error}`;
         }
     }
 
@@ -122,30 +146,41 @@ class ApiService {
             return true;
 
         } catch (error) {
-
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
-                const data = err.response?.data as { message: string } | undefined;
-                return data?.message;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur inconnue lors de la requête.';
             }
+
+            return `Une erreur inattendue s'est produite. ${error}`;
         }
     }
 
-    public async changePassword(email: string, oldPassword: string, newPassword: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/user/change-password`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            email: email,
-            oldPassword: oldPassword,
-            newPassword: newPassword
-        };
+    public async changePassword(email: string, oldPassword: string, newPassword: string): Promise<void | string> {
+        try {
+            const url: string = `${this.BASE_URL}/user/change-password`;
+            const headers = {
+                Authorization: `Bearer ${this.getToken()}`,
+                'Content-Type': 'application/json'
+            };
+            const body = {
+                email: email,
+                oldPassword: oldPassword,
+                newPassword: newPassword
+            };
 
-        const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+            console.log(result);
+            // code == 200
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite. ${error}`;
+        }
     }
 
     public async deleteUser(email: string, password: string): Promise<void> {
