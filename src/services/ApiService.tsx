@@ -53,6 +53,7 @@ class ApiService {
     }
 
     // User Routes
+
     /**
      * @returns true if  successful 
      * @returns A error string if unsuccessful,
@@ -84,7 +85,7 @@ class ApiService {
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-            
+
             return `Une erreur inattendue s'est produite.`
         }
     }
@@ -99,7 +100,6 @@ class ApiService {
             if (!email || !password) {
                 throw new Error(`L'email et le mot de passe sont requis.`);
             }
-            password="";
 
             const url: string = this.constructRequestUrl(`/user/login`);
             const headers = this.constructRequestHeaders();
@@ -123,7 +123,7 @@ class ApiService {
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-            
+
             return `Une erreur inattendue s'est produite.`
         }
     }
@@ -159,7 +159,7 @@ class ApiService {
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-            
+
             return `Une erreur inattendue s'est produite.`
         }
     }
@@ -195,7 +195,7 @@ class ApiService {
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-            
+
             return `Une erreur inattendue s'est produite.`
         }
     }
@@ -222,7 +222,7 @@ class ApiService {
             }
 
             return true;
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -231,7 +231,7 @@ class ApiService {
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-            
+
             return `Une erreur inattendue s'est produite.`
         }
     }
@@ -299,7 +299,7 @@ class ApiService {
 
 
     // Folder Routes
-    public async createFolder(title: string): Promise<void> {
+    public async createFolder(title: string): Promise<any> {
         const url: string = `${this.BASE_URL}/folder/create`;
         const headers = {
             Authorization: `Bearer ${this.getToken()}`,
@@ -313,7 +313,6 @@ class ApiService {
         console.log(result);
         // code == 200
     }
-
 
     public async getUserFolders(): Promise<FolderType[]> {
         const url: string = `${this.BASE_URL}/folder/getUserFolders`;
@@ -383,7 +382,48 @@ class ApiService {
         // code == 200
     }
 
+    public async duplicateFolder(folderId: string, newTitle: string): Promise<any> {
+        return "Route not implemented yet!";
+    }
+
+    public async copyFolder(folderId: string, newTitle: string): Promise<any> {
+        return "Route not implemented yet!";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Quiz Routes
+
+
     public async createQuiz(title: string, content: string[], folderId: string): Promise<void> {
         const url: string = `${this.BASE_URL}/quiz/create`;
         const headers = {
@@ -405,29 +445,6 @@ class ApiService {
             throw error; // Optional: rethrow the error to handle it elsewhere
         }
     }
-
-    // Quiz Routes
-    public async duplicateQuiz(quizId: string, folderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/duplicate`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            quizId: quizId,
-            folderId: folderId
-        };
-
-        try {
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-            console.log(result);
-            // code == 200
-        } catch (error) {
-            console.error('Error duplicating quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
-        }
-    }
-
 
     public async getQuiz(quizId: string): Promise<QuizType> {
         const url: string = `${this.BASE_URL}/quiz/get/${quizId}`;
@@ -503,68 +520,88 @@ class ApiService {
         // code == 200
     }
 
+    public async duplicateQuiz(quizId: string, newTitle: string, folderId: null): Promise<any> {
+        return "Route not implemented yet!";
+    }
+
+    public async copyQuiz(quizId: string, newTitle: string, folderId: null): Promise<any> {
+        return "Route not implemented yet!";
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Images Route
+
+    /**
+     * @returns the image URL (string) if successful 
+     * @returns A error string if unsuccessful,
+     */
     public async uploadImage(image: File): Promise<string> {
-        const url: string = `${this.BASE_URL}/image/upload`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'multipart/form-data'
-        };
+        try {
 
-        const formData = new FormData();
-        formData.append('image', image);
+            if (!image) {
+                throw new Error(`L'image est requise.`);
+            }
 
-        const result: AxiosResponse = await axios.post(url, formData, { headers: headers });
-        console.log(result);
-        // TODO: code 200 = ok
-        // TODO: get results.id to create the URL
+            const url: string = this.constructRequestUrl(`/image/upload`);
 
-        const id = result.data.results.id; // Assuming the response contains the ID of the uploaded image
+            const headers = {
+                Authorization: `Bearer ${this.getToken()}`,
+                'Content-Type': 'multipart/form-data'
+            };
 
-        return `${this.BASE_URL}/image/get/` + id;
+            const formData = new FormData();
+            formData.append('image', image);
+
+            const result: AxiosResponse = await axios.post(url, formData, { headers: headers });
+
+            if (result.status !== 200) {
+                throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
+            }
+
+            const id = result.data.results.id;
+
+            return this.constructRequestUrl('/image/get/' + id);
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
-    // Images Route
-    public async getImage(imageId: string): Promise<string> {
-        const url: string = `${this.BASE_URL}/image/get/${imageId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
+    // NOTE : Get Image pas necessaire
 
-        const result: AxiosResponse = await axios.get(url, { headers: headers });
-        console.log(result);
-        // TODO: Traiter la réponse selon les besoins de votre application
-        return result.data.url; // Supposons que la réponse contienne l'URL de l'image
-    }
-
-    public async deleteImage(imageId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/image/delete/${imageId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
-        const result: AxiosResponse = await axios.delete(url, { headers: headers });
-        console.log(result);
-        // TODO: Traiter la réponse selon les besoins de votre application
-        // code == 200
-    }
-
-    public async getUserImages(): Promise<string[]> {
-        const url: string = `${this.BASE_URL}/image/getUserImages`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
-        const result: AxiosResponse = await axios.get(url, { headers: headers });
-        console.log(result);
-        // TODO: Traiter la réponse selon les besoins de votre application
-        return result.data.images; // Supposons que la réponse contienne un tableau d'URLs d'images
-    }
 }
-
 
 const apiService = new ApiService();
 export default apiService;
