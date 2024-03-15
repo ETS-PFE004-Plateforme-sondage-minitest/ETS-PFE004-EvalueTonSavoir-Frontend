@@ -41,7 +41,7 @@ const QuizForm: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             const userFolders = await ApiService.getUserFolders();
-            setFolders(userFolders);
+            setFolders(userFolders as FolderType[]);
         };
 
         fetchData();
@@ -60,13 +60,13 @@ const QuizForm: React.FC = () => {
                     console.error('Quiz not found for id:', id);
                     return;
                 }
-                setQuiz(quiz);
+                setQuiz(quiz as QuizType);
 
-                setFilteredValue(quiz.content);
-                setValue(quiz.content.join('\n\n'));
+                // setFilteredValue(quiz.content);
+                // setValue(quiz.content.join('\n\n'));
 
 
-                setQuizTitle(quiz.title);
+                // setQuizTitle(quiz.title);
             } catch (error) {
                 console.error('Error fetching quiz:', error);
             }

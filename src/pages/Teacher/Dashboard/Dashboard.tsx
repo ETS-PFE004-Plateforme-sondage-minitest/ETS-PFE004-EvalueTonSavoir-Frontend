@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
                     await ApiService.createFolder("default");
                     userFolders = await ApiService.getUserFolders();
                 }
-                setFolders(userFolders);
+                setFolders(userFolders as FolderType[]);
             }
 
         };
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
         const fetchQuizzesForFolder = async () => {            
             if (selectedFolder) {
                 const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
-                setQuizzes(folderQuizzes);
+                setQuizzes(folderQuizzes as QuizType[]);
             }
         };
 

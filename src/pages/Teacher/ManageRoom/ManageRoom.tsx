@@ -41,7 +41,7 @@ const ManageRoom: React.FC = () => {
                     console.error('Quiz non Trouvé:', quizId.id);
                     return;
                 }
-                setQuiz(quiz);
+                setQuiz(quiz as QuizType);
                 if (!socket) {
                     createWebSocketRoom();
                   }
