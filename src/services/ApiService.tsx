@@ -383,10 +383,12 @@ class ApiService {
     }
 
     public async duplicateFolder(folderId: string, newTitle: string): Promise<any> {
+        console.log(folderId, newTitle);
         return "Route not implemented yet!";
     }
 
     public async copyFolder(folderId: string, newTitle: string): Promise<any> {
+        console.log(folderId, newTitle);
         return "Route not implemented yet!";
     }
 
@@ -520,11 +522,13 @@ class ApiService {
         // code == 200
     }
 
-    public async duplicateQuiz(quizId: string, newTitle: string, folderId: null): Promise<any> {
+    public async duplicateQuiz(quizId: string, newTitle: string, folderId: string): Promise<any> {
+        console.log(quizId, newTitle, folderId);
         return "Route not implemented yet!";
     }
 
-    public async copyQuiz(quizId: string, newTitle: string, folderId: null): Promise<any> {
+    public async copyQuiz(quizId: string, newTitle: string, folderId: string): Promise<any> {
+        console.log(quizId, newTitle), folderId;
         return "Route not implemented yet!";
     }
 
