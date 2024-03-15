@@ -139,7 +139,7 @@ class ApiService {
                 throw new Error(`La connexion a échoué. Status: ${result.status}`);
             }
 
-            this.saveToken(result.data.results.token);
+            this.saveToken(result.data.token);
 
             return true;
 
@@ -314,7 +314,7 @@ class ApiService {
             const url: string = this.constructRequestUrl(`/folder/getUserFolders`);
             const headers = this.constructRequestHeaders();
 
-            const result: AxiosResponse = await axios.get(url, headers);
+            const result: AxiosResponse = await axios.get(url, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`L'obtention des dossiers utilisateur a échoué. Status: ${result.status}`);
@@ -349,7 +349,7 @@ class ApiService {
             const url: string = this.constructRequestUrl(`/folder/getFolderContent/${folderId}`);
             const headers = this.constructRequestHeaders();
 
-            const result: AxiosResponse = await axios.get(url, headers);
+            const result: AxiosResponse = await axios.get(url, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`L'obtention des quiz du dossier a échoué. Status: ${result.status}`);
@@ -384,7 +384,7 @@ class ApiService {
             const url: string = this.constructRequestUrl(`/folder/delete/${folderId}`);
             const headers = this.constructRequestHeaders();
 
-            const result: AxiosResponse = await axios.delete(url, headers);
+            const result: AxiosResponse = await axios.delete(url, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`La supression du dossier a échoué. Status: ${result.status}`);
@@ -539,7 +539,7 @@ class ApiService {
             const url: string = this.constructRequestUrl(`/quiz/get/${quizId}`);
             const headers = this.constructRequestHeaders();
 
-            const result: AxiosResponse = await axios.get(url, headers);
+            const result: AxiosResponse = await axios.get(url, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`L'obtention du quiz a échoué. Status: ${result.status}`);
@@ -574,7 +574,7 @@ class ApiService {
             const url: string = this.constructRequestUrl(`/quiz/delete/${quizId}`);
             const headers = this.constructRequestHeaders();
 
-            const result: AxiosResponse = await axios.delete(url,headers);
+            const result: AxiosResponse = await axios.delete(url, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`La supression du quiz a échoué. Status: ${result.status}`);
