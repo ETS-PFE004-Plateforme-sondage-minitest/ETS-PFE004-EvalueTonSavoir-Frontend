@@ -236,160 +236,231 @@ class ApiService {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Folder Routes
+
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
     public async createFolder(title: string): Promise<any> {
-        const url: string = `${this.BASE_URL}/folder/create`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            title: title
-        };
-
-        const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
-    }
-
-    public async getUserFolders(): Promise<FolderType[]> {
-        const url: string = `${this.BASE_URL}/folder/getUserFolders`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
         try {
-            const response: AxiosResponse = await axios.get(url, { headers: headers });
-            if (response.status === 200) {
-                return response.data.results.map((folder: FolderType) => ({ _id: folder._id, title: folder.title }));
-            } else {
-                throw new Error('Failed to fetch user folders');
+
+            if (!title) {
+                throw new Error(`Le titre est requis.`);
             }
+
+            const url: string = this.constructRequestUrl(`/folder/create`);
+            const headers = this.constructRequestHeaders();
+            const body = { title };
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La création du dossier a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error fetching user folders:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async getFolderContent(folderId: string): Promise<QuizType[]> {
-        const url: string = `${this.BASE_URL}/folder/getFolderContent/${folderId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
+    /**
+     * @returns folder array if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async getUserFolders(): Promise<FolderType[] | string> {
         try {
-            const response: AxiosResponse = await axios.get(url, { headers: headers });
-            if (response.status === 200) {
-                // Assuming the response contains a list of quizzes
-                return response.data.results.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
-            } else {
-                throw new Error('Failed to fetch folder content');
+
+            // No params
+
+            const url: string = this.constructRequestUrl(`/folder/getUserFolders`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.get(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`L'obtention des dossiers utilisateur a échoué. Status: ${result.status}`);
             }
+
+            return result.data.results.map((folder: FolderType) => ({ _id: folder._id, title: folder.title }));
+            
         } catch (error) {
-            console.error('Error fetching folder content:', error);
-            throw error;
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async deleteFolder(folderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/folder/delete/${folderId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
+    /**
+     * @returns quiz array if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async getFolderContent(folderId: string): Promise<QuizType[] | string> {
+        try {
+
+            if (!folderId) {
+                throw new Error(`Le folderId est requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/folder/getFolderContent/${folderId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.get(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`L'obtention des quiz du dossier a échoué. Status: ${result.status}`);
+            }
+
+            return result.data.results.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
+    }
+
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async deleteFolder(folderId: string): Promise<any> {
+        try {
+
+            if (!folderId) {
+                throw new Error(`Le folderId est requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/folder/delete/${folderId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.delete(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La supression du dossier a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
 
         const result: AxiosResponse = await axios.delete(url, { headers: headers });
         console.log(result);
         // code == 200
     }
 
-    public async renameFolder(folderId: string, newTitle: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/folder/rename`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            folderId: folderId,
-            newTitle: newTitle
-        };
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async renameFolder(folderId: string, newTitle: string): Promise<any> {
+        try {
 
-        const result: AxiosResponse = await axios.put(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+            if (!folderId || !newTitle) {
+                throw new Error(`Le folderId et le nouveau titre sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/folder/rename`);
+            const headers = this.constructRequestHeaders();
+            const body = { folderId, newTitle };
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`Le changement de nom de dossier a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
     public async duplicateFolder(folderId: string, newTitle: string): Promise<any> {
-        console.log(folderId, newTitle);
-        return "Route not implemented yet!";
+        try {
+            console.log(folderId, newTitle);
+            return "Route not implemented yet!";
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
     public async copyFolder(folderId: string, newTitle: string): Promise<any> {
-        console.log(folderId, newTitle);
-        return "Route not implemented yet!";
+        try {
+            console.log(folderId, newTitle);
+            return "Route not implemented yet!";
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
 
