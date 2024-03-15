@@ -9,18 +9,43 @@ import { FolderType } from '../Types/FolderType';
 
 class ApiService {
     private BASE_URL: string;
+    private TTL: number;
 
     constructor() {
         this.BASE_URL = `http://localhost:4400`;
+        this.TTL = 3600000; // 1h
     }
 
     // Helpers
     private saveToken(token: string): void {
-        localStorage.setItem("jwt", token);
+        const now = new Date();
+
+        const object = {
+            token: token,
+            expiry: now.getTime()+this.TTL
+        }
+
+        localStorage.setItem("jwt", JSON.stringify(object));
     }
 
     private getToken(): string | null {
-        return localStorage.getItem("jwt");
+        const objectStr = localStorage.getItem("jwt");
+
+        if (!objectStr) {
+            return null
+        }
+
+        const object = JSON.parse(objectStr)
+        const now = new Date()
+
+        if (now.getTime() > object.expiry) {
+            // If the item is expired, delete the item from storage
+            // and return null
+            this.logout();
+            return null
+        }
+
+        return object.token;
     }
 
     public isLogedIn(): boolean {
@@ -29,6 +54,9 @@ class ApiService {
         if (token == null) {
             return false;
         }
+
+        // Update token expiry
+        this.saveToken(token);
 
         return true;
     }
