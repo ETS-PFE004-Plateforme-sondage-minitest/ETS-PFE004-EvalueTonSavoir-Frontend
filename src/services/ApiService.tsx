@@ -375,10 +375,6 @@ class ApiService {
 
             return `Une erreur inattendue s'est produite.`
         }
-
-        const result: AxiosResponse = await axios.delete(url, { headers: headers });
-        console.log(result);
-        // code == 200
     }
 
     /**
@@ -463,171 +459,231 @@ class ApiService {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Quiz Routes
 
-
-    public async createQuiz(title: string, content: string[], folderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/create`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            title: title,
-            content: content,
-            folderId: folderId
-        };
-
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async createQuiz(title: string, content: string[], folderId: string): Promise<any> {
         try {
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-            console.log(result);
-            // code == 200
+
+            if (!title || !content || !folderId) {
+                throw new Error(`Le titre, les contenu et le dossier de destination sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/create`);
+            const headers = this.constructRequestHeaders();
+            const body = { title, content, folderId};
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La création du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error creating quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async getQuiz(quizId: string): Promise<QuizType> {
-        const url: string = `${this.BASE_URL}/quiz/get/${quizId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
+    /**
+     * @returns quiz if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async getQuiz(quizId: string): Promise<QuizType | string> {
         try {
-            const result: AxiosResponse = await axios.get(url, { headers: headers });
-            //console.log(result);
-            // Assuming result.data contains the quiz information
+
+            if (!quizId) {
+                throw new Error(`Le quizId est requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/get/${quizId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.get(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`L'obtention du quiz a échoué. Status: ${result.status}`);
+            }
 
             return result.data.results as QuizType;
+
         } catch (error) {
-            console.error('Error getting quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async deleteQuiz(quizId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/delete/${quizId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async deleteQuiz(quizId: string): Promise<any> {
         try {
-            const result: AxiosResponse = await axios.delete(url, { headers: headers });
-            console.log(result);
-            // code == 200
+
+            if (!quizId) {
+                throw new Error(`Le quizId est requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/delete/${quizId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.delete(url,headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La supression du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error deleting quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async updateQuiz(quizId: string, newTitle: string, newContent: string[]): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/update`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            quizId: quizId,
-            newTitle: newTitle,
-            newContent: newContent
-        };
-
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async updateQuiz(quizId: string, newTitle: string, newContent: string[]): Promise<any> {
         try {
-            const result: AxiosResponse = await axios.put(url, body, { headers: headers });
-            console.log(result);
-            // code == 200
+
+            if (!quizId || !newTitle || !newContent) {
+                throw new Error(`Le quizId, titre et le contenu sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/update`);
+            const headers = this.constructRequestHeaders();
+            const body = { quizId, newTitle, newContent};
+
+            const result: AxiosResponse = await axios.put(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La mise à jours du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error updating quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async moveQuiz(quizId: string, newFolderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/move`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            quizId: quizId,
-            newFolderId: newFolderId
-        };
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async moveQuiz(quizId: string, newFolderId: string): Promise<any> {
+        try {
 
-        const result: AxiosResponse = await axios.put(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+            if (!quizId || !newFolderId) {
+                throw new Error(`Le quizId et le nouveau dossier sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/move`);
+            const headers = this.constructRequestHeaders();
+            const body = { quizId, newFolderId};
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`Le déplacement du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
     public async duplicateQuiz(quizId: string, newTitle: string, folderId: string): Promise<any> {
-        console.log(quizId, newTitle, folderId);
-        return "Route not implemented yet!";
+        try {
+            console.log(quizId, newTitle, folderId);
+            return "Route not implemented yet!";
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
     public async copyQuiz(quizId: string, newTitle: string, folderId: string): Promise<any> {
-        console.log(quizId, newTitle), folderId;
-        return "Route not implemented yet!";
+        try {
+            console.log(quizId, newTitle), folderId;
+            return "Route not implemented yet!";
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // Images Route
 
