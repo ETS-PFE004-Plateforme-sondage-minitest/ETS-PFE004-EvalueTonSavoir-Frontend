@@ -268,6 +268,59 @@ const Dashboard: React.FC = () => {
         quizIdsToRemove.length > 1
             ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
             : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
+
+            const handleCreateFolder = async () => {
+                try {
+                    const folderTitle = prompt('Titre du dossier');
+                    if (folderTitle) {
+                        await ApiService.createFolder(folderTitle);
+                        const userFolders = await ApiService.getUserFolders();
+                        setFolders(userFolders as FolderType[]);
+                    }
+                } catch (error) {
+                    console.error('Error creating folder:', error);
+                }
+            };
+            const handleDeleteFolder = async (folderId: string) => {
+                try {
+                    const confirmed = window.confirm('AVoulez-vous vraiment supprimer ce dossier?');
+                    if (confirmed) {
+                        await ApiService.deleteFolder(folderId);
+                        const userFolders = await ApiService.getUserFolders();
+                        setFolders(userFolders as FolderType[]);
+                    }
+                } catch (error) {
+                    console.error('Error deleting folder:', error);
+                }
+            };
+            const handleRenameFolder = async (folderId: string, currentTitle: string) => {
+                try {
+                    const newTitle = prompt('Entrée le nouveau nom du fichier', currentTitle);
+                    if (newTitle) {
+                        await ApiService.renameFolder(folderId, newTitle);
+                        const userFolders = await ApiService.getUserFolders();
+                        setFolders(userFolders as FolderType[]);
+                    }
+                } catch (error) {
+                    console.error('Error renaming folder:', error);
+                }
+            };
+            const handleDuplicateFolder = async (folderId: string) => {
+                try {
+                   
+                        await ApiService.duplicateFolder(folderId);
+                        const userFolders = await ApiService.getUserFolders();
+                        setFolders(userFolders as FolderType[]);
+                    
+                } catch (error) {
+                    console.error('Error duplicating folder:', error);
+                }
+            };
+            
+            
+            
+            
+
     return (
         <div className="dashboard-wrapper">
             <div className="dashboard-container">
@@ -327,14 +380,10 @@ const Dashboard: React.FC = () => {
                             <DeleteOutline />
                         </IconButton>
                     </Tooltip>
+                   
                 </div>
                 <div>
-                    <select value={selectedFolder} onChange={handleSelectFolder} required>
-                        <option value="" disabled>Select a folder</option>
-                        {folders.map((folder) => (
-                            <option key={folder._id} value={folder._id}>{folder.title}</option>
-                        ))}
-                    </select>
+                   
                 </div>
 
 

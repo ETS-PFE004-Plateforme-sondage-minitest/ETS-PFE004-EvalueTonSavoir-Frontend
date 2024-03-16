@@ -281,7 +281,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { title };
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`La création du dossier a échoué. Status: ${result.status}`);
@@ -419,9 +419,8 @@ class ApiService {
             const url: string = this.constructRequestUrl(`/folder/rename`);
             const headers = this.constructRequestHeaders();
             const body = { folderId, newTitle };
-
-            const result: AxiosResponse = await axios.post(url, body, headers);
-
+            
+            const result: AxiosResponse = await axios.put(url, body, { headers: headers });
             if (result.status !== 200) {
                 throw new Error(`Le changement de nom de dossier a échoué. Status: ${result.status}`);
             }
@@ -441,48 +440,65 @@ class ApiService {
         }
     }
 
-    /**
-     * @remarks This function is not yet implemented.
-     * @returns true if successful 
-     * @returns A error string if unsuccessful,
-     */
-    public async duplicateFolder(folderId: string, newTitle: string): Promise<any> {
+    public async duplicateFolder(folderId: string): Promise<any> {
         try {
-            console.log(folderId, newTitle);
-            return "Route not implemented yet!";
-
+            if (!folderId ) {
+                throw new Error(`Le folderId et le nouveau titre sont requis.`);
+            }
+    
+            const url: string = this.constructRequestUrl(`/folder/duplicate`);
+            const headers = this.constructRequestHeaders();
+            const body = { folderId };
+    
+            console.log( headers );
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+    
+            if (result.status !== 200) {
+                throw new Error(`La duplication du dossier a échoué. Status: ${result.status}`);
+            }
+    
+            return true;
+    
         } catch (error) {
             console.log("Error details: ", error);
-
+    
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-
+    
             return `Une erreur inattendue s'est produite.`
         }
     }
-
-    /**
-     * @remarks This function is not yet implemented.
-     * @returns true if successful 
-     * @returns A error string if unsuccessful,
-     */
+    
     public async copyFolder(folderId: string, newTitle: string): Promise<any> {
         try {
-            console.log(folderId, newTitle);
-            return "Route not implemented yet!";
-            
+            if (!folderId || !newTitle) {
+                throw new Error(`Le folderId et le nouveau titre sont requis.`);
+            }
+    
+            const url: string = this.constructRequestUrl(`/folder/copy/${folderId}`);
+            const headers = this.constructRequestHeaders();
+            const body = { newTitle };
+    
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+    
+            if (result.status !== 200) {
+                throw new Error(`La copie du dossier a échoué. Status: ${result.status}`);
+            }
+    
+            return true;
+    
         } catch (error) {
             console.log("Error details: ", error);
-
+    
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-
+    
             return `Une erreur inattendue s'est produite.`
         }
     }
