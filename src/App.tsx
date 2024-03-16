@@ -19,11 +19,22 @@ import JoinRoom from './pages/Student/JoinRoom/JoinRoom';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 
+import ApiService from './services/ApiService';
+
+const handleLogout = () => {
+    ApiService.logout();
+}
+
+const isLoggedIn = () => {
+    return ApiService.isLogedIn();
+}
 
 function App() {
     return (
         <div className="content">
-                <Header/>
+                <Header
+                isLoggedIn={isLoggedIn}
+                handleLogout={handleLogout}/>
             <div className="app">
                 <main>
                     <Routes>
