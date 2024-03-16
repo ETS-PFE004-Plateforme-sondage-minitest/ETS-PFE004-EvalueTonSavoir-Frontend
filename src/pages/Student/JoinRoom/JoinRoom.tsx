@@ -1,5 +1,5 @@
-// JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
+
 import { Socket } from 'socket.io-client';
 import { ENV_VARIABLES } from '../../../constants';
 
@@ -9,8 +9,10 @@ import webSocketService from '../../../services/WebsocketService';
 
 import './joinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
-import { Button, Paper, TextField } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
+
+import LoginContainer from '../../../components/LoginContainer/LoginContainer'
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
@@ -134,43 +136,40 @@ const JoinRoom: React.FC = () => {
             );
         default:
             return (
-                <div className="join-room-container">
-                    <h1 className="page-title mb-1">Rejoindre une salle</h1>
-                    <Paper>
-                        <div className="login-container">
-                            <img className="login-avatar" src="./people.svg" width={'20%'}></img>
-                            <TextField
-                                label="Nom d'utilisateur"
-                                variant="outlined"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Nom d'utilisateur"
-                                sx={{ marginBottom: '1rem' }}
-                                fullWidth
-                            />
-                            <TextField
-                                type="number"
-                                label="Numéro de la salle"
-                                variant="outlined"
-                                value={roomName}
-                                onChange={(e) => setRoomName(e.target.value)}
-                                placeholder="Nom de la salle"
-                                sx={{ marginBottom: '1rem' }}
-                                fullWidth
-                            />
-                            <LoadingButton
-                                loading={isConnecting}
-                                onClick={handleSocket}
-                                variant="contained"
-                                sx={{ marginBottom: `${connectionError && '2rem'}` }}
-                                disabled={!username || !roomName}
-                            >
-                                Rejoindre
-                            </LoadingButton>
-                            <div className="error-text text-base">{connectionError}</div>
-                        </div>
-                    </Paper>
-                </div>
+                <LoginContainer 
+                    title='Rejoindre une salle'
+                    error={connectionError}>
+
+                    <TextField
+                        label="Nom d'utilisateur"
+                        variant="outlined"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Nom d'utilisateur"
+                        sx={{ marginBottom: '1rem' }}
+                        fullWidth
+                    />
+
+                    <TextField
+                        type="number"
+                        label="Numéro de la salle"
+                        variant="outlined"
+                        value={roomName}
+                        onChange={(e) => setRoomName(e.target.value)}
+                        placeholder="Nom de la salle"
+                        sx={{ marginBottom: '1rem' }}
+                        fullWidth
+                    />
+
+                    <LoadingButton
+                        loading={isConnecting}
+                        onClick={handleSocket}
+                        variant="contained"
+                        sx={{ marginBottom: `${connectionError && '2rem'}` }}
+                        disabled={!username || !roomName}
+                    >Rejoindre</LoadingButton>
+
+                </LoginContainer>
             );
     }
 };

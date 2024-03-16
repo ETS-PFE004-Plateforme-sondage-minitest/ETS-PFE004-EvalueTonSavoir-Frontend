@@ -1,48 +1,17 @@
-.join-room-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 85%;
-}
-
-.waiting-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.login-links {
+    padding-top: 10px;
     width: 100%;
-    height: 85%;
-    text-align: center;
-}
-
-.login-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 2rem 4rem 2rem 4rem;
-    width: 25vw;
 }
 
-.login-avatar {
-    margin-bottom: 2rem;
-}
-.question-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+.login-links a {
+    padding: 4px;
+    color: #333;
+    text-decoration: none;
 }
 
-.question-component-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-@media only screen and (max-device-width: 768px) {
-    .login-container {
-        width: inherit;
-    }
+.login-links a:hover {
+    text-decoration: underline;
 }

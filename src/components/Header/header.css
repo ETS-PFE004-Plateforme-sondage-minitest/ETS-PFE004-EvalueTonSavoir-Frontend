@@ -1,0 +1,12 @@
+
+.header {
+    flex-shrink: 0;
+    padding: 15px;
+    overflow: hidden;
+}
+
+.header img {
+    float: left;
+    display: block;
+    cursor: pointer;
+}

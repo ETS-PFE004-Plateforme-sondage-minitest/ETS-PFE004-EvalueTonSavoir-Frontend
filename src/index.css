@@ -1,7 +1,9 @@
+/* Set default colors */
 :root {
     --main-color: #5271ff;
 }
 
+/* Set default font */
 * {
     margin: 0;
     padding: 0;
@@ -13,11 +15,33 @@
     color: #ffffff;
 }
 
-body,
-html {
+html,
+body {
     height: 100%;
-    width: 100%;
 }
+
+#root {
+    height: 100%;
+}
+
+.content {
+    max-width: 1000px;
+    margin: auto;
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.app {
+    flex: 1 0 auto;
+}
+
+
+
+
+/* 
+
 
 main {
     height: 85%;
@@ -171,4 +195,4 @@ main {
 
 .w-12 {
     width: 13rem;
-}
+} */
