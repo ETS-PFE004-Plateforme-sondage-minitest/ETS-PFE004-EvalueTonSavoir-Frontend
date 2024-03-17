@@ -327,7 +327,7 @@ const Dashboard: React.FC = () => {
         try {
             const confirmed = window.confirm('AVoulez-vous vraiment supprimer ce dossier?');
             if (confirmed) {
-                await ApiService.deleteFolder(folderId);
+                await ApiService.deleteFolder(selectedFolder);
                 const userFolders = await ApiService.getUserFolders();
                 setFolders(userFolders as FolderType[]);
             }
@@ -339,9 +339,9 @@ const Dashboard: React.FC = () => {
         try {
             // folderId: string GET THIS FROM CURRENT FOLDER
             // currentTitle: string GET THIS FROM CURRENT FOLDER
-            const newTitle = prompt('Entrée le nouveau nom du fichier', currentTitle);
+            const newTitle = prompt('Entrée le nouveau nom du fichier', "Nouveau nom de dossier");
             if (newTitle) {
-                await ApiService.renameFolder(folderId, newTitle);
+                await ApiService.renameFolder(selectedFolder, newTitle);
                 const userFolders = await ApiService.getUserFolders();
                 setFolders(userFolders as FolderType[]);
             }
@@ -352,7 +352,7 @@ const Dashboard: React.FC = () => {
     const handleDuplicateFolder = async () => {
         try {
             // folderId: string GET THIS FROM CURRENT FOLDER
-            await ApiService.duplicateFolder(folderId);
+            await ApiService.duplicateFolder(selectedFolder);
             const userFolders = await ApiService.getUserFolders();
             setFolders(userFolders as FolderType[]);
 
