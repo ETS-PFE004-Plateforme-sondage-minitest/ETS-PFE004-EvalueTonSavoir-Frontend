@@ -560,7 +560,7 @@ class ApiService {
             if (result.status !== 200) {
                 throw new Error(`L'obtention du quiz a échoué. Status: ${result.status}`);
             }
-
+            
             return result.data.data as QuizType;
 
         } catch (error) {
