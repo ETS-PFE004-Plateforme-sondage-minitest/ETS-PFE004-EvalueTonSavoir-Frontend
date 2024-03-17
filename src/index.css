@@ -37,6 +37,12 @@ body {
     flex: 1 0 auto;
 }
 
+.title {
+    font-size: xx-large;
+    font-weight: 600;
+
+    margin-bottom: 1rem;
+}
 
 
 

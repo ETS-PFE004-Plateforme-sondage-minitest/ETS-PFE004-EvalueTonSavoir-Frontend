@@ -97,7 +97,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
@@ -133,7 +133,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`La connexion a échoué. Status: ${result.status}`);
@@ -171,7 +171,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email };
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`Échec de la réinitialisation du mot de passe. Status: ${result.status}`);
@@ -207,7 +207,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, oldPassword, newPassword };
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`Le changement du mot de passe a échoué. Status: ${result.status}`);
@@ -243,7 +243,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`La supression du compte a échoué. Status: ${result.status}`);
@@ -320,7 +320,7 @@ class ApiService {
                 throw new Error(`L'obtention des dossiers utilisateur a échoué. Status: ${result.status}`);
             }
 
-            return result.data.results.map((folder: FolderType) => ({ _id: folder._id, title: folder.title }));
+            return result.data.data.map((folder: FolderType) => ({ _id: folder._id, title: folder.title }));
             
         } catch (error) {
             console.log("Error details: ", error);
@@ -355,7 +355,7 @@ class ApiService {
                 throw new Error(`L'obtention des quiz du dossier a échoué. Status: ${result.status}`);
             }
 
-            return result.data.results.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
+            return result.data.data.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
             
         } catch (error) {
             console.log("Error details: ", error);
@@ -520,7 +520,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { title, content, folderId};
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`La création du quiz a échoué. Status: ${result.status}`);
@@ -561,7 +561,7 @@ class ApiService {
                 throw new Error(`L'obtention du quiz a échoué. Status: ${result.status}`);
             }
 
-            return result.data.results as QuizType;
+            return result.data.data as QuizType;
 
         } catch (error) {
             console.log("Error details: ", error);
@@ -626,7 +626,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { quizId, newTitle, newContent};
 
-            const result: AxiosResponse = await axios.put(url, body, headers);
+            const result: AxiosResponse = await axios.put(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`La mise à jours du quiz a échoué. Status: ${result.status}`);
@@ -662,7 +662,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { quizId, newFolderId};
 
-            const result: AxiosResponse = await axios.post(url, body, headers);
+            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
 
             if (result.status !== 200) {
                 throw new Error(`Le déplacement du quiz a échoué. Status: ${result.status}`);

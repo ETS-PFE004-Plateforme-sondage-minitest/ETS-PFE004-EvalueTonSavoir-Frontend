@@ -1,6 +1,6 @@
 // Dashboard.tsx
 import { useNavigate } from 'react-router-dom';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, ChangeEventHandler } from 'react';
 import { Link } from 'react-router-dom';
 import { parse } from 'gift-pegjs';
 
@@ -26,7 +26,11 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Divider
+    Divider,
+    MenuItem,
+    NativeSelect,
+    InputLabel,
+    SelectChangeEvent
 } from '@mui/material';
 import {
     Search,
@@ -53,8 +57,6 @@ const Dashboard: React.FC = () => {
     const [folders, setFolders] = useState<FolderType[]>([]);
     const [selectedFolder, setSelectedFolder] = useState<string>(''); // Selected folder
 
-    const isMobile = useCheckMobileScreen();
-
     useEffect(() => {
         const fetchData = async () => {
             if (!ApiService.isLogedIn()) {
@@ -62,11 +64,7 @@ const Dashboard: React.FC = () => {
             }
             else {
                 let userFolders = await ApiService.getUserFolders();
-                if (userFolders.length < 1) {
-                    console.log("user has no folders: we created default one");
-                    await ApiService.createFolder("default");
-                    userFolders = await ApiService.getUserFolders();
-                }
+
                 setFolders(userFolders as FolderType[]);
             }
 
@@ -75,17 +73,53 @@ const Dashboard: React.FC = () => {
         fetchData();
     }, []);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     const handleSelectFolder = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedFolder(event.target.value);
     };
 
 
     useEffect(() => {
-        const fetchQuizzesForFolder = async () => {            
-            if (selectedFolder) {
+        const fetchQuizzesForFolder = async () => {
+
+            if (selectedFolder == '') {
+                const folders = await ApiService.getUserFolders(); // HACK force user folders to load on first load
+                console.log("show all quizes")
+                var quizzes: QuizType[] = [];
+
+                for (const folder of folders as FolderType[]) {
+                    const folderQuizzes = await ApiService.getFolderContent(folder._id);
+                    console.log("folder: ", folder.title, " quiz: ", folderQuizzes);
+                    quizzes = quizzes.concat(folderQuizzes as QuizType[])
+                }
+
+                setQuizzes(quizzes as QuizType[]);
+            }
+            else {
+                console.log("show some quizes")
                 const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
                 setQuizzes(folderQuizzes as QuizType[]);
+
             }
+
+
         };
 
         fetchQuizzesForFolder();
@@ -95,27 +129,33 @@ const Dashboard: React.FC = () => {
         if (selectedQuizes.length === 0) setIsSelectAll(false);
     }, [selectedQuizes]);
 
+
+
+
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    const handleRemoveQuiz = async (quizIds: string[]) => {
-        try {
-            // Send DELETE request for each quiz to be removed
-            for (const quizId of quizIds) {
-                await ApiService.deleteQuiz(quizId);
-            }
+    const handleRemoveQuiz = async (quizId: string) => {
+        // on le fait juste une fois 
+        await ApiService.deleteQuiz(quizId);
 
-            // Update the state to remove the deleted quizzes
-            const updatedQuizzes = quizzes.filter((quiz) => !quizIds.includes(quiz._id));
-            setQuizzes(updatedQuizzes);
-            setSelectedQuizes([]);
-            setQuizIdsToRemove([]);
-            setQuizTitleToRemove('');
-        } catch (error) {
-            console.error('Error removing quizzes:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
-        }
+        // try {
+        //     // Send DELETE request for each quiz to be removed
+        //     for (const quizId of quizIds) {
+        //         await ApiService.deleteQuiz(quizId);
+        //     }
+
+        //     // Update the state to remove the deleted quizzes
+        //     const updatedQuizzes = quizzes.filter((quiz) => !quizIds.includes(quiz._id));
+        //     setQuizzes(updatedQuizzes);
+        //     setSelectedQuizes([]);
+        //     setQuizIdsToRemove([]);
+        //     setQuizTitleToRemove('');
+        // } catch (error) {
+        //     console.error('Error removing quizzes:', error);
+        //     throw error; // Optional: rethrow the error to handle it elsewhere
+        // }
     };
 
     const handleConfirmRemoveQuiz = () => {
@@ -269,64 +309,79 @@ const Dashboard: React.FC = () => {
             ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
             : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
 
-            const handleCreateFolder = async () => {
-                try {
-                    const folderTitle = prompt('Titre du dossier');
-                    if (folderTitle) {
-                        await ApiService.createFolder(folderTitle);
-                        const userFolders = await ApiService.getUserFolders();
-                        setFolders(userFolders as FolderType[]);
-                    }
-                } catch (error) {
-                    console.error('Error creating folder:', error);
-                }
-            };
-            const handleDeleteFolder = async (folderId: string) => {
-                try {
-                    const confirmed = window.confirm('AVoulez-vous vraiment supprimer ce dossier?');
-                    if (confirmed) {
-                        await ApiService.deleteFolder(folderId);
-                        const userFolders = await ApiService.getUserFolders();
-                        setFolders(userFolders as FolderType[]);
-                    }
-                } catch (error) {
-                    console.error('Error deleting folder:', error);
-                }
-            };
-            const handleRenameFolder = async (folderId: string, currentTitle: string) => {
-                try {
-                    const newTitle = prompt('Entrée le nouveau nom du fichier', currentTitle);
-                    if (newTitle) {
-                        await ApiService.renameFolder(folderId, newTitle);
-                        const userFolders = await ApiService.getUserFolders();
-                        setFolders(userFolders as FolderType[]);
-                    }
-                } catch (error) {
-                    console.error('Error renaming folder:', error);
-                }
-            };
-            const handleDuplicateFolder = async (folderId: string) => {
-                try {
-                   
-                        await ApiService.duplicateFolder(folderId);
-                        const userFolders = await ApiService.getUserFolders();
-                        setFolders(userFolders as FolderType[]);
-                    
-                } catch (error) {
-                    console.error('Error duplicating folder:', error);
-                }
-            };
-            
-            
-            
-            
+    const handleCreateFolder = async () => {
+        try {
+            const folderTitle = prompt('Titre du dossier');
+            if (folderTitle) {
+                await ApiService.createFolder(folderTitle);
+                const userFolders = await ApiService.getUserFolders();
+                setFolders(userFolders as FolderType[]);
+            }
+        } catch (error) {
+            console.error('Error creating folder:', error);
+        }
+    };
+    const handleDeleteFolder = async (folderId: string) => {
+        try {
+            const confirmed = window.confirm('AVoulez-vous vraiment supprimer ce dossier?');
+            if (confirmed) {
+                await ApiService.deleteFolder(folderId);
+                const userFolders = await ApiService.getUserFolders();
+                setFolders(userFolders as FolderType[]);
+            }
+        } catch (error) {
+            console.error('Error deleting folder:', error);
+        }
+    };
+    const handleRenameFolder = async () => {
+        try {
+            // folderId: string GET THIS FROM CURRENT FOLDER
+            // currentTitle: string GET THIS FROM CURRENT FOLDER
+            const newTitle = prompt('Entrée le nouveau nom du fichier', currentTitle);
+            if (newTitle) {
+                await ApiService.renameFolder(folderId, newTitle);
+                const userFolders = await ApiService.getUserFolders();
+                setFolders(userFolders as FolderType[]);
+            }
+        } catch (error) {
+            console.error('Error renaming folder:', error);
+        }
+    };
+    const handleDuplicateFolder = async () => {
+        try {
+            // folderId: string GET THIS FROM CURRENT FOLDER
+            await ApiService.duplicateFolder(folderId);
+            const userFolders = await ApiService.getUserFolders();
+            setFolders(userFolders as FolderType[]);
+
+        } catch (error) {
+            console.error('Error duplicating folder:', error);
+        }
+    };
+
+    const handleCreateQuiz = () => {
+        navigate("/teacher/editor-quiz/new");
+    }
+
+    const handleEditQuiz = (quizId: string) => {
+        navigate(`/teacher/editor-quiz/${quizId}`);
+    }
+
+    const handleLancerQuiz = (quizId: string) => {
+        navigate(`/teacher/manage-room/${quizId}`);
+    }
+
+
+
 
     return (
-        <div className="dashboard-wrapper">
-            <div className="dashboard-container">
-                {isMobile && <div className="page-title mb-1">Tableau de bord</div>}
-                <div className="action-bar">
-                    {!isMobile && <div className="page-title">Tableau de bord</div>}
+
+        <div className="dashboard">
+
+
+            <div className="title">Tableau de bord</div>
+
+            {/* <div className="action-bar">
                     <div className="button-group">
                         <Button
                             component={Link}
@@ -345,25 +400,29 @@ const Dashboard: React.FC = () => {
                             Importer
                         </Button>
                     </div>
-                </div>
-                <div className="search-bar">
-                    <TextField
-                        onChange={handleSearch}
-                        value={searchTerm}
-                        placeholder="Rechercher un quiz"
-                        fullWidth
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton>
-                                        <Search />
-                                    </IconButton>
-                                </InputAdornment>
-                            )
-                        }}
-                    />
-                </div>
-                <div className="button-group">
+                </div> */}
+
+            {/* KEEP SHEARCH BAR! */}
+            {/* <div className="search-bar">
+                <TextField
+                    onChange={handleSearch}
+                    value={searchTerm}
+                    placeholder="Rechercher un quiz"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton>
+                                    <Search />
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                    }}
+                />
+            </div> */}
+            {/* KEEP SHEARCH BAR! */}
+
+            {/* <div className="button-group">
                     <Tooltip title="Tout sélectionner" placement="top">
                         <Checkbox checked={isSelectAll} onChange={handleSelectAll} />
                     </Tooltip>
@@ -381,65 +440,148 @@ const Dashboard: React.FC = () => {
                         </IconButton>
                     </Tooltip>
                    
-                </div>
-                <div>
-                   
+                </div> */}
+
+            <div className='folder'>
+                <div className='select'>
+                    <NativeSelect
+                        id="select-folder"
+                        color="primary"
+                        value={selectedFolder}
+                        onChange={handleSelectFolder}
+                    >
+                        <option value=""> Tous... </option>
+
+                        {folders.map((folder: FolderType) => (
+                            <option value={folder._id} key={folder._id}> {folder.title} </option>
+                        ))}
+                    </NativeSelect>
                 </div>
 
+                <div className='actions'>
+                    <IconButton
+                        color="primary"
+                        onClick={() => handleCreateFolder}
+                    > <Add /> </IconButton>
 
-                <List disablePadding sx={{ overflowY: 'auto', height: '100%' }}>
-                    {filteredQuizzes.map((quiz: QuizType) => (
-                        <div key={`key-${quiz._id}`}>
-                            <Divider />
-                            <ListItem key={quiz._id} disablePadding>
-                                <ListItemButton
-                                    role={undefined}
-                                    onClick={() => handleOnCheckQuiz(quiz._id)}
-                                    dense
-                                >
-                                    <ListItemIcon>
-                                        <Checkbox
-                                            edge="start"
-                                            checked={selectedQuizes.includes(quiz._id)}
-                                            tabIndex={-1}
-                                            disableRipple
-                                        />
-                                    </ListItemIcon>
-                                    <ListItemText id={quiz._id + quiz.title} primary={quiz.title} />
-                                    <div className="button-group">
-                                        <Tooltip title="Modifier" placement="top">
-                                            <IconButton
-                                                component={Link}
-                                                to={`/teacher/editor-quiz/${quiz._id}`}
-                                            >
-                                                <Edit />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Dupliquer" placement="top">
-                                            <IconButton
-                                                onClick={() => handleDuplicateQuiz(quiz._id)}
-                                            >
-                                                <ContentCopy />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Lancer" placement="top">
-                                            <Button
-                                                component={Link}
-                                                to={`/teacher/manage-room/${quiz._id}`}
-                                                variant="contained"
-                                                disabled={!validQuiz(quiz.content)}
-                                            >
-                                                Lancer
-                                            </Button>
-                                        </Tooltip>
-                                    </div>
-                                </ListItemButton>
-                            </ListItem>
-                        </div>
-                    ))}
-                </List>
+                    <IconButton
+                        color="primary"
+                        onClick={() => handleRenameFolder}
+                    > <Edit /> </IconButton>
+
+                    <IconButton
+                        color="primary"
+                        onClick={() => handleDuplicateFolder}
+                    > <ContentCopy /> </IconButton>
+
+                    <IconButton
+                        aria-label="delete"
+                        color="primary"
+                        onClick={() => handleDeleteFolder}
+                    > <DeleteOutline /> </IconButton>
+                </div>
+
             </div>
 
+            <div className='list'>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<Add />}
+                    onClick={handleCreateQuiz}
+                >
+                    Ajouter un nouveau quiz
+                </Button>
+
+                {quizzes.map((quiz: QuizType) => (
+                    <div className='quiz'>
+                        <div className='title'>
+                            <Button
+                                variant="outlined"
+                                onClick={() => handleLancerQuiz(quiz._id)}
+                            >
+                                {quiz.title}
+                            </Button>
+                        </div>
+
+                        <div className='actions'>
+                            <IconButton
+                                color="primary"
+                                onClick={() => handleEditQuiz(quiz._id)}
+                            > <Edit /> </IconButton>
+
+                            <IconButton
+                                color="primary"
+                                onClick={() => handleDuplicateQuiz(quiz._id)}
+                            > <ContentCopy /> </IconButton>
+
+                            <IconButton
+                                aria-label="delete"
+                                color="primary"
+                                onClick={() => handleRemoveQuiz(quiz._id)}
+                            > <DeleteOutline /> </IconButton>
+                        </div>
+                    </div>
+                ))}
+
+
+            </div>
+
+            {/* <List
+                disablePadding
+                sx={{ overflowY: 'auto', height: '100%' }}
+            >
+
+                {filteredQuizzes.map((quiz: QuizType) => (
+                    <div key={`key-${quiz._id}`}>
+                        <Divider />
+                        <ListItem key={quiz._id} disablePadding>
+                            <ListItemButton
+                                role={undefined}
+                                onClick={() => handleOnCheckQuiz(quiz._id)}
+                                dense
+                            >
+                                <ListItemIcon>
+                                    <Checkbox
+                                        edge="start"
+                                        checked={selectedQuizes.includes(quiz._id)}
+                                        tabIndex={-1}
+                                        disableRipple
+                                    />
+                                </ListItemIcon>
+                                <ListItemText id={quiz._id + quiz.title} primary={quiz.title} />
+                                <div className="button-group">
+                                    <Tooltip title="Modifier" placement="top">
+                                        <IconButton
+                                            component={Link}
+                                            to={`/teacher/editor-quiz/${quiz._id}`}
+                                        >
+                                            <Edit />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Dupliquer" placement="top">
+                                        <IconButton
+                                            onClick={() => handleDuplicateQuiz(quiz._id)}
+                                        >
+                                            <ContentCopy />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Lancer" placement="top">
+                                        <Button
+                                            component={Link}
+                                            to={`/teacher/manage-room/${quiz._id}`}
+                                            variant="contained"
+                                            disabled={!validQuiz(quiz.content)}
+                                        >
+                                            Lancer
+                                        </Button>
+                                    </Tooltip>
+                                </div>
+                            </ListItemButton>
+                        </ListItem>
+                    </div>
+                ))}
+            </List> */}
             <ConfirmDialog
                 open={quizIdsToRemove.length > 0}
                 title="Confirmation"

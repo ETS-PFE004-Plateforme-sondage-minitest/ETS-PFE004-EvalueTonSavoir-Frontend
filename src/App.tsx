@@ -32,9 +32,11 @@ const isLoggedIn = () => {
 function App() {
     return (
         <div className="content">
+            
                 <Header
                 isLoggedIn={isLoggedIn}
                 handleLogout={handleLogout}/>
+
             <div className="app">
                 <main>
                     <Routes>
