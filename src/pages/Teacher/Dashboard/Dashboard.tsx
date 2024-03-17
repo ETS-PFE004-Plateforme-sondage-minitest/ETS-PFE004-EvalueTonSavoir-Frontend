@@ -445,15 +445,21 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className='list'>
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<Add />}
-                    onClick={handleCreateQuiz}
-                    disabled={folders.length < 1} // Cannot create quiz if no folder created
-                >
-                    Ajouter un nouveau quiz
-                </Button>
+                <div className='ajouter'>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<Add />}
+                        onClick={handleCreateQuiz}
+                    >
+                        Ajouter un nouveau quiz
+                    </Button>
+                    <IconButton
+                        color="primary"
+                        onClick={() => handleOnImport()}
+                    > <Upload /> </IconButton>
+
+                </div>
 
                 {quizzes.map((quiz: QuizType) => (
                     <div className='quiz'>
@@ -468,6 +474,11 @@ const Dashboard: React.FC = () => {
                         </div>
 
                         <div className='actions'>
+                            <IconButton
+                                color="primary"
+                                onClick={() => downloadTxtFile(quiz)}
+                            > <FileDownload /> </IconButton>
+
                             <IconButton
                                 color="primary"
                                 onClick={() => handleEditQuiz(quiz)}
@@ -487,6 +498,13 @@ const Dashboard: React.FC = () => {
                     </div>
                 ))}
             </div>
+
+            <ImportModal
+                open={showImportModal}
+                handleOnClose={() => setShowImportModal(false)}
+                handleOnImport={handleOnImport}
+            />
+
         </div>
     );
 };

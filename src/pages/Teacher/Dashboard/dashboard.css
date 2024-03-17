@@ -38,6 +38,15 @@ div:has(> #select-folder) {
     flex-direction: column;
 }
 
+.dashboard .list .ajouter {
+    display: flex;
+    flex-direction: row;
+}
+
+.dashboard .list .ajouter button:first-child {
+    width: 100%;
+}
+
 .dashboard .list .quiz {
     display: flex;
     flex-direction: row;
