@@ -55,18 +55,20 @@ const QuizForm: React.FC = () => {
                     return; // Exit early if id is undefined or 'new'
                 }
 
-                const quiz = await ApiService.getQuiz(id);
+                //const quiz = await ApiService.getQuiz(id);
+                const quiz = await ApiService.getQuiz(id) as QuizType;
                 if (!quiz) {
                     console.error('Quiz not found for id:', id);
                     return;
                 }
                 setQuiz(quiz as QuizType);
+                const { title, content } = quiz;
+               
+                 setFilteredValue(content);
+                 setValue(quiz.content.join('\n\n'));
 
-                // setFilteredValue(quiz.content);
-                // setValue(quiz.content.join('\n\n'));
 
-
-                // setQuizTitle(quiz.title);
+                setQuizTitle(title);
             } catch (error) {
                 console.error('Error fetching quiz:', error);
             }
