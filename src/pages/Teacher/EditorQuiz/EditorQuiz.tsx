@@ -55,7 +55,6 @@ const QuizForm: React.FC = () => {
                     return; // Exit early if id is undefined or 'new'
                 }
 
-                //const quiz = await ApiService.getQuiz(id);
                 const quiz = await ApiService.getQuiz(id) as QuizType;
                 if (!quiz) {
                     console.error('Quiz not found for id:', id);
