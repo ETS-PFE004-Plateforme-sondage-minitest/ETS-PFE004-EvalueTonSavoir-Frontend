@@ -231,7 +231,7 @@ const Dashboard: React.FC = () => {
 
     };
 
-    const validQuiz = (questions: string[]) => {
+    const validateQuiz = (questions: string[]) => {
         if (!questions || questions.length === 0) {
             return false;
         }
@@ -461,6 +461,7 @@ const Dashboard: React.FC = () => {
                             <Button
                                 variant="outlined"
                                 onClick={() => handleLancerQuiz(quiz)}
+                                disabled={!validateQuiz(quiz.content)}
                             >
                                 {quiz.title}
                             </Button>
