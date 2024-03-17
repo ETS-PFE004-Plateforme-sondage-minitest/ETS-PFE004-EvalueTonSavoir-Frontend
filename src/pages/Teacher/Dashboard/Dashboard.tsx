@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
-    const handleRemoveQuiz = async (quizId: string) => {
+    const handleRemoveQuiz = async (quiz: QuizType) => {
         // on le fait juste une fois 
         await ApiService.deleteQuiz(quizId);
 
@@ -203,7 +203,7 @@ const Dashboard: React.FC = () => {
              console.error('Error duplicating quiz:', error);
          }
      };*/
-    const handleDuplicateQuiz = async (quizId: string) => {
+    const handleDuplicateQuiz = async (quiz: QuizType) => {
         try {
             const quizToDuplicate = quizzes.find((quiz) => quiz._id === quizId);
             if (!quizToDuplicate) {
@@ -321,7 +321,9 @@ const Dashboard: React.FC = () => {
             console.error('Error creating folder:', error);
         }
     };
-    const handleDeleteFolder = async (folderId: string) => {
+    const handleDeleteFolder = async () => {
+
+        // GET folder id from selected folder
         try {
             const confirmed = window.confirm('AVoulez-vous vraiment supprimer ce dossier?');
             if (confirmed) {
@@ -363,12 +365,12 @@ const Dashboard: React.FC = () => {
         navigate("/teacher/editor-quiz/new");
     }
 
-    const handleEditQuiz = (quizId: string) => {
-        navigate(`/teacher/editor-quiz/${quizId}`);
+    const handleEditQuiz = (quiz: QuizType) => {
+        navigate(`/teacher/editor-quiz/${quiz._id}`);
     }
 
-    const handleLancerQuiz = (quizId: string) => {
-        navigate(`/teacher/manage-room/${quizId}`);
+    const handleLancerQuiz = (quiz: QuizType) => {
+        navigate(`/teacher/manage-room/${quiz._id}`);
     }
 
 
@@ -378,32 +380,9 @@ const Dashboard: React.FC = () => {
 
         <div className="dashboard">
 
-
             <div className="title">Tableau de bord</div>
 
-            {/* <div className="action-bar">
-                    <div className="button-group">
-                        <Button
-                            component={Link}
-                            to="/teacher/editor-quiz/new"
-                            variant="outlined"
-                            color="primary"
-                            startIcon={<Add />}
-                        >
-                            Ajouter
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            startIcon={<Upload />}
-                            onClick={handleOnImport}
-                        >
-                            Importer
-                        </Button>
-                    </div>
-                </div> */}
-
-            {/* KEEP SHEARCH BAR! */}
-            {/* <div className="search-bar">
+            <div className="search-bar">
                 <TextField
                     onChange={handleSearch}
                     value={searchTerm}
@@ -419,28 +398,7 @@ const Dashboard: React.FC = () => {
                         )
                     }}
                 />
-            </div> */}
-            {/* KEEP SHEARCH BAR! */}
-
-            {/* <div className="button-group">
-                    <Tooltip title="Tout sélectionner" placement="top">
-                        <Checkbox checked={isSelectAll} onChange={handleSelectAll} />
-                    </Tooltip>
-                    <Tooltip title="Exporter" placement="top">
-                        <IconButton color="secondary" onClick={() => downloadTxtFile(selectedQuizes)}>
-                            <FileDownload />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Supprimer" placement="top">
-                        <IconButton
-                            color="secondary"
-                            onClick={() => handleRemoveQuiz(selectedQuizes)}
-                        >
-                            <DeleteOutline />
-                        </IconButton>
-                    </Tooltip>
-                   
-                </div> */}
+            </div>
 
             <div className='folder'>
                 <div className='select'>
@@ -461,23 +419,26 @@ const Dashboard: React.FC = () => {
                 <div className='actions'>
                     <IconButton
                         color="primary"
-                        onClick={() => handleCreateFolder}
+                        onClick={handleCreateFolder}
                     > <Add /> </IconButton>
 
                     <IconButton
                         color="primary"
-                        onClick={() => handleRenameFolder}
+                        onClick={handleRenameFolder}
+                        disabled={selectedFolder == ''} // cannot action on all
                     > <Edit /> </IconButton>
 
                     <IconButton
                         color="primary"
-                        onClick={() => handleDuplicateFolder}
+                        onClick={handleDuplicateFolder}
+                        disabled={selectedFolder == ''} // cannot action on all
                     > <ContentCopy /> </IconButton>
 
                     <IconButton
                         aria-label="delete"
                         color="primary"
-                        onClick={() => handleDeleteFolder}
+                        onClick={handleDeleteFolder}
+                        disabled={selectedFolder == ''} // cannot action on all
                     > <DeleteOutline /> </IconButton>
                 </div>
 
@@ -489,6 +450,7 @@ const Dashboard: React.FC = () => {
                     color="primary"
                     startIcon={<Add />}
                     onClick={handleCreateQuiz}
+                    disabled={folders.length < 1} // Cannot create quiz if no folder created
                 >
                     Ajouter un nouveau quiz
                 </Button>
@@ -498,7 +460,7 @@ const Dashboard: React.FC = () => {
                         <div className='title'>
                             <Button
                                 variant="outlined"
-                                onClick={() => handleLancerQuiz(quiz._id)}
+                                onClick={() => handleLancerQuiz(quiz)}
                             >
                                 {quiz.title}
                             </Button>
@@ -507,94 +469,23 @@ const Dashboard: React.FC = () => {
                         <div className='actions'>
                             <IconButton
                                 color="primary"
-                                onClick={() => handleEditQuiz(quiz._id)}
+                                onClick={() => handleEditQuiz(quiz)}
                             > <Edit /> </IconButton>
 
                             <IconButton
                                 color="primary"
-                                onClick={() => handleDuplicateQuiz(quiz._id)}
+                                onClick={() => handleDuplicateQuiz(quiz)}
                             > <ContentCopy /> </IconButton>
 
                             <IconButton
                                 aria-label="delete"
                                 color="primary"
-                                onClick={() => handleRemoveQuiz(quiz._id)}
+                                onClick={() => handleRemoveQuiz(quiz)}
                             > <DeleteOutline /> </IconButton>
                         </div>
                     </div>
                 ))}
-
-
             </div>
-
-            {/* <List
-                disablePadding
-                sx={{ overflowY: 'auto', height: '100%' }}
-            >
-
-                {filteredQuizzes.map((quiz: QuizType) => (
-                    <div key={`key-${quiz._id}`}>
-                        <Divider />
-                        <ListItem key={quiz._id} disablePadding>
-                            <ListItemButton
-                                role={undefined}
-                                onClick={() => handleOnCheckQuiz(quiz._id)}
-                                dense
-                            >
-                                <ListItemIcon>
-                                    <Checkbox
-                                        edge="start"
-                                        checked={selectedQuizes.includes(quiz._id)}
-                                        tabIndex={-1}
-                                        disableRipple
-                                    />
-                                </ListItemIcon>
-                                <ListItemText id={quiz._id + quiz.title} primary={quiz.title} />
-                                <div className="button-group">
-                                    <Tooltip title="Modifier" placement="top">
-                                        <IconButton
-                                            component={Link}
-                                            to={`/teacher/editor-quiz/${quiz._id}`}
-                                        >
-                                            <Edit />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Dupliquer" placement="top">
-                                        <IconButton
-                                            onClick={() => handleDuplicateQuiz(quiz._id)}
-                                        >
-                                            <ContentCopy />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title="Lancer" placement="top">
-                                        <Button
-                                            component={Link}
-                                            to={`/teacher/manage-room/${quiz._id}`}
-                                            variant="contained"
-                                            disabled={!validQuiz(quiz.content)}
-                                        >
-                                            Lancer
-                                        </Button>
-                                    </Tooltip>
-                                </div>
-                            </ListItemButton>
-                        </ListItem>
-                    </div>
-                ))}
-            </List> */}
-            <ConfirmDialog
-                open={quizIdsToRemove.length > 0}
-                title="Confirmation"
-                message={quizRemoveMessage}
-                onConfirm={handleConfirmRemoveQuiz}
-                onCancel={handleCancelRemoveQuiz}
-                buttonOrderType="warning"
-            />
-            <ImportModal
-                open={showImportModal}
-                handleOnClose={() => setShowImportModal(false)}
-                handleOnImport={handleOnImport}
-            />
         </div>
     );
 };

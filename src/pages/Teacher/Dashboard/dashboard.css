@@ -43,7 +43,7 @@ div:has(> #select-folder) {
     flex-direction: row;
 
     margin: 10px;
-    box-sizing:content-box;
+    box-sizing: content-box;
 }
 
 .dashboard .list .quiz .title {
@@ -64,53 +64,3 @@ div:has(> #select-folder) {
     flex-direction: row;
     align-items: center;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* 
-
-.action-bar {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-}
-
-
-
-.quiz-card-control {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    height: 100%;
-    width: 70%;
-    gap: 2vh;
-}
-
-
-.button-group {
-    display: flex;
-    gap: 1vw;
-    margin-left: 0.25rem;
-}
-
- */
