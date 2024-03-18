@@ -769,7 +769,7 @@ class ApiService {
                 throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
             }
 
-            const id = result.data.results.id;
+            const id = result.data.id;
 
             return this.constructRequestUrl('/image/get/' + id);
 
