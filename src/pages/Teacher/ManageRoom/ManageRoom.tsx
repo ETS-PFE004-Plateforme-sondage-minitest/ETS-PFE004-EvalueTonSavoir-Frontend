@@ -96,15 +96,24 @@ const ManageRoom: React.FC = () => {
         socket.on('create-failure', () => {
             console.log('Error creating room.');
         });
+        
         socket.on('user-joined', (user: UserType) => {
+            console.log("USER JOINED ! ")
+            console.log("quizMode: ", quizMode)
+
             setUsers((prevUsers) => [...prevUsers, user]);
 
             // This doesn't relaunch the quiz for users that connected late
             if (quizMode === 'teacher') {
+                console.log("TEACHER")
+
                 webSocketService.nextQuestion(roomName, currentQuestion);
+
             } else if (quizMode === 'student') {
+
                 console.log(quizQuestions);
                 webSocketService.launchStudentModeQuiz(roomName, quizQuestions);
+
             }
         });
         socket.on('join-failure', (message) => {
@@ -232,9 +241,9 @@ const ManageRoom: React.FC = () => {
             <div className='roomHeader'>
 
                 <DisconnectButton
-                onReturn={handleReturn}
-                askConfirm
-                message={`Êtes-vous sûr de vouloir quitter?`}/>
+                    onReturn={handleReturn}
+                    askConfirm
+                    message={`Êtes-vous sûr de vouloir quitter?`} />
 
                 <div className='centerTitle'>
                     <div className='title'>Salle: {roomName}</div>
@@ -246,120 +255,71 @@ const ManageRoom: React.FC = () => {
             </div>
 
             <div className='room'>
-                     {quizQuestions ? (
-                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                         <div className="title center-h-align mb-2">{quiz?.title}</div>
-                         {quizMode === 'teacher' && (
-                             <div className="mb-1">
-                                 <QuestionNavigation
-                                     currentQuestionId={Number(currentQuestion?.question.id)}
-                                     questionsLength={quizQuestions?.length}
-                                     previousQuestion={previousQuestion}
-                                     nextQuestion={nextQuestion}
-                                 />
-                             </div>
-                         )}
-                         <div className="mb-2 flex-column-wrapper">
-                             <div className="preview-and-result-container">
-                                 {currentQuestion && (
-                                     <Question
-                                         imageUrl={currentQuestion?.image}
-                                         showAnswer={false}
-                                         question={currentQuestion?.question}
-                                     />
-                                 )}
-                                 <LiveResultsComponent
-                                     quizMode={quizMode}
-                                     socket={socket}
-                                     questions={quizQuestions}
-                                     showSelectedQuestion={showSelectedQuestion}
-                                 ></LiveResultsComponent>
-                             </div>
-                         </div>
-                         {quizMode === 'teacher' && (
-                             <div className="nextQuestionButton">
-                                 <Button onClick={nextQuestion} variant="contained">
-                                     Prochaine question
-                                 </Button>
-                             </div>
-                         )}
-                     </div>
-                 ) : (
-                     <UserWaitPage
-                         users={users}
-                         launchQuiz={launchQuiz}
-                         roomName={roomName}
-                         setQuizMode={setQuizMode}
-                     />
-                 )}
+
+                {quizQuestions ? (
+
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+
+                        <div className="title center-h-align mb-2">{quiz?.title}</div>
+
+                        {quizMode === 'teacher' && (
+
+                            <div className="mb-1">
+                                <QuestionNavigation
+                                    currentQuestionId={Number(currentQuestion?.question.id)}
+                                    questionsLength={quizQuestions?.length}
+                                    previousQuestion={previousQuestion}
+                                    nextQuestion={nextQuestion}
+                                />
+                            </div>
+
+                        )}
+
+                        <div className="mb-2 flex-column-wrapper">
+                            <div className="preview-and-result-container">
+
+                                {currentQuestion && (
+                                    <Question
+                                        imageUrl={currentQuestion?.image}
+                                        showAnswer={false}
+                                        question={currentQuestion?.question}
+                                    />
+                                )}
+
+                                <LiveResultsComponent
+                                    quizMode={quizMode}
+                                    socket={socket}
+                                    questions={quizQuestions}
+                                    showSelectedQuestion={showSelectedQuestion}
+                                    students={users}
+                                ></LiveResultsComponent>
+
+                            </div>
+                        </div>
+
+                        {quizMode === 'teacher' && (
+                            <div className="nextQuestionButton">
+                                <Button onClick={nextQuestion} variant="contained">
+                                    Prochaine question
+                                </Button>
+                            </div>
+                        )}
+
+                    </div>
+
+                ) : (
+
+                    <UserWaitPage
+                        users={users}
+                        launchQuiz={launchQuiz}
+                        roomName={roomName}
+                        setQuizMode={setQuizMode}
+                    />
+
+                )}
             </div>
 
         </div>
-        // <div className="room-wrapper">
-        //     <div className="quit-btn">
-        //         <Button variant="outlined" onClick={handleReturn}>
-        //             Déconnexion
-        //         </Button>
-        //     </div>
-        //     <div className="room-container">
-        //         <div className="mb-1 top-container">
-        //             <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
-        //             {quizQuestions && (
-        //                 <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-        //                     <div>Salle: {roomName}</div>
-        //                     <div>Utilisateurs: {users.length}/60</div>
-        //                 </div>
-        //             )}
-        //         </div>
-        //         {quizQuestions ? (
-        //             <div style={{ display: 'flex', flexDirection: 'column' }}>
-        //                 <div className="title center-h-align mb-2">{quiz?.title}</div>
-        //                 {quizMode === 'teacher' && (
-        //                     <div className="mb-1">
-        //                         <QuestionNavigation
-        //                             currentQuestionId={Number(currentQuestion?.question.id)}
-        //                             questionsLength={quizQuestions?.length}
-        //                             previousQuestion={previousQuestion}
-        //                             nextQuestion={nextQuestion}
-        //                         />
-        //                     </div>
-        //                 )}
-        //                 <div className="mb-2 flex-column-wrapper">
-        //                     <div className="preview-and-result-container">
-        //                         {currentQuestion && (
-        //                             <Question
-        //                                 imageUrl={currentQuestion?.image}
-        //                                 showAnswer={false}
-        //                                 question={currentQuestion?.question}
-        //                             />
-        //                         )}
-        //                         <LiveResultsComponent
-        //                             quizMode={quizMode}
-        //                             socket={socket}
-        //                             questions={quizQuestions}
-        //                             showSelectedQuestion={showSelectedQuestion}
-        //                         ></LiveResultsComponent>
-        //                     </div>
-        //                 </div>
-        //                 {quizMode === 'teacher' && (
-        //                     <div className="nextQuestionButton">
-        //                         <Button onClick={nextQuestion} variant="contained">
-        //                             Prochaine question
-        //                         </Button>
-        //                     </div>
-        //                 )}
-        //             </div>
-        //         ) : (
-        //             <UserWaitPage
-        //                 users={users}
-        //                 launchQuiz={launchQuiz}
-        //                 roomName={roomName}
-        //                 setQuizMode={setQuizMode}
-        //             />
-        //         )}
-        //     </div>
-        // </div>
-
     );
 };
 
