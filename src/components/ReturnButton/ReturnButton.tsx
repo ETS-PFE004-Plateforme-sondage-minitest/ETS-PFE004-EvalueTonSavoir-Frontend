@@ -41,7 +41,7 @@ const ReturnButton: React.FC<Props> = ({
     };
 
     return (
-        <div>
+        <div className='returnButton'>
             <Button
                 variant="text"
                 startIcon={<ChevronLeft />}

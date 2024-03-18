@@ -8,14 +8,13 @@ import Editor from '../../../components/Editor/Editor';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
-//import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
 import './editorQuiz.css';
-import { Button } from '@mui/material';
-import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
+import { Button, TextField, NativeSelect, IconButton } from '@mui/material';
+import { Send } from '@mui/icons-material';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
-//import axios from 'axios'; // Import Axios for HTTP requests
+
 import ApiService from '../../../services/ApiService';
 
 interface EditQuizParams {
@@ -24,20 +23,21 @@ interface EditQuizParams {
 }
 
 const QuizForm: React.FC = () => {
+    const [quizTitle, setQuizTitle] = useState('');
+    const [selectedFolder, setSelectedFolder] = useState<string>('');
+    const [filteredValue, setFilteredValue] = useState<string[]>([]);
+
     const { id } = useParams<EditQuizParams>();
     const [value, setValue] = useState('');
-    const [filteredValue, setFilteredValue] = useState<string[]>([]);
-    const [quizToSave, setQuizToSave] = useState(false);
-    const [quizTitle, setQuizTitle] = useState('');
     const [isNewQuiz, setNewQuiz] = useState(false);
     const [quiz, setQuiz] = useState<QuizType | null>(null);
     const navigate = useNavigate();
     const [folders, setFolders] = useState<FolderType[]>([]);
-    const [selectedFolder, setSelectedFolder] = useState<string>(''); // Selected folder
     const [imageLinks, setImageLinks] = useState<string[]>([]);
     const handleSelectFolder = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedFolder(event.target.value);
     };
+
     useEffect(() => {
         const fetchData = async () => {
             const userFolders = await ApiService.getUserFolders();
@@ -52,150 +52,191 @@ const QuizForm: React.FC = () => {
             try {
                 if (!id || id === 'new') {
                     setNewQuiz(true);
-                    return; // Exit early if id is undefined or 'new'
+                    return;
                 }
 
                 const quiz = await ApiService.getQuiz(id) as QuizType;
+
                 if (!quiz) {
+                    window.alert(`Une erreur est survenue.\n Le quiz ${id} n'a pas été trouvé\nVeuillez réessayer plus tard`)
                     console.error('Quiz not found for id:', id);
+                    navigate('/teacher/dashboard');
                     return;
                 }
-                setQuiz(quiz as QuizType);
-                const { title, content } = quiz;
-               
-                 setFilteredValue(content);
-                 setValue(quiz.content.join('\n\n'));
 
+                setQuiz(quiz as QuizType);
+                const { title, content, folderId } = quiz;
 
                 setQuizTitle(title);
+                setSelectedFolder(folderId);
+                setFilteredValue(content);
+                setValue(quiz.content.join('\n\n'));
+
             } catch (error) {
+                window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
                 console.error('Error fetching quiz:', error);
+                navigate('/teacher/dashboard');
             }
         };
-
 
         fetchData();
     }, [id]);
 
-
-
-    function handleEditorChange(value: string) {
-        setValue(value);
-    }
-
     function handleUpdatePreview(value: string) {
         if (value !== '') {
-            handleEditorChange(value);
+            setValue(value);
         }
+
         const linesArray = value.split(/(?<=^|[^\\]}.*)[\n]+/);
+
         if (linesArray[linesArray.length - 1] === '') linesArray.pop();
+
         setFilteredValue(linesArray);
     }
-
-    const handleSaveQuiz = () => {
-        setQuizToSave(true);
-    };
 
     const handleQuizTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuizTitle(event.target.value);
     };
 
-    const handleModalClose = () => {
-        setQuizToSave(false);
-        setQuizTitle('');
-    };
-
     const handleQuizSave = async () => {
         try {
-            if (isNewQuiz) {
-                if (!selectedFolder) {
-                    alert("Veuillez choisir un dossier");
-                    return; 
-                }
-                await ApiService.createQuiz(quizTitle || 'Untitled quiz', filteredValue, selectedFolder);
-            } else {
-                console.log(quiz);
-                if (quiz)
-                    await ApiService.updateQuiz(quiz._id, quizTitle, filteredValue);
+            // check if everything is there
+            if (quizTitle == '') {
+                alert("Veuillez choisir un titre");
+                return;
             }
 
-            handleModalClose();
+            if (selectedFolder == '') {
+                alert("Veuillez choisir un dossier");
+                return;
+            }
+
+            if (isNewQuiz) {
+                await ApiService.createQuiz(quizTitle, filteredValue, selectedFolder);
+            } else {
+                if (quiz) {
+                    await ApiService.updateQuiz(quiz._id, quizTitle, filteredValue);
+                }
+            }
+
             navigate('/teacher/dashboard');
         } catch (error) {
-            console.error('Error saving quiz:', error);
+            window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+            console.log(error)
         }
     };
 
+    // I do not know what this does but do not remove
     if (!isNewQuiz && !quiz) {
         return <div>Chargement...</div>;
     }
-    
 
     const handleSaveImage = async () => {
         try {
             const inputElement = document.getElementById('file-input') as HTMLInputElement;
+            
             if (!inputElement.files || inputElement.files.length === 0) {
-                console.error('No files selected.');
+                window.alert("Veuillez d'abord choisir un fichier à télécharger")
                 return;
             }
 
-            const image = inputElement.files[0];
-            const imageUrl = await ApiService.uploadImage(image);
-            console.log('Image uploaded:', imageUrl);
+            const imageUrl = await ApiService.uploadImage(inputElement.files[0]);
 
-            // Ajouter l'URL de l'image téléchargée à la liste des liens d'images
+            // Check for errors
+            if(imageUrl.indexOf("ERROR") >= 0) {
+                window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+                return;
+            }
+
             setImageLinks(prevLinks => [...prevLinks, imageUrl]);
         } catch (error) {
-            console.error('Error uploading image:', error);
+            window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
         }
     };
 
+    const handleCopyToClipboard = async (link: string) => {
+        navigator.clipboard.writeText(link);
+    }
+
     return (
-        <div className="editor-page-wrapper">
-            <div className="edit-page-container">
-                <div className="return-button-wrapper">
-                    <ReturnButton
-                        askConfirm
-                        message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
+        <div className='quizEditor'>
+
+            <div className='editHeader'>
+                <ReturnButton
+                    askConfirm
+                    message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire?`}
+                />
+
+                <div className='title'>Éditeur de quiz</div>
+
+                <div className='dumb'></div>
+            </div>
+
+            <div className='editSection'>
+
+                <div className='edit'>
+                    <h2 className="subtitle">Éditeur</h2>
+                    <TextField
+                        onChange={handleQuizTitleChange}
+                        value={quizTitle}
+                        placeholder="Titre du quiz"
+                        fullWidth
                     />
-                </div>
-                <h1 className="page-title">Éditeur de quiz</h1>
 
-                <div className="container">
-                    <div>
-                        <h2 className="subtitle">Éditeur</h2>
-                        <div className="editor-container">
-                            <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
-                            <div>
-                                <select value={selectedFolder} onChange={handleSelectFolder} required>
-                                    <option value="" disabled>Select a folder</option>
-                                    {folders.map((folder) => (
-                                        <option key={folder._id} value={folder._id}>{folder.title}</option>
-                                    ))}
-                                </select>
-                            </div>
+                    <NativeSelect
+                        id="select-folder"
+                        color="primary"
+                        value={selectedFolder}
+                        onChange={handleSelectFolder}
+                        disabled={!isNewQuiz}
+                    >
+                        <option disabled value=""> Choisir un dossier... </option>
 
-                            <Button variant="contained" onClick={handleSaveQuiz}>
-                                Enregistrer
-                            </Button>
+                        {folders.map((folder: FolderType) => (
+                            <option value={folder._id} key={folder._id}> {folder.title} </option>
+                        ))}
+                    </NativeSelect>
+
+                    <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
+
+                    <div className='images'>
+                        <div className='upload'>
+                            <label className="dropArea">
+                                <input type="file" id="file-input" className="file-input" accept="image/*" multiple />
+                            </label>
+
+                            <IconButton
+                                color="primary"
+                                onClick={handleSaveImage}
+                            > <Send /> </IconButton>
+
                         </div>
-                        {/* Drag and drop file input */}
-                        <div id="drop-zone" className="drop-zone">
-                            <input type="file" id="file-input" className="file-input" accept="image/*" multiple />
-                        </div>
-                        <Button variant="contained" onClick={handleSaveImage}>
-                            Envoyer image
-                        </Button>
+
+                        <h2 className="subtitle">Mes images :</h2>
+
                         <div>
-                            <h2>Liens d'images utilisés :</h2>
                             <ul>
                                 {imageLinks.map((link, index) => (
-                                    <li key={index}>{link}</li>
+                                    <li key={index}>
+                                        <code
+                                            onClick={() => handleCopyToClipboard(`<img ${link} >`)}>
+                                            {`<img ${link} >`}
+                                        </code>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
-                        <GiftCheatSheet />
                     </div>
+
+                    <Button variant="contained" onClick={handleQuizSave}>
+                        Enregistrer
+                    </Button>
+
+                    <GiftCheatSheet />
+
+                </div>
+
+                <div className='preview'>
                     <div className="preview-column">
                         <h2 className="subtitle">Prévisualisation</h2>
                         <div>
@@ -203,17 +244,9 @@ const QuizForm: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <ConfirmDialog
-                    open={quizToSave}
-                    title="Sauvegarder le questionnaire"
-                    message="Entrez un titre pour votre questionnaire:"
-                    hasOptionalInput
-                    optionalInputValue={quizTitle}
-                    onOptionalInputChange={handleQuizTitleChange}
-                    onConfirm={handleQuizSave}
-                    onCancel={handleModalClose}
-                />
+
             </div>
+
         </div>
     );
 };
