@@ -8,6 +8,7 @@ import { QuestionService } from '../../services/QuestionService';
 import { Button } from '@mui/material';
 import QuestionNavigation from '../QuestionNavigation/QuestionNavigation';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import DisconnectButton from '../../components/DisconnectButton/DisconnectButton';
 
 interface StudentModeQuizProps {
     questions: QuestionType[];
@@ -45,27 +46,30 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
     };
 
     return (
+    <div className='room'>
+    <div className='roomHeader'>
+
+        <DisconnectButton
+            onReturn={disconnectWebSocket}
+            message={`Êtes-vous sûr de vouloir quitter?`} />
+
+    </div>
         <div className="overflow-auto">
             <div className="question-component-container">
-                <div className="quit-btn">
-                    <Button variant="outlined" onClick={disconnectWebSocket}>
-                        Déconnexion
-                    </Button>
-                </div>
                 <div className="mb-5">
                     <QuestionNavigation
                         currentQuestionId={Number(questionInfos.question.id)}
                         questionsLength={questions.length}
                         previousQuestion={previousQuestion}
                         nextQuestion={nextQuestion}
-                    />
+                        />
                 </div>
                 <QuestionComponent
                     handleOnSubmitAnswer={handleOnSubmitAnswer}
                     question={questionInfos.question}
                     showAnswer={isAnswerSubmitted}
                     imageUrl={imageUrl}
-                />
+                    />
                 <div className="center-h-align mt-1/2">
                     <div className="w-12">
                         <Button
@@ -74,7 +78,7 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
                             fullWidth
                             startIcon={<ChevronLeft />}
                             disabled={Number(questionInfos.question.id) <= 1}
-                        >
+                            >
                             Question précédente
                         </Button>
                     </div>
@@ -85,13 +89,14 @@ const StudentModeQuiz: React.FC<StudentModeQuizProps> = ({
                             fullWidth
                             endIcon={<ChevronRight />}
                             disabled={Number(questionInfos.question.id) >= questions.length}
-                        >
+                            >
                             Question suivante
                         </Button>
                     </div>
                 </div>
             </div>
         </div>
+                            </div>
     );
 };
 
