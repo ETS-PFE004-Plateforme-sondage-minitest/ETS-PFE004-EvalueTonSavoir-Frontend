@@ -10,7 +10,7 @@ import DisconnectButton from '../../../components/DisconnectButton/DisconnectBut
 
 import './joinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
-import { Button, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import LoginContainer from '../../../components/LoginContainer/LoginContainer'
