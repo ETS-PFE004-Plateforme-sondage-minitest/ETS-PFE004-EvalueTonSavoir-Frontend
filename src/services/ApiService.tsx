@@ -37,7 +37,7 @@ class ApiService {
 
         const object = {
             token: token,
-            expiry: now.getTime()+this.TTL
+            expiry: now.getTime() + this.TTL
         }
 
         localStorage.setItem("jwt", JSON.stringify(object));
@@ -97,7 +97,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
@@ -133,7 +133,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`La connexion a échoué. Status: ${result.status}`);
@@ -171,7 +171,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email };
 
-            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`Échec de la réinitialisation du mot de passe. Status: ${result.status}`);
@@ -207,7 +207,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, oldPassword, newPassword };
 
-            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`Le changement du mot de passe a échoué. Status: ${result.status}`);
@@ -243,7 +243,7 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`La supression du compte a échoué. Status: ${result.status}`);
@@ -281,14 +281,14 @@ class ApiService {
             const headers = this.constructRequestHeaders();
             const body = { title };
 
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`La création du dossier a échoué. Status: ${result.status}`);
             }
 
             return true;
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -321,7 +321,7 @@ class ApiService {
             }
 
             return result.data.data.map((folder: FolderType) => ({ _id: folder._id, title: folder.title }));
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -356,7 +356,7 @@ class ApiService {
             }
 
             return result.data.data.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -419,14 +419,14 @@ class ApiService {
             const url: string = this.constructRequestUrl(`/folder/rename`);
             const headers = this.constructRequestHeaders();
             const body = { folderId, newTitle };
-            
+
             const result: AxiosResponse = await axios.put(url, body, { headers: headers });
             if (result.status !== 200) {
                 throw new Error(`Le changement de nom de dossier a échoué. Status: ${result.status}`);
             }
 
             return true;
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -442,63 +442,63 @@ class ApiService {
 
     public async duplicateFolder(folderId: string): Promise<any> {
         try {
-            if (!folderId ) {
+            if (!folderId) {
                 throw new Error(`Le folderId et le nouveau titre sont requis.`);
             }
-    
+
             const url: string = this.constructRequestUrl(`/folder/duplicate`);
             const headers = this.constructRequestHeaders();
             const body = { folderId };
-    
-            console.log( headers );
+
+            console.log(headers);
             const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-    
+
             if (result.status !== 200) {
                 throw new Error(`La duplication du dossier a échoué. Status: ${result.status}`);
             }
-    
+
             return true;
-    
+
         } catch (error) {
             console.log("Error details: ", error);
-    
+
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-    
+
             return `Une erreur inattendue s'est produite.`
         }
     }
-    
+
     public async copyFolder(folderId: string, newTitle: string): Promise<any> {
         try {
             if (!folderId || !newTitle) {
                 throw new Error(`Le folderId et le nouveau titre sont requis.`);
             }
-    
+
             const url: string = this.constructRequestUrl(`/folder/copy/${folderId}`);
             const headers = this.constructRequestHeaders();
             const body = { newTitle };
-    
+
             const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-    
+
             if (result.status !== 200) {
                 throw new Error(`La copie du dossier a échoué. Status: ${result.status}`);
             }
-    
+
             return true;
-    
+
         } catch (error) {
             console.log("Error details: ", error);
-    
+
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
                 const data = err.response?.data as { error: string } | undefined;
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
-    
+
             return `Une erreur inattendue s'est produite.`
         }
     }
@@ -518,16 +518,16 @@ class ApiService {
 
             const url: string = this.constructRequestUrl(`/quiz/create`);
             const headers = this.constructRequestHeaders();
-            const body = { title, content, folderId};
+            const body = { title, content, folderId };
 
-            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`La création du quiz a échoué. Status: ${result.status}`);
             }
 
             return true;
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -560,7 +560,7 @@ class ApiService {
             if (result.status !== 200) {
                 throw new Error(`L'obtention du quiz a échoué. Status: ${result.status}`);
             }
-            
+
             return result.data.data as QuizType;
 
         } catch (error) {
@@ -597,7 +597,7 @@ class ApiService {
             }
 
             return true;
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -624,16 +624,16 @@ class ApiService {
 
             const url: string = this.constructRequestUrl(`/quiz/update`);
             const headers = this.constructRequestHeaders();
-            const body = { quizId, newTitle, newContent};
+            const body = { quizId, newTitle, newContent };
 
-            const result: AxiosResponse = await axios.put(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.put(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`La mise à jours du quiz a échoué. Status: ${result.status}`);
             }
 
             return true;
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -660,16 +660,16 @@ class ApiService {
 
             const url: string = this.constructRequestUrl(`/quiz/move`);
             const headers = this.constructRequestHeaders();
-            const body = { quizId, newFolderId};
+            const body = { quizId, newFolderId };
 
-            const result: AxiosResponse = await axios.post(url, body, {headers: headers});
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`Le déplacement du quiz a échoué. Status: ${result.status}`);
             }
 
             return true;
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
@@ -688,13 +688,23 @@ class ApiService {
      * @returns true if successful 
      * @returns A error string if unsuccessful,
      */
-    public async duplicateQuiz(quizId: string, newTitle: string, folderId: string): Promise<any> {
+    public async duplicateQuiz(quizId: string): Promise<any> {
+
+
+        const url: string = this.constructRequestUrl(`/quiz/duplicate`);
+        const headers = this.constructRequestHeaders();
+        const body = { quizId };
+        
         try {
-            console.log(quizId, newTitle, folderId);
-            return "Route not implemented yet!";
-            
+            const result: AxiosResponse = await axios.post(url, body, { headers });
+
+            if (result.status !== 200) {
+                throw new Error(`La duplication du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return result;
         } catch (error) {
-            console.log("Error details: ", error);
+            console.error("Error details: ", error);
 
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
@@ -702,8 +712,9 @@ class ApiService {
                 return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
 
-            return `Une erreur inattendue s'est produite.`
+            return `Une erreur inattendue s'est produite.`;
         }
+
     }
 
     /**
@@ -715,7 +726,7 @@ class ApiService {
         try {
             console.log(quizId, newTitle), folderId;
             return "Route not implemented yet!";
-            
+
         } catch (error) {
             console.log("Error details: ", error);
 
