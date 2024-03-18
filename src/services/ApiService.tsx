@@ -768,10 +768,10 @@ class ApiService {
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
                 const data = err.response?.data as { error: string } | undefined;
-                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+                return `ERROR : ${data?.error}` || 'ERROR : Erreur serveur inconnue lors de la requête.';
             }
 
-            return `Une erreur inattendue s'est produite.`
+            return `ERROR : Une erreur inattendue s'est produite.`
         }
     }
     // NOTE : Get Image pas necessaire
