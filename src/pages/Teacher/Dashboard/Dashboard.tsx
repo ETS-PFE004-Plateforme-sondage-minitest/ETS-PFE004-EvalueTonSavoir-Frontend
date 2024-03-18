@@ -136,26 +136,15 @@ const Dashboard: React.FC = () => {
         setSearchTerm(event.target.value);
     };
 
+
     const handleRemoveQuiz = async (quiz: QuizType) => {
-        // on le fait juste une fois 
-        await ApiService.deleteQuiz(quizId);
-
-        // try {
-        //     // Send DELETE request for each quiz to be removed
-        //     for (const quizId of quizIds) {
-        //         await ApiService.deleteQuiz(quizId);
-        //     }
-
-        //     // Update the state to remove the deleted quizzes
-        //     const updatedQuizzes = quizzes.filter((quiz) => !quizIds.includes(quiz._id));
-        //     setQuizzes(updatedQuizzes);
-        //     setSelectedQuizes([]);
-        //     setQuizIdsToRemove([]);
-        //     setQuizTitleToRemove('');
-        // } catch (error) {
-        //     console.error('Error removing quizzes:', error);
-        //     throw error; // Optional: rethrow the error to handle it elsewhere
-        // }
+        try {
+            await ApiService.deleteQuiz(quiz._id);
+            const updatedQuizzes = quizzes.filter((q) => q._id !== quiz._id);
+            setQuizzes(updatedQuizzes);
+        } catch (error) {
+            console.error('Error removing quiz:', error);
+        }
     };
 
     const handleConfirmRemoveQuiz = () => {
@@ -172,50 +161,31 @@ const Dashboard: React.FC = () => {
         setQuizIdsToRemove([]);
     };
 
-    /* const handleDuplicateQuiz = async (id: string) => {
-         try {
-             const quizToDuplicate = quizzes.find((quiz: QuizType) => quiz._id === id);
-             if (!quizToDuplicate) return;
- 
-             const existingQuizzesWithTitle = quizzes.filter(
-                 (quiz: QuizType) =>
-                     quiz.title === quizToDuplicate.title ||
-                     quiz.title.match(new RegExp(`${quizToDuplicate.title} \\(\\d+\\)$`))
-             );
-             const titleSuffix =
-                 existingQuizzesWithTitle.length > 0 ? ` (${existingQuizzesWithTitle.length})` : '';
- 
-             const duplicatedQuiz: QuizType = {
-                 ...quizToDuplicate,
-                 _id: uuidv4(),
-                 title: quizToDuplicate.title + titleSuffix || 'Untitled Quiz'
-             };
-             const token = getAuthToken();
-             const headers = {
-                 Authorization: `Bearer ${token}`
-             };
-             const response = await axios.post(api + 'quiz/duplicate/' + id, { iduser: iduser, quiz: duplicatedQuiz }, {
-                 headers: headers
-             });
-             setQuizzes([...quizzes, response.data]);
-             window.location.reload();
-         } catch (error) {
-             console.error('Error duplicating quiz:', error);
-         }
-     };*/
+    
     const handleDuplicateQuiz = async (quiz: QuizType) => {
         try {
-            const quizToDuplicate = quizzes.find((quiz) => quiz._id === quizId);
-            if (!quizToDuplicate) {
-                console.error(`Quiz with ID ${quizId} not found.`);
-                return;
-            }
+            await ApiService.duplicateQuiz(quiz._id);
+            if (selectedFolder == '') {
+                const folders = await ApiService.getUserFolders(); // HACK force user folders to load on first load
+                console.log("show all quizes")
+                var quizzes: QuizType[] = [];
 
-            const selectedFolderId = selectedFolder;
-            await ApiService.duplicateQuiz(quizId, selectedFolderId, "X");
+                for (const folder of folders as FolderType[]) {
+                    const folderQuizzes = await ApiService.getFolderContent(folder._id);
+                    console.log("folder: ", folder.title, " quiz: ", folderQuizzes);
+                    quizzes = quizzes.concat(folderQuizzes as QuizType[])
+                }
+
+                setQuizzes(quizzes as QuizType[]);
+            }
+            else {
+                console.log("show some quizes")
+                const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
+                setQuizzes(folderQuizzes as QuizType[]);
+
+            }
         } catch (error) {
             console.error('Error duplicating quiz:', error);
-            throw error;
         }
     };
 
@@ -263,250 +233,267 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    const downloadTxtFile = async (quizIds: string[]) => {
+    const downloadTxtFile = async (quiz: QuizType) => {
+
         try {
-            const selectedQuizzes = quizzes.filter((quiz) => quizIds.includes(quiz._id));
-
-            selectedQuizzes.forEach((quiz, index) => {
-                const { title, content } = quiz;
-                let quizContent = '';
-
-                content.forEach((question, qIndex) => {
-                    const formattedQuestion = question.trim();
-                    if (formattedQuestion !== '') {
-                        quizContent += formattedQuestion;
-                        if (qIndex !== content.length - 1) {
-                            quizContent += '\n';
-                        }
+            const selectedQuiz = quizzes.find((quiz) => quiz._id === quiz._id);
+    
+            if (!selectedQuiz) {
+                throw new Error('Selected quiz not found');
+            }
+    
+            const { title, content } = selectedQuiz;
+            let quizContent = '';
+    
+            content.forEach((question, qIndex) => {
+                const formattedQuestion = question.trim();
+                if (formattedQuestion !== '') {
+                    quizContent += formattedQuestion;
+                    if (qIndex !== content.length - 1) {
+                        quizContent += '\n';
                     }
-                });
-
-                const blob = new Blob([quizContent], { type: 'text/plain' });
-                const a = document.createElement('a');
-                const filename = title || `quiz_${index}`;
-                a.download = `${filename}.txt`;
-                a.href = window.URL.createObjectURL(blob);
-                a.click();
+                }
             });
+    
+            const blob = new Blob([quizContent], { type: 'text/plain' });
+            const a = document.createElement('a');
+            const filename = title || `quiz_${quizId}`;
+            a.download = `${filename}.txt`;
+            a.href = window.URL.createObjectURL(blob);
+            a.click();
         } catch (error) {
-            console.error('Error exporting selected quizzes:', error);
+            console.error('Error exporting selected quiz:', error);
         }
-    };
+};
 
 
-    const handleSelectAll = () => {
-        if (isSelectAll) {
-            setIsSelectAll(false);
-            setSelectedQuizes([]);
-        } else {
-            setIsSelectAll(true);
-            setSelectedQuizes(quizzes.map((quiz) => quiz._id));
-        }
-    };
+const handleSelectAll = () => {
+    if (isSelectAll) {
+        setIsSelectAll(false);
+        setSelectedQuizes([]);
+    } else {
+        setIsSelectAll(true);
+        setSelectedQuizes(quizzes.map((quiz) => quiz._id));
+    }
+};
 
-    const quizRemoveMessage =
-        quizIdsToRemove.length > 1
-            ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
-            : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
+const quizRemoveMessage =
+    quizIdsToRemove.length > 1
+        ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
+        : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
 
-    const handleCreateFolder = async () => {
-        try {
-            const folderTitle = prompt('Titre du dossier');
-            if (folderTitle) {
-                await ApiService.createFolder(folderTitle);
-                const userFolders = await ApiService.getUserFolders();
-                setFolders(userFolders as FolderType[]);
-            }
-        } catch (error) {
-            console.error('Error creating folder:', error);
-        }
-    };
-    const handleDeleteFolder = async () => {
-
-        // GET folder id from selected folder
-        try {
-            const confirmed = window.confirm('AVoulez-vous vraiment supprimer ce dossier?');
-            if (confirmed) {
-                await ApiService.deleteFolder(selectedFolder);
-                const userFolders = await ApiService.getUserFolders();
-                setFolders(userFolders as FolderType[]);
-            }
-        } catch (error) {
-            console.error('Error deleting folder:', error);
-        }
-    };
-    const handleRenameFolder = async () => {
-        try {
-            // folderId: string GET THIS FROM CURRENT FOLDER
-            // currentTitle: string GET THIS FROM CURRENT FOLDER
-            const newTitle = prompt('Entrée le nouveau nom du fichier', "Nouveau nom de dossier");
-            if (newTitle) {
-                await ApiService.renameFolder(selectedFolder, newTitle);
-                const userFolders = await ApiService.getUserFolders();
-                setFolders(userFolders as FolderType[]);
-            }
-        } catch (error) {
-            console.error('Error renaming folder:', error);
-        }
-    };
-    const handleDuplicateFolder = async () => {
-        try {
-            // folderId: string GET THIS FROM CURRENT FOLDER
-            await ApiService.duplicateFolder(selectedFolder);
+const handleCreateFolder = async () => {
+    try {
+        const folderTitle = prompt('Titre du dossier');
+        if (folderTitle) {
+            await ApiService.createFolder(folderTitle);
             const userFolders = await ApiService.getUserFolders();
             setFolders(userFolders as FolderType[]);
-
-        } catch (error) {
-            console.error('Error duplicating folder:', error);
         }
-    };
-
-    const handleCreateQuiz = () => {
-        navigate("/teacher/editor-quiz/new");
+    } catch (error) {
+        console.error('Error creating folder:', error);
     }
+};
+const handleDeleteFolder = async () => {
 
-    const handleEditQuiz = (quiz: QuizType) => {
-        navigate(`/teacher/editor-quiz/${quiz._id}`);
+
+    try {
+        const confirmed = window.confirm('Voulez-vous vraiment supprimer ce dossier?');
+        if (confirmed) {
+            await ApiService.deleteFolder(selectedFolder);
+            const userFolders = await ApiService.getUserFolders();
+            setFolders(userFolders as FolderType[]);
+        }
+
+        const folders = await ApiService.getUserFolders(); // HACK force user folders to load on first load
+        console.log("show all quizes")
+        var quizzes: QuizType[] = [];
+
+        for (const folder of folders as FolderType[]) {
+            const folderQuizzes = await ApiService.getFolderContent(folder._id);
+            console.log("folder: ", folder.title, " quiz: ", folderQuizzes);
+            quizzes = quizzes.concat(folderQuizzes as QuizType[])
+        }
+
+        setQuizzes(quizzes as QuizType[]);
+
+
+    } catch (error) {
+        console.error('Error deleting folder:', error);
     }
-
-    const handleLancerQuiz = (quiz: QuizType) => {
-        navigate(`/teacher/manage-room/${quiz._id}`);
+};
+const handleRenameFolder = async () => {
+    try {
+        // folderId: string GET THIS FROM CURRENT FOLDER
+        // currentTitle: string GET THIS FROM CURRENT FOLDER
+        const newTitle = prompt('Entrée le nouveau nom du fichier', "Nouveau nom de dossier");
+        if (newTitle) {
+            await ApiService.renameFolder(selectedFolder, newTitle);
+            const userFolders = await ApiService.getUserFolders();
+            setFolders(userFolders as FolderType[]);
+        }
+    } catch (error) {
+        console.error('Error renaming folder:', error);
     }
+};
+const handleDuplicateFolder = async () => {
+    try {
+        // folderId: string GET THIS FROM CURRENT FOLDER
+        await ApiService.duplicateFolder(selectedFolder);
+        const userFolders = await ApiService.getUserFolders();
+        setFolders(userFolders as FolderType[]);
+
+    } catch (error) {
+        console.error('Error duplicating folder:', error);
+    }
+};
+
+const handleCreateQuiz = () => {
+    navigate("/teacher/editor-quiz/new");
+}
+
+const handleEditQuiz = (quiz: QuizType) => {
+    navigate(`/teacher/editor-quiz/${quiz._id}`);
+}
+
+const handleLancerQuiz = (quiz: QuizType) => {
+    navigate(`/teacher/manage-room/${quiz._id}`);
+}
 
 
 
 
-    return (
+return (
 
-        <div className="dashboard">
+    <div className="dashboard">
 
-            <div className="title">Tableau de bord</div>
+        <div className="title">Tableau de bord</div>
 
-            <div className="search-bar">
-                <TextField
-                    onChange={handleSearch}
-                    value={searchTerm}
-                    placeholder="Rechercher un quiz"
-                    fullWidth
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton>
-                                    <Search />
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }}
-                />
-            </div>
-
-            <div className='folder'>
-                <div className='select'>
-                    <NativeSelect
-                        id="select-folder"
-                        color="primary"
-                        value={selectedFolder}
-                        onChange={handleSelectFolder}
-                    >
-                        <option value=""> Tous... </option>
-
-                        {folders.map((folder: FolderType) => (
-                            <option value={folder._id} key={folder._id}> {folder.title} </option>
-                        ))}
-                    </NativeSelect>
-                </div>
-
-                <div className='actions'>
-                    <IconButton
-                        color="primary"
-                        onClick={handleCreateFolder}
-                    > <Add /> </IconButton>
-
-                    <IconButton
-                        color="primary"
-                        onClick={handleRenameFolder}
-                        disabled={selectedFolder == ''} // cannot action on all
-                    > <Edit /> </IconButton>
-
-                    <IconButton
-                        color="primary"
-                        onClick={handleDuplicateFolder}
-                        disabled={selectedFolder == ''} // cannot action on all
-                    > <ContentCopy /> </IconButton>
-
-                    <IconButton
-                        aria-label="delete"
-                        color="primary"
-                        onClick={handleDeleteFolder}
-                        disabled={selectedFolder == ''} // cannot action on all
-                    > <DeleteOutline /> </IconButton>
-                </div>
-
-            </div>
-
-            <div className='list'>
-                <div className='ajouter'>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<Add />}
-                        onClick={handleCreateQuiz}
-                    >
-                        Ajouter un nouveau quiz
-                    </Button>
-                    <IconButton
-                        color="primary"
-                        onClick={() => handleOnImport()}
-                    > <Upload /> </IconButton>
-
-                </div>
-
-                {quizzes.map((quiz: QuizType) => (
-                    <div className='quiz'>
-                        <div className='title'>
-                            <Button
-                                variant="outlined"
-                                onClick={() => handleLancerQuiz(quiz)}
-                                disabled={!validateQuiz(quiz.content)}
-                            >
-                                {quiz.title}
-                            </Button>
-                        </div>
-
-                        <div className='actions'>
-                            <IconButton
-                                color="primary"
-                                onClick={() => downloadTxtFile(quiz)}
-                            > <FileDownload /> </IconButton>
-
-                            <IconButton
-                                color="primary"
-                                onClick={() => handleEditQuiz(quiz)}
-                            > <Edit /> </IconButton>
-
-                            <IconButton
-                                color="primary"
-                                onClick={() => handleDuplicateQuiz(quiz)}
-                            > <ContentCopy /> </IconButton>
-
-                            <IconButton
-                                aria-label="delete"
-                                color="primary"
-                                onClick={() => handleRemoveQuiz(quiz)}
-                            > <DeleteOutline /> </IconButton>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <ImportModal
-                open={showImportModal}
-                handleOnClose={() => setShowImportModal(false)}
-                handleOnImport={handleOnImport}
+        <div className="search-bar">
+            <TextField
+                onChange={handleSearch}
+                value={searchTerm}
+                placeholder="Rechercher un quiz"
+                fullWidth
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton>
+                                <Search />
+                            </IconButton>
+                        </InputAdornment>
+                    )
+                }}
             />
+        </div>
+
+        <div className='folder'>
+            <div className='select'>
+                <NativeSelect
+                    id="select-folder"
+                    color="primary"
+                    value={selectedFolder}
+                    onChange={handleSelectFolder}
+                >
+                    <option value=""> Tous... </option>
+
+                    {folders.map((folder: FolderType) => (
+                        <option value={folder._id} key={folder._id}> {folder.title} </option>
+                    ))}
+                </NativeSelect>
+            </div>
+
+            <div className='actions'>
+                <IconButton
+                    color="primary"
+                    onClick={handleCreateFolder}
+                > <Add /> </IconButton>
+
+                <IconButton
+                    color="primary"
+                    onClick={handleRenameFolder}
+                    disabled={selectedFolder == ''} // cannot action on all
+                > <Edit /> </IconButton>
+
+                <IconButton
+                    color="primary"
+                    onClick={handleDuplicateFolder}
+                    disabled={selectedFolder == ''} // cannot action on all
+                > <ContentCopy /> </IconButton>
+
+                <IconButton
+                    aria-label="delete"
+                    color="primary"
+                    onClick={handleDeleteFolder}
+                    disabled={selectedFolder == ''} // cannot action on all
+                > <DeleteOutline /> </IconButton>
+            </div>
 
         </div>
-    );
+
+        <div className='list'>
+            <div className='ajouter'>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<Add />}
+                    onClick={handleCreateQuiz}
+                >
+                    Ajouter un nouveau quiz
+                </Button>
+                <IconButton
+                    color="primary"
+                    onClick={() => handleOnImport()}
+                > <Upload /> </IconButton>
+
+            </div>
+
+            {quizzes.map((quiz: QuizType) => (
+                <div className='quiz'>
+                    <div className='title'>
+                        <Button
+                            variant="outlined"
+                            onClick={() => handleLancerQuiz(quiz)}
+                            disabled={!validateQuiz(quiz.content)}
+                        >
+                            {quiz.title}
+                        </Button>
+                    </div>
+
+                    <div className='actions'>
+                        <IconButton
+                            color="primary"
+                            onClick={() => downloadTxtFile(quiz)}
+                        > <FileDownload /> </IconButton>
+
+                        <IconButton
+                            color="primary"
+                            onClick={() => handleEditQuiz(quiz)}
+                        > <Edit /> </IconButton>
+
+                        <IconButton
+                            color="primary"
+                            onClick={() => handleDuplicateQuiz(quiz)}
+                        > <ContentCopy /> </IconButton>
+
+                        <IconButton
+                            aria-label="delete"
+                            color="primary"
+                            onClick={() => handleRemoveQuiz(quiz)}
+                        > <DeleteOutline /> </IconButton>
+                    </div>
+                </div>
+            ))}
+        </div>
+
+        <ImportModal
+            open={showImportModal}
+            handleOnClose={() => setShowImportModal(false)}
+            handleOnImport={handleOnImport}
+        />
+
+    </div>
+);
 };
 
 export default Dashboard;
