@@ -233,27 +233,31 @@ const Dashboard: React.FC = () => {
         }
     };
 
+
     const downloadTxtFile = async (quiz: QuizType) => {
 
         try {
-            const selectedQuiz = quizzes.find((quiz) => quiz._id === quiz._id);
+            const selectedQuiz = await ApiService.getQuiz(quiz._id);
+            //quizzes.find((quiz) => quiz._id === quiz._id);
 
             if (!selectedQuiz) {
                 throw new Error('Selected quiz not found');
             }
 
-            const { title, content } = selectedQuiz;
-             let quizContent = '';
-     
-             content.forEach((question, qIndex) => {
-                 const formattedQuestion = question.trim();
-                 if (formattedQuestion !== '') {
-                     quizContent += formattedQuestion;
-                     if (qIndex !== content.length - 1) {
-                         quizContent += '\n';
-                     }
-                 }
-             });
+            //const { title, content } = selectedQuiz;
+            let quizContent = "";
+            let title = selectedQuiz.title;
+            console.log(selectedQuiz.content);
+            selectedQuiz.content.forEach((question, qIndex) => {
+                        const formattedQuestion = question.trim();
+                        console.log(formattedQuestion);
+                        if (formattedQuestion !== '') {
+                            quizContent += formattedQuestion;
+                            if (qIndex !== selectedQuiz.content.length - 1) {
+                                quizContent += '\n';
+                            }
+                        }
+                    });
 
             const blob = new Blob([quizContent], { type: 'text/plain' });
             const a = document.createElement('a');
@@ -264,35 +268,8 @@ const Dashboard: React.FC = () => {
         } catch (error) {
             console.error('Error exporting selected quiz:', error);
         }
-    };
-
-    /*const importTxtFile = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-    
-            reader.onload = (event) => {
-                const fileContent = event.target.result;
-                // Parse file content to create a quiz object
-                const lines = fileContent.split('\n');
-                const title = lines.shift().trim();
-                const content = lines.map((line) => line.trim()).filter((line) => line !== '');
-    
-                // Here you can create the quiz object
-                const quiz = {
-                    title: title,
-                    content: content
-                };
-    
-                resolve(quiz);
-            };
-    
-            reader.onerror = (event) => {
-                reject(new Error('Error reading file'));
-            };
-    
-            reader.readAsText(file);
-        });
-    };*/
+    };   
+  
 
 
     const handleSelectAll = () => {
@@ -518,6 +495,7 @@ const Dashboard: React.FC = () => {
                 open={showImportModal}
                 handleOnClose={() => setShowImportModal(false)}
                 handleOnImport={handleOnImport}
+                selectedFolder={selectedFolder}
             />
 
         </div>
