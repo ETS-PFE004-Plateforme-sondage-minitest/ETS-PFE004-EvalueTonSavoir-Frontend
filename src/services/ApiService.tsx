@@ -3,6 +3,7 @@ import { ENV_VARIABLES } from '../constants';
 
 import { QuizType } from '../Types/QuizType';
 import { FolderType } from '../Types/FolderType';
+import { Folder } from '@mui/icons-material';
 
 class ApiService {
     private BASE_URL: string;
@@ -657,12 +658,12 @@ class ApiService {
             if (!quizId || !newFolderId) {
                 throw new Error(`Le quizId et le nouveau dossier sont requis.`);
             }
-
+            //console.log(quizId);
             const url: string = this.constructRequestUrl(`/quiz/move`);
             const headers = this.constructRequestHeaders();
             const body = { quizId, newFolderId };
 
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+            const result: AxiosResponse = await axios.put(url, body, { headers: headers });
 
             if (result.status !== 200) {
                 throw new Error(`Le déplacement du quiz a échoué. Status: ${result.status}`);

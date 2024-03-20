@@ -232,7 +232,28 @@ const Dashboard: React.FC = () => {
             setSelectedQuizes((prevItems) => [...prevItems, selectedQuizId]);
         }
     };
+    const handleMoveQuiz = async (quiz: QuizType, newFolderId: string) => {
+        try {
+            await ApiService.moveQuiz(quiz._id, newFolderId);
+            if (selectedFolder == '') {
+                const folders = await ApiService.getUserFolders();
+                var quizzes: QuizType[] = [];
 
+                for (const folder of folders as FolderType[]) {
+                    const folderQuizzes = await ApiService.getFolderContent(folder._id);
+                    quizzes = quizzes.concat(folderQuizzes as QuizType[])
+                }
+
+                setQuizzes(quizzes as QuizType[]);
+            }
+            else {
+                const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
+                setQuizzes(folderQuizzes as QuizType[]);
+            }
+        } catch (error) {
+            console.error('Error moving quiz:', error);
+        }
+    };
 
     const downloadTxtFile = async (quiz: QuizType) => {
 
@@ -249,15 +270,15 @@ const Dashboard: React.FC = () => {
             let title = selectedQuiz.title;
             console.log(selectedQuiz.content);
             selectedQuiz.content.forEach((question, qIndex) => {
-                        const formattedQuestion = question.trim();
-                        console.log(formattedQuestion);
-                        if (formattedQuestion !== '') {
-                            quizContent += formattedQuestion;
-                            if (qIndex !== selectedQuiz.content.length - 1) {
-                                quizContent += '\n';
-                            }
-                        }
-                    });
+                const formattedQuestion = question.trim();
+                console.log(formattedQuestion);
+                if (formattedQuestion !== '') {
+                    quizContent += formattedQuestion;
+                    if (qIndex !== selectedQuiz.content.length - 1) {
+                        quizContent += '\n';
+                    }
+                }
+            });
 
             const blob = new Blob([quizContent], { type: 'text/plain' });
             const a = document.createElement('a');
@@ -268,8 +289,8 @@ const Dashboard: React.FC = () => {
         } catch (error) {
             console.error('Error exporting selected quiz:', error);
         }
-    };   
-  
+    };
+
 
 
     const handleSelectAll = () => {
@@ -486,6 +507,7 @@ const Dashboard: React.FC = () => {
                                 color="primary"
                                 onClick={() => handleRemoveQuiz(quiz)}
                             > <DeleteOutline /> </IconButton>
+                            
                         </div>
                     </div>
                 ))}
