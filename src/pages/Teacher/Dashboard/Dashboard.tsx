@@ -385,7 +385,25 @@ const Dashboard: React.FC = () => {
     const handleLancerQuiz = (quiz: QuizType) => {
         navigate(`/teacher/manage-room/${quiz._id}`);
     }
-
+    const handleShareQuiz = async (quizId) => {
+        try {
+            const email = prompt('Entrée le courriel du destinataire', "destinataire") || "";
+            await ApiService.ShareQuiz(quizId,  email);            
+        } catch (error) {
+            console.error('Erreur lors du partage du quiz:', error);
+        }
+    };  
+    const handleReceiveSharedQuiz = async (/*quizId, folderId*/) => {
+        try {
+            const quizId = prompt('Entrée le Id du quiz ', "ID") || "";
+            const folderId = prompt('Entrée le id du dossier', "Dossier") || "";
+            await ApiService.receiveSharedQuiz(quizId, folderId);
+            
+        } catch (error) {
+            console.error('Error receiving shared quiz:', error);
+        }
+    };
+    
 
 
 
@@ -471,6 +489,10 @@ const Dashboard: React.FC = () => {
                         color="primary"
                         onClick={() => handleOnImport()}
                     > <Upload /> </IconButton>
+                     <IconButton
+                        color="primary"
+                        onClick={() => handleReceiveSharedQuiz()}
+                    > <Upload /> </IconButton>
 
                 </div>
 
@@ -508,6 +530,10 @@ const Dashboard: React.FC = () => {
                                 onClick={() => handleRemoveQuiz(quiz)}
                             > <DeleteOutline /> </IconButton>
                             
+                            <IconButton
+                                color="primary"
+                                onClick={() => handleShareQuiz(quiz._id)}
+                            > <FileDownload /> </IconButton>
                         </div>
                     </div>
                 ))}
