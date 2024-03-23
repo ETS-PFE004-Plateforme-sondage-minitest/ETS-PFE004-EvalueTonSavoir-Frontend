@@ -11,7 +11,7 @@ class ApiService {
     private BASE_URL: string;
 
     constructor() {
-        this.BASE_URL = `http://localhost:4400`;
+        this.BASE_URL = `http://10.196.10.69:4400`;
     }
 
     // Helpers
