@@ -6,6 +6,7 @@ import Home from './pages/Home/Home';
 
 // Pages espace enseignant
 import Dashboard from './pages/Teacher/Dashboard/Dashboard';
+import Share from './pages/Teacher/Share/Share';
 import Login from './pages/Teacher/Login/Login';
 import Register from './pages/Teacher/Register/Register';
 import ResetPassword from './pages/Teacher/ResetPassword/ResetPassword';
@@ -48,6 +49,7 @@ function App() {
                         <Route path="/teacher/register" element={<Register />} />
                         <Route path="/teacher/resetPassword" element={<ResetPassword />} />
                         <Route path="/teacher/dashboard" element={<Dashboard />} />
+                        <Route path="/teacher/share/:id" element={<Share />} />
                         <Route path="/teacher/editor-quiz/:id" element={<QuizForm />} />
                         <Route path="/teacher/manage-room/:id" element={<ManageRoom />} />
 
