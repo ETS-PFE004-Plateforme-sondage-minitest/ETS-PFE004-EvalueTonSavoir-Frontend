@@ -3,7 +3,6 @@ import { ENV_VARIABLES } from '../constants';
 
 import { QuizType } from '../Types/QuizType';
 import { FolderType } from '../Types/FolderType';
-import { Folder } from '@mui/icons-material';
 
 class ApiService {
     private BASE_URL: string;
@@ -695,7 +694,7 @@ class ApiService {
         const url: string = this.constructRequestUrl(`/quiz/duplicate`);
         const headers = this.constructRequestHeaders();
         const body = { quizId };
-        
+
         try {
             const result: AxiosResponse = await axios.post(url, body, { headers });
 
@@ -738,6 +737,95 @@ class ApiService {
             }
 
             return `Une erreur inattendue s'est produite.`
+        }
+    }
+
+    async ShareQuiz(quizId: string, email: string): Promise<any> {
+        try {
+            if (!quizId || !email) {
+                throw new Error(`quizId and email are required.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/Share`);
+            const headers = this.constructRequestHeaders();
+            const body = { quizId, email };
+
+            const result: AxiosResponse = await axios.put(url, body, { headers: headers });
+
+            if (result.status !== 200) {
+                throw new Error(`Update and share quiz failed. Status: ${result.status}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Unknown server error during request.';
+            }
+
+            return `An unexpected error occurred.`;
+        }
+    }
+
+    async getSharedQuiz(quizId: string): Promise<string> {
+        try {
+            if (!quizId) {
+                throw new Error(`quizId is required.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/getShare/${quizId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.get(url, { headers: headers });
+
+            if (result.status !== 200) {
+                throw new Error(`Update and share quiz failed. Status: ${result.status}`);
+            }
+
+            return result.data.data;
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Unknown server error during request.';
+            }
+
+            return `An unexpected error occurred.`;
+        }
+    }
+
+    async receiveSharedQuiz(quizId: string, folderId: string): Promise<any> {
+        try {
+            if (!quizId || !folderId) {
+                throw new Error(`quizId and folderId are required.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/receiveShare`);
+            const headers = this.constructRequestHeaders();
+            const body = { quizId, folderId };
+
+            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+
+            if (result.status !== 200) {
+                throw new Error(`Receive shared quiz failed. Status: ${result.status}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Unknown server error during request.';
+            }
+
+            return `An unexpected error occurred.`;
         }
     }
 
@@ -786,66 +874,6 @@ class ApiService {
             return `ERROR : Une erreur inattendue s'est produite.`
         }
     }
-
-    async ShareQuiz(quizId: string, email: string): Promise<any> {
-        try {
-            if (!quizId || !email) {
-                throw new Error(`quizId, newTitle, newContent, and email are required.`);
-            }
-    
-            const url: string = this.constructRequestUrl(`/quiz/Share`);
-            const headers = this.constructRequestHeaders();
-            const body = { quizId, email };
-    
-            const result: AxiosResponse = await axios.put(url, body, { headers: headers });
-    
-            if (result.status !== 200) {
-                throw new Error(`Update and share quiz failed. Status: ${result.status}`);
-            }
-    
-            return true;
-        } catch (error) {
-            console.log("Error details: ", error);
-    
-            if (axios.isAxiosError(error)) {
-                const err = error as AxiosError;
-                const data = err.response?.data as { error: string } | undefined;
-                return data?.error || 'Unknown server error during request.';
-            }
-    
-            return `An unexpected error occurred.`;
-        }
-    }
-    async receiveSharedQuiz(quizId: string, folderId: string): Promise<any> {
-        try {
-            if (!quizId || !folderId) {
-                throw new Error(`quizId and folderId are required.`);
-            }
-    
-            const url: string = this.constructRequestUrl(`/quiz/receiveShare`);
-            const headers = this.constructRequestHeaders();
-            const body = { quizId, folderId };
-    
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-    
-            if (result.status !== 200) {
-                throw new Error(`Receive shared quiz failed. Status: ${result.status}`);
-            }
-    
-            return true;
-        } catch (error) {
-            console.log("Error details: ", error);
-    
-            if (axios.isAxiosError(error)) {
-                const err = error as AxiosError;
-                const data = err.response?.data as { error: string } | undefined;
-                return data?.error || 'Unknown server error during request.';
-            }
-    
-            return `An unexpected error occurred.`;
-        }
-    }
-    
     // NOTE : Get Image pas necessaire
 
 }
