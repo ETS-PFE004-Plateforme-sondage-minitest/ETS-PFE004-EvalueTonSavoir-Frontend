@@ -39,7 +39,8 @@ import {
     Add,
     Upload,
     ContentCopy,
-    Edit
+    Edit,
+    Share
 } from '@mui/icons-material';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
@@ -61,6 +62,7 @@ const Dashboard: React.FC = () => {
         const fetchData = async () => {
             if (!ApiService.isLogedIn()) {
                 navigate("/teacher/login");
+                return;
             }
             else {
                 let userFolders = await ApiService.getUserFolders();
@@ -385,24 +387,22 @@ const Dashboard: React.FC = () => {
     const handleLancerQuiz = (quiz: QuizType) => {
         navigate(`/teacher/manage-room/${quiz._id}`);
     }
-    const handleShareQuiz = async (quizId) => {
+
+    const handleShareQuiz = async (quiz: QuizType) => {
         try {
-            const email = prompt('Entrée le courriel du destinataire', "destinataire") || "";
-            await ApiService.ShareQuiz(quizId,  email);            
+            const email = prompt(`Veuillez saisir l'email de la personne avec qui vous souhaitez partager ce quiz`, "destinataire") || "";
+            const result = await ApiService.ShareQuiz(quiz._id,  email);
+
+            if (!result) {
+                window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+            }
+
+            window.alert(`Quiz partagé avec succès!`)
+
         } catch (error) {
             console.error('Erreur lors du partage du quiz:', error);
         }
-    };  
-    const handleReceiveSharedQuiz = async (/*quizId, folderId*/) => {
-        try {
-            const quizId = prompt('Entrée le Id du quiz ', "ID") || "";
-            const folderId = prompt('Entrée le id du dossier', "Dossier") || "";
-            await ApiService.receiveSharedQuiz(quizId, folderId);
-            
-        } catch (error) {
-            console.error('Error receiving shared quiz:', error);
-        }
-    };
+    }
     
 
 
@@ -489,10 +489,10 @@ const Dashboard: React.FC = () => {
                         color="primary"
                         onClick={() => handleOnImport()}
                     > <Upload /> </IconButton>
-                     <IconButton
+                     {/* <IconButton
                         color="primary"
                         onClick={() => handleReceiveSharedQuiz()}
-                    > <Upload /> </IconButton>
+                    > <Upload /> </IconButton> */}
 
                 </div>
 
@@ -532,8 +532,8 @@ const Dashboard: React.FC = () => {
                             
                             <IconButton
                                 color="primary"
-                                onClick={() => handleShareQuiz(quiz._id)}
-                            > <FileDownload /> </IconButton>
+                                onClick={() => handleShareQuiz(quiz)}
+                            > <Share /> </IconButton>
                         </div>
                     </div>
                 ))}
