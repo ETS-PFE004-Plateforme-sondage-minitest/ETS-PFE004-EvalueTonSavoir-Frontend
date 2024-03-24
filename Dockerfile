@@ -14,11 +14,7 @@ RUN npm install
 COPY . .
 
 # Créer le fichier .env avec les variables d'environnement nécessaires
-<<<<<<< HEAD
 RUN echo "VITE_BACKEND_URL=https://ets-glitch-backend.glitch.me/\nVITE_AZURE_BACKEND_URL=https://evaluetonsavoirbackend.azurewebsites.net/" > .env
-=======
-RUN echo "VITE_BACKEND_URL=http://10.196.10.69:4400/\nVITE_AZURE_BACKEND_URL=http://10.196.10.69:4400" > .env
->>>>>>> main
 
 # Exécuter le script de build du projet
 RUN npm run build
