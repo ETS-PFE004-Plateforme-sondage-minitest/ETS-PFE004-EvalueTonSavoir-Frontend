@@ -36,8 +36,6 @@ const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [quizIdsToRemove, setQuizIdsToRemove] = useState<string[]>([]);
-    const [quizTitleToRemove, setQuizTitleToRemove] = useState<string>('');
     const [showImportModal, setShowImportModal] = useState<boolean>(false);
     const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
     const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
@@ -136,20 +134,6 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    const handleConfirmRemoveQuiz = () => {
-        const updatedQuizzes = quizzes.filter(
-            (quiz: QuizType) => !quizIdsToRemove.includes(quiz._id)
-        );
-        setQuizzes(updatedQuizzes);
-        setSelectedQuizes([]);
-        setQuizIdsToRemove([]);
-        setQuizTitleToRemove('');
-    };
-
-    const handleCancelRemoveQuiz = () => {
-        setQuizIdsToRemove([]);
-    };
-
 
     const handleDuplicateQuiz = async (quiz: QuizType) => {
         try {
@@ -210,17 +194,6 @@ const Dashboard: React.FC = () => {
         return true;
     };
 
-    const handleOnCheckQuiz = (selectedQuizId: string) => {
-        const quizSelected = selectedQuizes.includes(selectedQuizId);
-
-        if (quizSelected) {
-            setSelectedQuizes((prevQuizes) =>
-                prevQuizes.filter((quizId) => selectedQuizId !== quizId)
-            );
-        } else {
-            setSelectedQuizes((prevItems) => [...prevItems, selectedQuizId]);
-        }
-    };
     const handleMoveQuiz = async (quiz: QuizType, newFolderId: string) => {
         try {
             await ApiService.moveQuiz(quiz._id, newFolderId);
