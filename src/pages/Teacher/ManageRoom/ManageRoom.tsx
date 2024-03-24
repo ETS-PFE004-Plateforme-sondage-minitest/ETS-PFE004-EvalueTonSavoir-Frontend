@@ -5,7 +5,6 @@ import { Socket } from 'socket.io-client';
 import { parse } from 'gift-pegjs';
 import { QuestionType } from '../../../Types/QuestionType';
 import LiveResultsComponent from '../../../components/LiveResults/LiveResults';
-import { QuizService } from '../../../services/QuizService';
 import { QuestionService } from '../../../services/QuestionService';
 import webSocketService from '../../../services/WebsocketService';
 import { QuizType } from '../../../Types/QuizType';
@@ -17,9 +16,10 @@ import { Button } from '@mui/material';
 import LoadingCircle from '../../../components/LoadingCircle/LoadingCircle';
 import { Refresh, Error } from '@mui/icons-material';
 import UserWaitPage from '../../../components/UserWaitPage/UserWaitPage';
-import ReturnButton from '../../../components/ReturnButton/ReturnButton';
+import DisconnectButton from '../../../components/DisconnectButton/DisconnectButton';
 import QuestionNavigation from '../../../components/QuestionNavigation/QuestionNavigation';
 import Question from '../../../components/Questions/Question';
+import ApiService from '../../../services/ApiService';
 
 const ManageRoom: React.FC = () => {
     const navigate = useNavigate();
@@ -28,19 +28,44 @@ const ManageRoom: React.FC = () => {
     const [users, setUsers] = useState<UserType[]>([]);
     const quizId = useParams<{ id: string }>();
     const [quizQuestions, setQuizQuestions] = useState<QuestionType[] | undefined>();
-    const [quiz, setQuiz] = useState<QuizType>();
+    const [quiz, setQuiz] = useState<QuizType | null>(null);
     const [quizMode, setQuizMode] = useState<'teacher' | 'student'>('teacher');
     const [connectingError, setConnectingError] = useState<string>('');
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType | undefined>(undefined);
 
     useEffect(() => {
-        setQuiz(QuizService.getQuizById(quizId.id));
-        createWebSocketRoom();
+        if (quizId.id) {
+            const fetchquiz = async () => {
 
-        return () => {
-            webSocketService.disconnect();
-        };
-    }, [quizId.id]);
+                const quiz = await ApiService.getQuiz(quizId.id as string);
+
+                if (!quiz) {
+                    window.alert(`Une erreur est survenue.\n Le quiz ${quizId.id} n'a pas été trouvé\nVeuillez réessayer plus tard`)
+                    console.error('Quiz not found for id:', quizId.id);
+                    navigate('/teacher/dashboard');
+                    return;
+                }
+
+                setQuiz(quiz as QuizType);
+
+                if (!socket) {
+                    createWebSocketRoom();
+                }
+
+                // return () => {
+                //     webSocketService.disconnect();
+                // };
+            };
+
+            fetchquiz();
+
+        } else {
+            window.alert(`Une erreur est survenue.\n Le quiz ${quizId.id} n'a pas été trouvé\nVeuillez réessayer plus tard`)
+            console.error('Quiz not found for id:', quizId.id);
+            navigate('/teacher/dashboard');
+            return;
+        }
+    }, [quizId]);
 
     const disconnectWebSocket = () => {
         if (socket) {
@@ -57,6 +82,7 @@ const ManageRoom: React.FC = () => {
     const createWebSocketRoom = () => {
         setConnectingError('');
         const socket = webSocketService.connect(ENV_VARIABLES.VITE_BACKEND_URL);
+        console.log(socket);
         socket.on('connect', () => {
             webSocketService.createRoom();
         });
@@ -70,15 +96,24 @@ const ManageRoom: React.FC = () => {
         socket.on('create-failure', () => {
             console.log('Error creating room.');
         });
+        
         socket.on('user-joined', (user: UserType) => {
+            console.log("USER JOINED ! ")
+            console.log("quizMode: ", quizMode)
+
             setUsers((prevUsers) => [...prevUsers, user]);
 
             // This doesn't relaunch the quiz for users that connected late
             if (quizMode === 'teacher') {
+                console.log("TEACHER")
+
                 webSocketService.nextQuestion(roomName, currentQuestion);
+
             } else if (quizMode === 'student') {
+
                 console.log(quizQuestions);
                 webSocketService.launchStudentModeQuiz(roomName, quizQuestions);
+
             }
         });
         socket.on('join-failure', (message) => {
@@ -93,7 +128,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const nextQuestion = () => {
-        if (!quizQuestions || !currentQuestion || !quiz?.questions) return;
+        if (!quizQuestions || !currentQuestion || !quiz?.content) return;
 
         const nextQuestionIndex = Number(currentQuestion?.question.id);
 
@@ -104,7 +139,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const previousQuestion = () => {
-        if (!quizQuestions || !currentQuestion || !quiz?.questions) return;
+        if (!quizQuestions || !currentQuestion || !quiz?.content) return;
 
         const prevQuestionIndex = Number(currentQuestion?.question.id) - 2; // -2 because question.id starts at index 1
 
@@ -115,7 +150,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const initializeQuizQuestion = () => {
-        const quizQuestionArray = quiz?.questions;
+        const quizQuestionArray = quiz?.content;
         if (!quizQuestionArray) return null;
         const parsedQuestions = [] as QuestionType[];
 
@@ -152,7 +187,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const launchQuiz = () => {
-        if (!socket || !roomName || quiz?.questions.length === 0) {
+        if (!socket || !roomName || quiz?.content.length === 0) {
             console.log('Error launching quiz. No socket, room name or no questions.');
             return;
         }
@@ -165,7 +200,7 @@ const ManageRoom: React.FC = () => {
     };
 
     const showSelectedQuestion = (questionIndex: number) => {
-        if (quiz?.questions && quizQuestions) {
+        if (quiz?.content && quizQuestions) {
             setCurrentQuestion(quizQuestions[questionIndex]);
             console.log(quizQuestions[questionIndex]);
             if (quizMode === 'teacher') {
@@ -202,26 +237,33 @@ const ManageRoom: React.FC = () => {
     }
 
     return (
-        <div className="room-wrapper">
-            <div className="quit-btn">
-                <Button variant="outlined" onClick={handleReturn}>
-                    Déconnexion
-                </Button>
-            </div>
-            <div className="room-container">
-                <div className="mb-1 top-container">
-                    <ReturnButton onReturn={handleReturn} askConfirm={!!quizQuestions} />
-                    {quizQuestions && (
-                        <div className="text-lg text-bold blue selectable-text room-name-wrapper">
-                            <div>Salle: {roomName}</div>
-                            <div>Utilisateurs: {users.length}/60</div>
-                        </div>
-                    )}
+        <div className='room'>
+            <div className='roomHeader'>
+
+                <DisconnectButton
+                    onReturn={handleReturn}
+                    askConfirm
+                    message={`Êtes-vous sûr de vouloir quitter?`} />
+
+                <div className='centerTitle'>
+                    <div className='title'>Salle: {roomName}</div>
+                    <div className='userCount subtitle'>Utilisateurs: {users.length}/60</div>
                 </div>
+
+                <div className='dumb'></div>
+
+            </div>
+
+            <div className='room'>
+
                 {quizQuestions ? (
+
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
+
                         <div className="title center-h-align mb-2">{quiz?.title}</div>
+
                         {quizMode === 'teacher' && (
+
                             <div className="mb-1">
                                 <QuestionNavigation
                                     currentQuestionId={Number(currentQuestion?.question.id)}
@@ -230,9 +272,12 @@ const ManageRoom: React.FC = () => {
                                     nextQuestion={nextQuestion}
                                 />
                             </div>
+
                         )}
+
                         <div className="mb-2 flex-column-wrapper">
                             <div className="preview-and-result-container">
+
                                 {currentQuestion && (
                                     <Question
                                         imageUrl={currentQuestion?.image}
@@ -240,14 +285,18 @@ const ManageRoom: React.FC = () => {
                                         question={currentQuestion?.question}
                                     />
                                 )}
+
                                 <LiveResultsComponent
                                     quizMode={quizMode}
                                     socket={socket}
                                     questions={quizQuestions}
                                     showSelectedQuestion={showSelectedQuestion}
+                                    students={users}
                                 ></LiveResultsComponent>
+
                             </div>
                         </div>
+
                         {quizMode === 'teacher' && (
                             <div className="nextQuestionButton">
                                 <Button onClick={nextQuestion} variant="contained">
@@ -255,16 +304,20 @@ const ManageRoom: React.FC = () => {
                                 </Button>
                             </div>
                         )}
+
                     </div>
+
                 ) : (
+
                     <UserWaitPage
                         users={users}
                         launchQuiz={launchQuiz}
-                        roomName={roomName}
                         setQuizMode={setQuizMode}
                     />
+
                 )}
             </div>
+
         </div>
     );
 };

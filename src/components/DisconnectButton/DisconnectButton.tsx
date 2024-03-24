@@ -11,7 +11,7 @@ interface Props {
     message?: string;
 }
 
-const ReturnButton: React.FC<Props> = ({
+const DisconnectButton: React.FC<Props> = ({
     askConfirm = false,
     message = 'Êtes-vous sûr de vouloir quitter la page ?',
     onReturn
@@ -49,7 +49,7 @@ const ReturnButton: React.FC<Props> = ({
                 color="primary"
                 sx={{ marginLeft: '-0.5rem', fontSize: 16 }}
             >
-                Retour
+                Quitter
             </Button>
             <ConfirmDialog
                 open={showDialog}
@@ -63,4 +63,4 @@ const ReturnButton: React.FC<Props> = ({
     );
 };
 
-export default ReturnButton;
+export default DisconnectButton;

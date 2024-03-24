@@ -12,7 +12,8 @@ describe('DragAndDrop Component', () => {
        <DragAndDrop
         handleOnClose={handleOnClose}
         handleOnImport={handleOnImport}
-        open={open} />
+        open={open} 
+        selectedFolder="selectedFolder"/>
       );
      expect(screen.getByText('Importation de quiz')).toBeInTheDocument();
   });
@@ -27,6 +28,7 @@ describe('DragAndDrop Component', () => {
         handleOnClose={handleOnCloseMock}
         handleOnImport={handleOnImportMock}
         open={true}
+        selectedFolder="selectedFolder"
       />
     );
     const dropZone = screen.getByText(/Déposer des fichiers ici/i);
@@ -41,7 +43,8 @@ describe('DragAndDrop Component', () => {
     const handleOnImport = jest.fn();
     const open = true;
     const { container } = render(
-      <DragAndDrop handleOnClose={handleOnClose} handleOnImport={handleOnImport} open={open} />
+      <DragAndDrop handleOnClose={handleOnClose} handleOnImport={handleOnImport} open={open}
+      selectedFolder="selectedFolder" />
     );
     const file = new File(['file content'], 'example.txt', { type: 'text/plain' });
     fireEvent.change(screen.getByText( /cliquez pour ouvrir l'explorateur des fichiers/i), {
@@ -58,6 +61,7 @@ describe('DragAndDrop Component', () => {
         handleOnClose={handleOnCloseMock}
         handleOnImport={handleOnImportMock}
         open={true}
+        selectedFolder="selectedFolder"
       />
     );
     const file = new File(['file content'], 'example.txt', { type: 'text/plain' });

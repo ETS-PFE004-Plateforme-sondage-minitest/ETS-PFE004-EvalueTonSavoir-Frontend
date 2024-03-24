@@ -1,36 +1,75 @@
-.container {
+.quizEditor .editHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: stretch
+}
+.quizEditor .editHeader .returnButton {
+    flex-basis: 10%;
+
     display: flex;
     justify-content: center;
-    gap: 2vw;
-    margin-top: 2rem;
-    overflow-y: auto;
 }
 
-.edit-page-container {
+.quizEditor .editHeader .title {
+    flex-basis: auto;
+}
+
+.quizEditor .editHeader .dumb {
+    flex-basis: 10%;
+}
+
+.quizEditor .editSection {
+    width: 100%;
+    height: 78vh;
+    display: flex;
+}
+
+.quizEditor .editSection .edit {
+    flex: 50%;
+    padding: 5px;
+
     display: flex;
     flex-direction: column;
+    gap: 5px;
+
+    overflow: auto;
+}
+.quizEditor .editSection .edit code {
+    cursor: pointer;
+    padding-bottom: 5px;
+}
+
+.quizEditor .editSection .edit .upload {
+    display: flex;
+    width: 100%;
+
     align-items: center;
-    position: relative;
-}
-
-.editor-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-bottom: 2rem;
-}
-
-.return-button-wrapper {
-    position: absolute;
-    left: 0;
-}
-
-.editor-page-wrapper {
-    display: flex;
     justify-content: center;
+}
+input[type="file"] {
     height: 100%;
+    width: 100%;
 }
 
-.preview-column {
-    width: 30vw;
+.quizEditor .editSection .edit .upload .dropArea {
+    display: flex;
+    border: 1px dotted;
+    width: 100%;
+    padding: 10px;
+
+    align-items: center;
+    justify-content: center;
+
+    /* justifyContent: center;
+    alignItems: center;
+    backgroundColor: dragIsOver ? "lightgray" : "white; */
+}
+
+.quizEditor .editSection .preview {
+    flex: 50%;
+    padding: 5px;
+
+    overflow: auto;
 }

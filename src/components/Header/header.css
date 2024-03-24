@@ -1,0 +1,14 @@
+
+.header {
+    flex-shrink: 0;
+    padding: 15px;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header img {
+    cursor: pointer;
+}

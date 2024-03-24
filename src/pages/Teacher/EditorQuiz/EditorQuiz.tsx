@@ -1,19 +1,21 @@
 // EditorQuiz.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
+
+import { FolderType } from '../../../Types/FolderType';
 
 import Editor from '../../../components/Editor/Editor';
 import GiftCheatSheet from '../../../components/GIFTCheatSheet/GiftCheatSheet';
 import GIFTTemplatePreview from '../../../components/GiftTemplate/GIFTTemplatePreview';
 
-import { QuizService } from '../../../services/QuizService';
 import { QuizType } from '../../../Types/QuizType';
 
 import './editorQuiz.css';
-import { Button } from '@mui/material';
-import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
+import { Button, TextField, NativeSelect, IconButton } from '@mui/material';
+import { Send } from '@mui/icons-material';
 import ReturnButton from '../../../components/ReturnButton/ReturnButton';
+
+import ApiService from '../../../services/ApiService';
 
 interface EditQuizParams {
     id: string;
@@ -21,102 +23,220 @@ interface EditQuizParams {
 }
 
 const QuizForm: React.FC = () => {
+    const [quizTitle, setQuizTitle] = useState('');
+    const [selectedFolder, setSelectedFolder] = useState<string>('');
+    const [filteredValue, setFilteredValue] = useState<string[]>([]);
+
     const { id } = useParams<EditQuizParams>();
     const [value, setValue] = useState('');
-    const [filteredValue, setFilteredValue] = useState<string[]>([]);
-    const [quizToSave, setQuizToSave] = useState(false);
-    const [quizTitle, setQuizTitle] = useState('');
     const [isNewQuiz, setNewQuiz] = useState(false);
     const [quiz, setQuiz] = useState<QuizType | null>(null);
     const navigate = useNavigate();
+    const [folders, setFolders] = useState<FolderType[]>([]);
+    const [imageLinks, setImageLinks] = useState<string[]>([]);
+    const handleSelectFolder = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedFolder(event.target.value);
+    };
 
     useEffect(() => {
-        const quizToEdit = QuizService.getQuizById(id);
-        if (!!quizToEdit) {
-            setQuiz(quizToEdit);
-            setFilteredValue(quizToEdit.questions);
-            setValue(quizToEdit.questions.join('\n\n'));
-            setQuizTitle(quizToEdit.title);
-        } else {
-            setNewQuiz(true);
-        }
-    }, [id]);
+        const fetchData = async () => {
+            const userFolders = await ApiService.getUserFolders();
+            setFolders(userFolders as FolderType[]);
+        };
 
-    function handleEditorChange(value: string) {
-        setValue(value);
-    }
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (!id || id === 'new') {
+                    setNewQuiz(true);
+                    return;
+                }
+
+                const quiz = await ApiService.getQuiz(id) as QuizType;
+
+                if (!quiz) {
+                    window.alert(`Une erreur est survenue.\n Le quiz ${id} n'a pas été trouvé\nVeuillez réessayer plus tard`)
+                    console.error('Quiz not found for id:', id);
+                    navigate('/teacher/dashboard');
+                    return;
+                }
+
+                setQuiz(quiz as QuizType);
+                const { title, content, folderId } = quiz;
+
+                setQuizTitle(title);
+                setSelectedFolder(folderId);
+                setFilteredValue(content);
+                setValue(quiz.content.join('\n\n'));
+
+            } catch (error) {
+                window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+                console.error('Error fetching quiz:', error);
+                navigate('/teacher/dashboard');
+            }
+        };
+
+        fetchData();
+    }, [id]);
 
     function handleUpdatePreview(value: string) {
         if (value !== '') {
-            handleEditorChange(value);
+            setValue(value);
         }
-        const linesArray = value.split(/(?<=^|[^\\]}.*)[\n]+/); // Split at next line breaks after closing curly brace not preceded by a backslash
-        if (linesArray[linesArray.length - 1] === '') linesArray.pop(); // Remove last empty line
+
+        const linesArray = value.split(/(?<=^|[^\\]}.*)[\n]+/);
+
+        if (linesArray[linesArray.length - 1] === '') linesArray.pop();
+
         setFilteredValue(linesArray);
     }
-
-    const handleSaveQuiz = () => {
-        setQuizToSave(true);
-    };
 
     const handleQuizTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuizTitle(event.target.value);
     };
 
-    const handleModalClose = () => {
-        setQuizToSave(false);
-        setQuizTitle('');
-    };
+    const handleQuizSave = async () => {
+        try {
+            // check if everything is there
+            if (quizTitle == '') {
+                alert("Veuillez choisir un titre");
+                return;
+            }
 
-    const handleQuizSave = () => {
-        const storedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-        if (isNewQuiz) {
-            const newQuiz = {
-                id: uuidv4(),
-                title: quizTitle || 'Untitled quiz',
-                questions: filteredValue
-            };
-            const updatedQuizzes = [...storedQuizzes, newQuiz];
-            localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
-        } else {
-            const updatedQuizzes = storedQuizzes.map((q: QuizType) => {
-                if (q.id === id) {
-                    return { ...q, title: quizTitle, questions: filteredValue };
+            if (selectedFolder == '') {
+                alert("Veuillez choisir un dossier");
+                return;
+            }
+
+            if (isNewQuiz) {
+                await ApiService.createQuiz(quizTitle, filteredValue, selectedFolder);
+            } else {
+                if (quiz) {
+                    await ApiService.updateQuiz(quiz._id, quizTitle, filteredValue);
                 }
-                return q;
-            });
-            localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+            }
+
+            navigate('/teacher/dashboard');
+        } catch (error) {
+            window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+            console.log(error)
         }
-        handleModalClose();
-        navigate('/teacher/dashboard');
     };
 
+    // I do not know what this does but do not remove
     if (!isNewQuiz && !quiz) {
         return <div>Chargement...</div>;
     }
 
-    return (
-        <div className="editor-page-wrapper">
-            <div className="edit-page-container">
-                <div className="return-button-wrapper">
-                    <ReturnButton
-                        askConfirm
-                        message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire ?`}
-                    />
-                </div>
-                <h1 className="page-title">Éditeur de quiz</h1>
+    const handleSaveImage = async () => {
+        try {
+            const inputElement = document.getElementById('file-input') as HTMLInputElement;
+            
+            if (!inputElement.files || inputElement.files.length === 0) {
+                window.alert("Veuillez d'abord choisir un fichier à télécharger")
+                return;
+            }
 
-                <div className="container">
-                    <div>
-                        <h2 className="subtitle">Éditeur</h2>
-                        <div className="editor-container">
-                            <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
-                            <Button variant="contained" onClick={handleSaveQuiz}>
-                                Enregistrer
-                            </Button>
+            const imageUrl = await ApiService.uploadImage(inputElement.files[0]);
+
+            // Check for errors
+            if(imageUrl.indexOf("ERROR") >= 0) {
+                window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+                return;
+            }
+
+            setImageLinks(prevLinks => [...prevLinks, imageUrl]);
+        } catch (error) {
+            window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+        }
+    };
+
+    const handleCopyToClipboard = async (link: string) => {
+        navigator.clipboard.writeText(link);
+    }
+
+    return (
+        <div className='quizEditor'>
+
+            <div className='editHeader'>
+                <ReturnButton
+                    askConfirm
+                    message={`Êtes-vous sûr de vouloir quitter l'éditeur sans sauvegarder le questionnaire?`}
+                />
+
+                <div className='title'>Éditeur de quiz</div>
+
+                <div className='dumb'></div>
+            </div>
+
+            <div className='editSection'>
+
+                <div className='edit'>
+                    <h2 className="subtitle">Éditeur</h2>
+                    <TextField
+                        onChange={handleQuizTitleChange}
+                        value={quizTitle}
+                        placeholder="Titre du quiz"
+                        fullWidth
+                    />
+
+                    <NativeSelect
+                        id="select-folder"
+                        color="primary"
+                        value={selectedFolder}
+                        onChange={handleSelectFolder}
+                        disabled={!isNewQuiz}
+                    >
+                        <option disabled value=""> Choisir un dossier... </option>
+
+                        {folders.map((folder: FolderType) => (
+                            <option value={folder._id} key={folder._id}> {folder.title} </option>
+                        ))}
+                    </NativeSelect>
+
+                    <Editor initialValue={value} onEditorChange={handleUpdatePreview} />
+
+                    <div className='images'>
+                        <div className='upload'>
+                            <label className="dropArea">
+                                <input type="file" id="file-input" className="file-input" accept="image/*" multiple />
+                            </label>
+
+                            <IconButton
+                                color="primary"
+                                onClick={handleSaveImage}
+                            > <Send /> </IconButton>
+
                         </div>
-                        <GiftCheatSheet />
+
+                        <h2 className="subtitle">Mes images :</h2>
+
+                        <div>
+                            <ul>
+                                {imageLinks.map((link, index) => (
+                                    <li key={index}>
+                                        <code
+                                            onClick={() => handleCopyToClipboard(`<img ${link} >`)}>
+                                            {`<img ${link} >`}
+                                        </code>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
+
+                    <Button variant="contained" onClick={handleQuizSave}>
+                        Enregistrer
+                    </Button>
+
+                    <GiftCheatSheet />
+
+                </div>
+
+                <div className='preview'>
                     <div className="preview-column">
                         <h2 className="subtitle">Prévisualisation</h2>
                         <div>
@@ -124,17 +244,9 @@ const QuizForm: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <ConfirmDialog
-                    open={quizToSave}
-                    title="Sauvegarder le questionnaire"
-                    message="Entrez un titre pour votre questionnaire:"
-                    hasOptionalInput
-                    optionalInputValue={quizTitle}
-                    onOptionalInputChange={handleQuizTitleChange}
-                    onConfirm={handleQuizSave}
-                    onCancel={handleModalClose}
-                />
+
             </div>
+
         </div>
     );
 };

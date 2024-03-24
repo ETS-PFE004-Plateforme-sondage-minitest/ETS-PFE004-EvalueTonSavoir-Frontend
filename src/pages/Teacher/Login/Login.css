@@ -1,0 +1,17 @@
+.login-links {
+    padding-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-links a {
+    padding: 4px;
+    color: #333;
+    text-decoration: none;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
