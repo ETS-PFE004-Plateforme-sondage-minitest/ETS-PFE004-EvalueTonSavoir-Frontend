@@ -8,11 +8,10 @@ import './userWaitPage.css';
 interface Props {
     users: UserType[];
     launchQuiz: () => void;
-    roomName: string;
     setQuizMode: (mode: 'student' | 'teacher') => void;
 }
 
-const UserWaitPage: React.FC<Props> = ({ users, launchQuiz, roomName, setQuizMode }) => {
+const UserWaitPage: React.FC<Props> = ({ users, launchQuiz, setQuizMode }) => {
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
     return (
