@@ -37,9 +37,6 @@ const Dashboard: React.FC = () => {
     const [quizzes, setQuizzes] = useState<QuizType[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showImportModal, setShowImportModal] = useState<boolean>(false);
-    const [selectedQuizes, setSelectedQuizes] = useState<string[]>([]);
-    const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
-
     const [folders, setFolders] = useState<FolderType[]>([]);
     const [selectedFolder, setSelectedFolder] = useState<string>(''); // Selected folder
 
@@ -111,12 +108,6 @@ const Dashboard: React.FC = () => {
 
         fetchQuizzesForFolder();
     }, [selectedFolder]);
-
-    useEffect(() => {
-        if (selectedQuizes.length === 0) setIsSelectAll(false);
-    }, [selectedQuizes]);
-
-
 
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -223,7 +214,7 @@ const Dashboard: React.FC = () => {
     const downloadTxtFile = async (quiz: QuizType) => {
 
         try {
-            const selectedQuiz = await ApiService.getQuiz(quiz._id);
+            const selectedQuiz = await ApiService.getQuiz(quiz._id) as QuizType;
             //quizzes.find((quiz) => quiz._id === quiz._id);
 
             if (!selectedQuiz) {
@@ -247,7 +238,7 @@ const Dashboard: React.FC = () => {
 
             const blob = new Blob([quizContent], { type: 'text/plain' });
             const a = document.createElement('a');
-            const filename = title || `quiz_${quizId}`;
+            const filename = title;
             a.download = `${filename}.txt`;
             a.href = window.URL.createObjectURL(blob);
             a.click();

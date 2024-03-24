@@ -312,7 +312,6 @@ const ManageRoom: React.FC = () => {
                     <UserWaitPage
                         users={users}
                         launchQuiz={launchQuiz}
-                        roomName={roomName}
                         setQuizMode={setQuizMode}
                     />
 
