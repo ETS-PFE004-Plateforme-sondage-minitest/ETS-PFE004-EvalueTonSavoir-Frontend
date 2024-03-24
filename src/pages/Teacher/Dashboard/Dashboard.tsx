@@ -479,7 +479,7 @@ const Dashboard: React.FC = () => {
 
                 </div>
 
-                {quizzes.map((quiz: QuizType) => (
+                {filteredQuizzes.map((quiz: QuizType) => (
                     <div className='quiz'>
                         <div className='title'>
                             <Button
