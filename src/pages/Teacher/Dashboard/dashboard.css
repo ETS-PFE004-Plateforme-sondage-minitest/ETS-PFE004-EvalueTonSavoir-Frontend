@@ -65,6 +65,13 @@ div:has(> #select-folder) {
     font-size: large;
     margin: 0;
     font-weight: 100;
+    overflow: hidden;
+}
+.dashboard .list .quiz .title button {
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    text-overflow: ellipsis;
 }
 
 .dashboard .list .quiz .actions {
