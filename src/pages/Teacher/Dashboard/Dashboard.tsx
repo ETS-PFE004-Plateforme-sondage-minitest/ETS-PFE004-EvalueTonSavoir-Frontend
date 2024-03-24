@@ -253,18 +253,6 @@ const Dashboard: React.FC = () => {
         }
     };
 
-
-
-    const handleSelectAll = () => {
-        if (isSelectAll) {
-            setIsSelectAll(false);
-            setSelectedQuizes([]);
-        } else {
-            setIsSelectAll(true);
-            setSelectedQuizes(quizzes.map((quiz) => quiz._id));
-        }
-    };
-
     const quizRemoveMessage =
         quizIdsToRemove.length > 1
             ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
