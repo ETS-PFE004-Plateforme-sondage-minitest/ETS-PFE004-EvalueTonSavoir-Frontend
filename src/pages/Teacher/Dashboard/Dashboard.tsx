@@ -327,14 +327,18 @@ const Dashboard: React.FC = () => {
 
     const handleShareQuiz = async (quiz: QuizType) => {
         try {
-            const email = prompt(`Veuillez saisir l'email de la personne avec qui vous souhaitez partager ce quiz`, "destinataire") || "";
-            const result = await ApiService.ShareQuiz(quiz._id,  email);
+            const email = prompt(`Veuillez saisir l'email de la personne avec qui vous souhaitez partager ce quiz`, "");
 
-            if (!result) {
-                window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+            if (email) {
+                const result = await ApiService.ShareQuiz(quiz._id,  email);
+    
+                if (!result) {
+                    window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
+                    return;
+                }
+    
+                window.alert(`Quiz partagé avec succès!`)
             }
-
-            window.alert(`Quiz partagé avec succès!`)
 
         } catch (error) {
             console.error('Erreur lors du partage du quiz:', error);
