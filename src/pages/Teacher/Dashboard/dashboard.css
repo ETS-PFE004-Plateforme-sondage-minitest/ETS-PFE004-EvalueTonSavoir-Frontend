@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     max-width: 100%;
-    gap: 10px;
+    gap: 30px;
 
     padding: 2rem 2rem;
 }
@@ -31,27 +31,26 @@ div:has(> #select-folder) {
     align-items: center;
 }
 
+.dashboard .ajouter {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
 
+.dashboard .ajouter button:first-child {
+    width: 100%;
+}
 
 .dashboard .list {
     display: flex;
     flex-direction: column;
 }
 
-.dashboard .list .ajouter {
-    display: flex;
-    flex-direction: row;
-}
-
-.dashboard .list .ajouter button:first-child {
-    width: 100%;
-}
-
 .dashboard .list .quiz {
     display: flex;
     flex-direction: row;
 
-    margin: 10px;
+    margin-bottom: 10px;
     box-sizing: content-box;
 }
 

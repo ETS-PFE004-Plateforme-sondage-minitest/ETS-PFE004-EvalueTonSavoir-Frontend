@@ -18,6 +18,7 @@ import {
     IconButton,
     InputAdornment,
     Button,
+    Tooltip,
     NativeSelect
 } from '@mui/material';
 import {
@@ -331,13 +332,13 @@ const Dashboard: React.FC = () => {
             const email = prompt(`Veuillez saisir l'email de la personne avec qui vous souhaitez partager ce quiz`, "");
 
             if (email) {
-                const result = await ApiService.ShareQuiz(quiz._id,  email);
-    
+                const result = await ApiService.ShareQuiz(quiz._id, email);
+
                 if (!result) {
                     window.alert(`Une erreur est survenue.\n Veuillez réessayer plus tard`)
                     return;
                 }
-    
+
                 window.alert(`Quiz partagé avec succès!`)
             }
 
@@ -345,7 +346,7 @@ const Dashboard: React.FC = () => {
             console.error('Erreur lors du partage du quiz:', error);
         }
     }
-    
+
 
 
 
@@ -390,98 +391,121 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 <div className='actions'>
-                    <IconButton
-                        color="primary"
-                        onClick={handleCreateFolder}
-                    > <Add /> </IconButton>
 
-                    <IconButton
-                        color="primary"
-                        onClick={handleRenameFolder}
-                        disabled={selectedFolder == ''} // cannot action on all
-                    > <Edit /> </IconButton>
+                    <Tooltip title="Ajouter dossier" placement="top">
+                        <IconButton
+                            color="primary"
+                            onClick={handleCreateFolder}
+                        > <Add /> </IconButton>
+                    </Tooltip>
 
-                    <IconButton
-                        color="primary"
-                        onClick={handleDuplicateFolder}
-                        disabled={selectedFolder == ''} // cannot action on all
-                    > <ContentCopy /> </IconButton>
+                    <Tooltip title="Renommer dossier" placement="top">
+                        <IconButton
+                            color="primary"
+                            onClick={handleRenameFolder}
+                            disabled={selectedFolder == ''} // cannot action on all
+                        > <Edit /> </IconButton>
+                    </Tooltip>
 
-                    <IconButton
-                        aria-label="delete"
-                        color="primary"
-                        onClick={handleDeleteFolder}
-                        disabled={selectedFolder == ''} // cannot action on all
-                    > <DeleteOutline /> </IconButton>
+                    <Tooltip title="Dupliquer dossier" placement="top">
+                        <IconButton
+                            color="primary"
+                            onClick={handleDuplicateFolder}
+                            disabled={selectedFolder == ''} // cannot action on all
+                        > <ContentCopy /> </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title="Suprimer dossier" placement="top">
+                        <IconButton
+                            aria-label="delete"
+                            color="primary"
+                            onClick={handleDeleteFolder}
+                            disabled={selectedFolder == ''} // cannot action on all
+                        > <DeleteOutline /> </IconButton>
+                    </Tooltip>
                 </div>
 
             </div>
 
+            <div className='ajouter'>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<Add />}
+                    onClick={handleCreateQuiz}
+                >
+                    Ajouter un nouveau quiz
+                </Button>
+
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<Upload />}
+                    onClick={handleOnImport}
+                >
+                    Import
+                </Button>
+
+            </div>
             <div className='list'>
-                <div className='ajouter'>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<Add />}
-                        onClick={handleCreateQuiz}
-                    >
-                        Ajouter un nouveau quiz
-                    </Button>
-
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<Upload />}
-                        onClick={handleOnImport}
-                    >
-                        Import
-                    </Button>
-
-                </div>
 
                 {filteredQuizzes.map((quiz: QuizType) => (
                     <div className='quiz'>
                         <div className='title'>
-                            <Button
-                                variant="outlined"
-                                onClick={() => handleLancerQuiz(quiz)}
-                                disabled={!validateQuiz(quiz.content)}
-                            >
-                                {quiz.title}
-                            </Button>
+                            <Tooltip title="Lancer quiz" placement="top">
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => handleLancerQuiz(quiz)}
+                                    disabled={!validateQuiz(quiz.content)}
+                                >
+                                    {quiz.title}
+                                </Button>
+                            </Tooltip>
                         </div>
 
                         <div className='actions'>
-                            <IconButton
-                                color="primary"
-                                onClick={() => downloadTxtFile(quiz)}
-                            > <FileDownload /> </IconButton>
+                            <Tooltip title="Télécharger quiz" placement="top">
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => downloadTxtFile(quiz)}
+                                > <FileDownload /> </IconButton>
+                            </Tooltip>
 
-                            <IconButton
-                                color="primary"
-                                onClick={() => handleEditQuiz(quiz)}
-                            > <Edit /> </IconButton>
+                            <Tooltip title="Modifier quiz" placement="top">
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => handleEditQuiz(quiz)}
+                                > <Edit /> </IconButton>
+                            </Tooltip>
 
-                            {/* <IconButton
-                                color="primary"
-                                onClick={() => handleMoveQuiz(quiz)}
-                            > <DriveFileMove /> </IconButton> */}
+                            {/* <Tooltip title="Bouger quiz" placement="top">
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => handleMoveQuiz(quiz)}
+                                > <DriveFileMove /> </IconButton>
+                            </Tooltip> */}
 
-                            <IconButton
-                                color="primary"
-                                onClick={() => handleDuplicateQuiz(quiz)}
-                            > <ContentCopy /> </IconButton>
+                            <Tooltip title="Dupliquer quiz" placement="top">
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => handleDuplicateQuiz(quiz)}
+                                > <ContentCopy /> </IconButton>
+                            </Tooltip>
 
-                            <IconButton
-                                aria-label="delete"
-                                color="primary"
-                                onClick={() => handleRemoveQuiz(quiz)}
-                            > <DeleteOutline /> </IconButton>
-                            
-                            <IconButton
-                                color="primary"
-                                onClick={() => handleShareQuiz(quiz)}
-                            > <Share /> </IconButton>
+                            <Tooltip title="Supprimer quiz" placement="top">
+                                <IconButton
+                                    aria-label="delete"
+                                    color="primary"
+                                    onClick={() => handleRemoveQuiz(quiz)}
+                                > <DeleteOutline /> </IconButton>
+                            </Tooltip>
+
+                            <Tooltip title="Partager quiz" placement="top">
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => handleShareQuiz(quiz)}
+                                > <Share /> </IconButton>
+                            </Tooltip>
                         </div>
                     </div>
                 ))}
