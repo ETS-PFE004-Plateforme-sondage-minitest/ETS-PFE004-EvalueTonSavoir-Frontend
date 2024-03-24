@@ -29,11 +29,9 @@ const theme = createTheme({
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
         <BrowserRouter>
             <ThemeProvider theme={theme}>
                 <App />
             </ThemeProvider>
         </BrowserRouter>
-    </React.StrictMode>
 );
