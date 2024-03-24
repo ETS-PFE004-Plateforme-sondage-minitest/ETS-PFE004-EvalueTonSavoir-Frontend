@@ -172,7 +172,7 @@ const Dashboard: React.FC = () => {
             }
 
             const selectedFolderId = selectedFolder;
-            await ApiService.duplicateQuiz(quizId, selectedFolderId);
+            await ApiService.duplicateQuiz(quizId, selectedFolderId, "X");
         } catch (error) {
             console.error('Error duplicating quiz:', error);
             throw error;

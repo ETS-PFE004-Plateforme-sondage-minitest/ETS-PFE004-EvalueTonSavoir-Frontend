@@ -1,26 +1,70 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { ENV_VARIABLES } from '../constants';
+
 import { QuizType } from '../Types/QuizType';
 import { FolderType } from '../Types/FolderType';
-//import { Quiz } from '@mui/icons-material';
-
-//import { v4 as uuidv4 } from 'uuid';
-
-
 
 class ApiService {
     private BASE_URL: string;
+    private TTL: number;
 
     constructor() {
+<<<<<<< HEAD
         this.BASE_URL = `http://10.196.10.69:4400`;
+=======
+        this.BASE_URL = ENV_VARIABLES.VITE_BACKEND_URL;
+        this.TTL = 3600000; // 1h
+    }
+
+    private constructRequestUrl(endpoint: string): string {
+        return `http://${this.BASE_URL}${endpoint}`;
+    }
+
+    private constructRequestHeaders(): any {
+        if (this.isLogedIn()) {
+            return {
+                Authorization: `Bearer ${this.getToken()}`,
+                'Content-Type': 'application/json'
+            };
+        }
+        else {
+            return {
+                'Content-Type': 'application/json'
+            };
+        }
+>>>>>>> aaa781853529b01e88632bd9d9280fdf468b0c10
     }
 
     // Helpers
     private saveToken(token: string): void {
-        localStorage.setItem("jwt", token);
+        const now = new Date();
+
+        const object = {
+            token: token,
+            expiry: now.getTime()+this.TTL
+        }
+
+        localStorage.setItem("jwt", JSON.stringify(object));
     }
 
     private getToken(): string | null {
-        return localStorage.getItem("jwt");
+        const objectStr = localStorage.getItem("jwt");
+
+        if (!objectStr) {
+            return null
+        }
+
+        const object = JSON.parse(objectStr)
+        const now = new Date()
+
+        if (now.getTime() > object.expiry) {
+            // If the item is expired, delete the item from storage
+            // and return null
+            this.logout();
+            return null
+        }
+
+        return object.token;
     }
 
     public isLogedIn(): boolean {
@@ -30,6 +74,9 @@ class ApiService {
             return false;
         }
 
+        // Update token expiry
+        this.saveToken(token);
+
         return true;
     }
 
@@ -38,394 +85,686 @@ class ApiService {
     }
 
     // User Routes
+
+    /**
+     * @returns true if  successful 
+     * @returns A error string if unsuccessful,
+     */
     public async register(email: string, password: string): Promise<any> {
         try {
-            const url: string = `${this.BASE_URL}/user/register`;
 
-            const headers = {
-                'Content-Type': 'application/json'
-            };
+            if (!email || !password) {
+                throw new Error(`L'email et le mot de passe sont requis.`);
+            }
 
-            const body = {
-                email: email,
-                password: password
-            };
+            const url: string = this.constructRequestUrl(`/user/register`);
+            const headers = this.constructRequestHeaders();
+            const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+            const result: AxiosResponse = await axios.post(url, body, headers);
 
-            if (result.data.code != 200) return result.data.message;
+            if (result.status !== 200) {
+                throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
+            }
 
             return true;
 
         } catch (error) {
+            console.log("Error details: ", error);
 
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
-                const data = err.response?.data as { message: string } | undefined;
-                return data?.message;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
+    /**
+     * @returns true if  successful 
+     * @returns A error string if unsuccessful,
+     */
     public async login(email: string, password: string): Promise<any> {
         try {
-            const url: string = `${this.BASE_URL}/user/login`;
 
-            const headers = {
-                'Content-Type': 'application/json'
-            };
+            if (!email || !password) {
+                throw new Error(`L'email et le mot de passe sont requis.`);
+            }
 
-            const body = {
-                email: email,
-                password: password
-            };
+            const url: string = this.constructRequestUrl(`/user/login`);
+            const headers = this.constructRequestHeaders();
+            const body = { email, password };
 
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+            const result: AxiosResponse = await axios.post(url, body, headers);
 
-            if (result.data.code != 200) return result.data.message;
+            if (result.status !== 200) {
+                throw new Error(`La connexion a échoué. Status: ${result.status}`);
+            }
 
             this.saveToken(result.data.results.token);
 
             return true;
 
         } catch (error) {
+            console.log("Error details: ", error);
 
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
-                const data = err.response?.data as { message: string } | undefined;
-                return data?.message;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
+    /**
+     * @returns true if  successful 
+     * @returns A error string if unsuccessful,
+     */
     public async resetPassword(email: string): Promise<any> {
         try {
-            const url: string = `${this.BASE_URL}/user/reset-password`;
 
-            const headers = {
-                'Content-Type': 'application/json'
-            };
+            if (!email) {
+                throw new Error(`L'email est requis.`);
+            }
 
-            const body = {
-                email: email
-            };
+            const url: string = this.constructRequestUrl(`/user/reset-password`);
+            const headers = this.constructRequestHeaders();
+            const body = { email };
 
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
+            const result: AxiosResponse = await axios.post(url, body, headers);
 
-            if (result.data.code != 200) return result.data.message;
+            if (result.status !== 200) {
+                throw new Error(`Échec de la réinitialisation du mot de passe. Status: ${result.status}`);
+            }
 
             return true;
 
         } catch (error) {
+            console.log("Error details: ", error);
 
             if (axios.isAxiosError(error)) {
                 const err = error as AxiosError;
-                const data = err.response?.data as { message: string } | undefined;
-                return data?.message;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
             }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async changePassword(email: string, oldPassword: string, newPassword: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/user/change-password`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            email: email,
-            oldPassword: oldPassword,
-            newPassword: newPassword
-        };
+    /**
+     * @returns true if  successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async changePassword(email: string, oldPassword: string, newPassword: string): Promise<any> {
+        try {
 
-        const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+            if (!email || !oldPassword || !newPassword) {
+                throw new Error(`L'email, l'ancien et le nouveau mot de passe sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/user/change-password`);
+            const headers = this.constructRequestHeaders();
+            const body = { email, oldPassword, newPassword };
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`Le changement du mot de passe a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
-    public async deleteUser(email: string, password: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/user/delete-user`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            email: email,
-            password: password
-        };
+    /**
+     * @returns true if  successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async deleteUser(email: string, password: string): Promise<any> {
+        try {
 
-        const result: AxiosResponse = await axios.delete(url, { data: body, headers: headers });
-        console.log(result);
-        // code == 200
+            if (!email || !password) {
+                throw new Error(`L'email et le mot de passe sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/user/delete-user`);
+            const headers = this.constructRequestHeaders();
+            const body = { email, password };
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La supression du compte a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
     // Folder Routes
-    public async createFolder(title: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/folder/create`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            title: title
-        };
 
-        const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
-    }
-
-
-    public async getUserFolders(): Promise<FolderType[]> {
-        const url: string = `${this.BASE_URL}/folder/getUserFolders`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async createFolder(title: string): Promise<any> {
         try {
-            const response: AxiosResponse = await axios.get(url, { headers: headers });
-            if (response.status === 200) {
-                return response.data.results.map((folder: FolderType) => ({ _id: folder._id, title: folder.title }));
-            } else {
-                throw new Error('Failed to fetch user folders');
+
+            if (!title) {
+                throw new Error(`Le titre est requis.`);
             }
+
+            const url: string = this.constructRequestUrl(`/folder/create`);
+            const headers = this.constructRequestHeaders();
+            const body = { title };
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La création du dossier a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error fetching user folders:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async getFolderContent(folderId: string): Promise<QuizType[]> {
-        const url: string = `${this.BASE_URL}/folder/getFolderContent/${folderId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
+    /**
+     * @returns folder array if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async getUserFolders(): Promise<FolderType[] | string> {
         try {
-            const response: AxiosResponse = await axios.get(url, { headers: headers });
-            if (response.status === 200) {
-                // Assuming the response contains a list of quizzes
-                return response.data.results.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
-            } else {
-                throw new Error('Failed to fetch folder content');
+
+            // No params
+
+            const url: string = this.constructRequestUrl(`/folder/getUserFolders`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.get(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`L'obtention des dossiers utilisateur a échoué. Status: ${result.status}`);
             }
+
+            return result.data.results.map((folder: FolderType) => ({ _id: folder._id, title: folder.title }));
+            
         } catch (error) {
-            console.error('Error fetching folder content:', error);
-            throw error;
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async deleteFolder(folderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/folder/delete/${folderId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
+    /**
+     * @returns quiz array if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async getFolderContent(folderId: string): Promise<QuizType[] | string> {
+        try {
 
-        const result: AxiosResponse = await axios.delete(url, { headers: headers });
-        console.log(result);
-        // code == 200
+            if (!folderId) {
+                throw new Error(`Le folderId est requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/folder/getFolderContent/${folderId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.get(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`L'obtention des quiz du dossier a échoué. Status: ${result.status}`);
+            }
+
+            return result.data.results.map((quiz: QuizType) => ({ _id: quiz._id, title: quiz.title, content: quiz.content }));
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
-    public async renameFolder(folderId: string, newTitle: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/folder/rename`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            folderId: folderId,
-            newTitle: newTitle
-        };
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async deleteFolder(folderId: string): Promise<any> {
+        try {
 
-        const result: AxiosResponse = await axios.put(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+            if (!folderId) {
+                throw new Error(`Le folderId est requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/folder/delete/${folderId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.delete(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La supression du dossier a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
+    }
+
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async renameFolder(folderId: string, newTitle: string): Promise<any> {
+        try {
+
+            if (!folderId || !newTitle) {
+                throw new Error(`Le folderId et le nouveau titre sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/folder/rename`);
+            const headers = this.constructRequestHeaders();
+            const body = { folderId, newTitle };
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`Le changement de nom de dossier a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
+    }
+
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async duplicateFolder(folderId: string, newTitle: string): Promise<any> {
+        try {
+            console.log(folderId, newTitle);
+            return "Route not implemented yet!";
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
+    }
+
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async copyFolder(folderId: string, newTitle: string): Promise<any> {
+        try {
+            console.log(folderId, newTitle);
+            return "Route not implemented yet!";
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
     // Quiz Routes
-    public async createQuiz(title: string, content: string[], folderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/create`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            title: title,
-            content: content,
-            folderId: folderId
-        };
 
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async createQuiz(title: string, content: string[], folderId: string): Promise<any> {
         try {
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-            console.log(result);
-            // code == 200
+
+            if (!title || !content || !folderId) {
+                throw new Error(`Le titre, les contenu et le dossier de destination sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/create`);
+            const headers = this.constructRequestHeaders();
+            const body = { title, content, folderId};
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La création du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error creating quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    // Quiz Routes
-    public async duplicateQuiz(quizId: string, folderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/duplicate`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            quizId: quizId,
-            folderId: folderId
-        };
-
+    /**
+     * @returns quiz if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async getQuiz(quizId: string): Promise<QuizType | string> {
         try {
-            const result: AxiosResponse = await axios.post(url, body, { headers: headers });
-            console.log(result);
-            // code == 200
-        } catch (error) {
-            console.error('Error duplicating quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
-        }
-    }
 
+            if (!quizId) {
+                throw new Error(`Le quizId est requis.`);
+            }
 
-    public async getQuiz(quizId: string): Promise<QuizType> {
-        const url: string = `${this.BASE_URL}/quiz/get/${quizId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
+            const url: string = this.constructRequestUrl(`/quiz/get/${quizId}`);
+            const headers = this.constructRequestHeaders();
 
-        try {
-            const result: AxiosResponse = await axios.get(url, { headers: headers });
-            //console.log(result);
-            // Assuming result.data contains the quiz information
+            const result: AxiosResponse = await axios.get(url, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`L'obtention du quiz a échoué. Status: ${result.status}`);
+            }
 
             return result.data.results as QuizType;
+
         } catch (error) {
-            console.error('Error getting quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async deleteQuiz(quizId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/delete/${quizId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async deleteQuiz(quizId: string): Promise<any> {
         try {
-            const result: AxiosResponse = await axios.delete(url, { headers: headers });
-            console.log(result);
-            // code == 200
+
+            if (!quizId) {
+                throw new Error(`Le quizId est requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/delete/${quizId}`);
+            const headers = this.constructRequestHeaders();
+
+            const result: AxiosResponse = await axios.delete(url,headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La supression du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error deleting quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async updateQuiz(quizId: string, newTitle: string, newContent: string[]): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/update`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            quizId: quizId,
-            newTitle: newTitle,
-            newContent: newContent
-        };
-
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async updateQuiz(quizId: string, newTitle: string, newContent: string[]): Promise<any> {
         try {
-            const result: AxiosResponse = await axios.put(url, body, { headers: headers });
-            console.log(result);
-            // code == 200
+
+            if (!quizId || !newTitle || !newContent) {
+                throw new Error(`Le quizId, titre et le contenu sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/update`);
+            const headers = this.constructRequestHeaders();
+            const body = { quizId, newTitle, newContent};
+
+            const result: AxiosResponse = await axios.put(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`La mise à jours du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
         } catch (error) {
-            console.error('Error updating quiz:', error);
-            throw error; // Optional: rethrow the error to handle it elsewhere
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
         }
     }
 
-    public async moveQuiz(quizId: string, newFolderId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/quiz/move`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-        const body = {
-            quizId: quizId,
-            newFolderId: newFolderId
-        };
+    /**
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async moveQuiz(quizId: string, newFolderId: string): Promise<any> {
+        try {
 
-        const result: AxiosResponse = await axios.put(url, body, { headers: headers });
-        console.log(result);
-        // code == 200
+            if (!quizId || !newFolderId) {
+                throw new Error(`Le quizId et le nouveau dossier sont requis.`);
+            }
+
+            const url: string = this.constructRequestUrl(`/quiz/move`);
+            const headers = this.constructRequestHeaders();
+            const body = { quizId, newFolderId};
+
+            const result: AxiosResponse = await axios.post(url, body, headers);
+
+            if (result.status !== 200) {
+                throw new Error(`Le déplacement du quiz a échoué. Status: ${result.status}`);
+            }
+
+            return true;
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
 
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async duplicateQuiz(quizId: string, newTitle: string, folderId: string): Promise<any> {
+        try {
+            console.log(quizId, newTitle, folderId);
+            return "Route not implemented yet!";
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
+    }
+
+    /**
+     * @remarks This function is not yet implemented.
+     * @returns true if successful 
+     * @returns A error string if unsuccessful,
+     */
+    public async copyQuiz(quizId: string, newTitle: string, folderId: string): Promise<any> {
+        try {
+            console.log(quizId, newTitle), folderId;
+            return "Route not implemented yet!";
+            
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
+    }
 
     // Images Route
+
+    /**
+     * @returns the image URL (string) if successful 
+     * @returns A error string if unsuccessful,
+     */
     public async uploadImage(image: File): Promise<string> {
-        const url: string = `${this.BASE_URL}/image/upload`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'multipart/form-data'
-        };
+        try {
 
-        const formData = new FormData();
-        formData.append('image', image);
+            if (!image) {
+                throw new Error(`L'image est requise.`);
+            }
 
-        const result: AxiosResponse = await axios.post(url, formData, { headers: headers });
-        console.log(result);
-        // TODO: code 200 = ok
-        // TODO: get results.id to create the URL
+            const url: string = this.constructRequestUrl(`/image/upload`);
 
-        const id = result.data.results.id; // Assuming the response contains the ID of the uploaded image
+            const headers = {
+                Authorization: `Bearer ${this.getToken()}`,
+                'Content-Type': 'multipart/form-data'
+            };
 
-        return `${this.BASE_URL}/image/get/` + id;
+            const formData = new FormData();
+            formData.append('image', image);
+
+            const result: AxiosResponse = await axios.post(url, formData, { headers: headers });
+
+            if (result.status !== 200) {
+                throw new Error(`L'enregistrement a échoué. Status: ${result.status}`);
+            }
+
+            const id = result.data.results.id;
+
+            return this.constructRequestUrl('/image/get/' + id);
+
+        } catch (error) {
+            console.log("Error details: ", error);
+
+            if (axios.isAxiosError(error)) {
+                const err = error as AxiosError;
+                const data = err.response?.data as { error: string } | undefined;
+                return data?.error || 'Erreur serveur inconnue lors de la requête.';
+            }
+
+            return `Une erreur inattendue s'est produite.`
+        }
     }
-    // Images Route
-    public async getImage(imageId: string): Promise<string> {
-        const url: string = `${this.BASE_URL}/image/get/${imageId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
+    // NOTE : Get Image pas necessaire
 
-        const result: AxiosResponse = await axios.get(url, { headers: headers });
-        console.log(result);
-        // TODO: Traiter la réponse selon les besoins de votre application
-        return result.data.url; // Supposons que la réponse contienne l'URL de l'image
-    }
-
-    public async deleteImage(imageId: string): Promise<void> {
-        const url: string = `${this.BASE_URL}/image/delete/${imageId}`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
-        const result: AxiosResponse = await axios.delete(url, { headers: headers });
-        console.log(result);
-        // TODO: Traiter la réponse selon les besoins de votre application
-        // code == 200
-    }
-
-    public async getUserImages(): Promise<string[]> {
-        const url: string = `${this.BASE_URL}/image/getUserImages`;
-        const headers = {
-            Authorization: `Bearer ${this.getToken()}`,
-            'Content-Type': 'application/json'
-        };
-
-        const result: AxiosResponse = await axios.get(url, { headers: headers });
-        console.log(result);
-        // TODO: Traiter la réponse selon les besoins de votre application
-        return result.data.images; // Supposons que la réponse contienne un tableau d'URLs d'images
-    }
 }
-
 
 const apiService = new ApiService();
 export default apiService;
