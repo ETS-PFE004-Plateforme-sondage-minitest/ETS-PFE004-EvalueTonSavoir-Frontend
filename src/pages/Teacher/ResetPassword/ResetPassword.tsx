@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom';
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
 
-import './ResetPassword.css';
-import { Paper, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-
+import LoginContainer from '../../../components/LoginContainer/LoginContainer'
 import ApiService from '../../../services/ApiService';
 
 const ResetPassword: React.FC = () => {
@@ -38,38 +37,31 @@ const ResetPassword: React.FC = () => {
 
 
     return (
-        <div className="join-room-container">
-            <h1 className="page-title mb-1">Reset Password</h1>
+        <LoginContainer
+            title='Récupération du compte'
+            error={connectionError}>
 
-            <Paper>
+            <TextField
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Nom d'utilisateur"
+                sx={{ marginBottom: '1rem' }}
+                fullWidth
+            />
 
-                <div className="login-container">
-                    <img className="login-avatar" src="./people.svg" width={'20%'}></img>
+            <LoadingButton
+                loading={isConnecting}
+                onClick={reset}
+                variant="contained"
+                sx={{ marginBottom: `${connectionError && '2rem'}` }}
+                disabled={!email}
+            >
+                Réinitialiser le mot de passe
+            </LoadingButton>
 
-                    <TextField
-                        label="Email"
-                        variant="outlined"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Nom d'utilisateur"
-                        sx={{ marginBottom: '1rem' }}
-                        fullWidth
-                    />
-
-                    <LoadingButton
-                        loading={isConnecting}
-                        onClick={reset}
-                        variant="contained"
-                        sx={{ marginBottom: `${connectionError && '2rem'}` }}
-                        disabled={!email}
-                    >
-                        Reset
-                    </LoadingButton>
-
-                    <div className="error-text text-base">{connectionError}</div>
-                </div>
-            </Paper>
-        </div>
+        </LoginContainer>
     );
 };
 

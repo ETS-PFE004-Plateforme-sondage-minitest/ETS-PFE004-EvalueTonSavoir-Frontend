@@ -1,0 +1,21 @@
+.quizImport .importHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: stretch
+}
+.quizImport .importHeader .returnButton {
+    flex-basis: 10%;
+
+    display: flex;
+    justify-content: center;
+}
+
+.quizImport .importHeader .title {
+    flex-basis: auto;
+}
+
+.quizImport .importHeader .dumb {
+    flex-basis: 10%;
+}

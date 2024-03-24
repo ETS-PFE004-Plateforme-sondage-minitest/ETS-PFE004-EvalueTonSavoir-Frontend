@@ -1,15 +1,50 @@
-.btn-container {
-    display: flex;
-    width: 60%;
-    gap: 18%;
-    min-height: 10vh;
-}
-
-.page-container {
+.page {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 85%;
+}
+
+.btn-container {
+    display: flex;
+}
+
+
+.teacher-btn {
+    margin: 10px;
+    padding: 1rem;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-rows: auto auto;
+    background-color: var(--main-color);
+    text-decoration: none;
+}
+
+.teacher-btn img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    margin-left: -2vw;
+}
+
+.student-btn {
+    margin: 10px;
+    padding: 1rem;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-rows: auto auto;
+    background-color: var(--main-color);
+    text-decoration: none;
+}
+
+.student-btn img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    margin-right: -2vw;
 }
 
 .big-title {
@@ -26,68 +61,12 @@
     align-items: end;
 }
 
-.teacher-btn {
-    display: grid;
-    grid-template-rows: auto auto;
-    background-color: var(--main-color);
-    padding: 1rem;
-    text-decoration: none;
-    width: 100%;
-}
-
-.teacher-btn img {
-    width: 70%;
-    height: 70%;
-    object-fit: contain;
-    margin-left: -2vw;
-}
-
-.student-btn {
-    display: grid;
-    grid-template-rows: auto auto;
-    background-color: var(--main-color);
-    padding: 1rem;
-    text-decoration: none;
-    width: 100%;
-}
-
-.student-btn img {
-    width: 70%;
-    height: 70%;
-    object-fit: contain;
-    margin-right: -2vw;
-}
-
-@media only screen and (max-width: 1000px) {
-    .btn-container {
-        width: 100%;
-        gap: 5%;
-    }
-    .big-title {
-        font-size: 8vw;
-    }
-}
-
 @media only screen and (max-width: 768px) {
     .btn-container {
-        width: 100%;
-        gap: 5%;
+        flex-direction: column;
     }
+
     .big-title {
         font-size: 8vw;
     }
-}
-
-@media only screen and (max-width: 660px) {
-    .btn-container {
-        width: 100%;
-        gap: 5%;
-    }
-    .big-title {
-        font-size: 7vw;
-    }
-}
-
-.btn-container a:visited a:hover a:active {
-    color: inherit;
 }

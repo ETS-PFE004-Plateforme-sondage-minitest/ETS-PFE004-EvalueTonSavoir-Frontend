@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom';
 // JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
 
-import './Register.css';
-import { Paper, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-
+import LoginContainer from '../../../components/LoginContainer/LoginContainer'
 import ApiService from '../../../services/ApiService';
 
 const Register: React.FC = () => {
@@ -39,49 +38,43 @@ const Register: React.FC = () => {
 
 
     return (
-        <div className="join-room-container">
-            <h1 className="page-title mb-1">Register</h1>
+        <LoginContainer
+            title='Créer un compte'
+            error={connectionError}>
 
-            <Paper>
+            <TextField
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Nom d'utilisateur"
+                sx={{ marginBottom: '1rem' }}
+                fullWidth
+            />
 
-                <div className="login-container">
-                    <img className="login-avatar" src="./people.svg" width={'20%'}></img>
+            <TextField
+                label="Mot de passe"
+                variant="outlined"
+                value={password}
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Nom de la salle"
+                sx={{ marginBottom: '1rem' }}
+                fullWidth
+            />
 
-                    <TextField
-                        label="Email"
-                        variant="outlined"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Nom d'utilisateur"
-                        sx={{ marginBottom: '1rem' }}
-                        fullWidth
-                    />
+            <LoadingButton
+                loading={isConnecting}
+                onClick={register}
+                variant="contained"
+                sx={{ marginBottom: `${connectionError && '2rem'}` }}
+                disabled={!email || !password}
+            >
+                S'inscrire
+            </LoadingButton>
 
-                    <TextField
-                        label="Mot de passe"
-                        variant="outlined"
-                        value={password}
-                        type="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Nom de la salle"
-                        sx={{ marginBottom: '1rem' }}
-                        fullWidth
-                    />
+        </LoginContainer>
 
-                    <LoadingButton
-                        loading={isConnecting}
-                        onClick={register}
-                        variant="contained"
-                        sx={{ marginBottom: `${connectionError && '2rem'}` }}
-                        disabled={!email || !password}
-                    >
-                        Register
-                    </LoadingButton>
-
-                    <div className="error-text text-base">{connectionError}</div>
-                </div>
-            </Paper>
-        </div>
     );
 };
 

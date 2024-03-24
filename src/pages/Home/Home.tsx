@@ -1,4 +1,3 @@
-// Home.tsx
 import React from 'react';
 
 import './home.css';
@@ -6,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
     return (
-        <div className="page-container">
+        <div className="page">
             <div className="btn-container">
 
                 <Link to="/student/join-room" className="student-btn">

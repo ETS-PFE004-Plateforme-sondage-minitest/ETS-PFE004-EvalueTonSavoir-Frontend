@@ -4,15 +4,15 @@ import { useNavigate, Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import './Login.css';
-import { Paper, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-
+import LoginContainer from '../../../components/LoginContainer/LoginContainer'
 import ApiService from '../../../services/ApiService';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
-    
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -40,61 +40,54 @@ const Login: React.FC = () => {
 
 
     return (
-        <div className="join-room-container">
-            <h1 className="page-title mb-1">Login</h1>
+        <LoginContainer
+            title='Login'
+            error={connectionError}>
 
-            <Paper>
+            <TextField
+                label="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Nom d'utilisateur"
+                sx={{ marginBottom: '1rem' }}
+                fullWidth
+            />
 
-                <div className="login-container">
-                    <img className="login-avatar" src="./people.svg" width={'20%'}></img>
+            <TextField
+                label="Mot de passe"
+                variant="outlined"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Nom de la salle"
+                sx={{ marginBottom: '1rem' }}
+                fullWidth
+            />
 
-                    <TextField
-                        label="Email"
-                        variant="outlined"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Nom d'utilisateur"
-                        sx={{ marginBottom: '1rem' }}
-                        fullWidth
-                    />
+            <LoadingButton
+                loading={isConnecting}
+                onClick={login}
+                variant="contained"
+                sx={{ marginBottom: `${connectionError && '2rem'}` }}
+                disabled={!email || !password}
+            >
+                Login
+            </LoadingButton>
 
-                    <TextField
-                        label="Mot de passe"
-                        variant="outlined"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Nom de la salle"
-                        sx={{ marginBottom: '1rem' }}
-                        fullWidth
-                    />
+            <div className="login-links">
 
-                    <LoadingButton
-                        loading={isConnecting}
-                        onClick={login}
-                        variant="contained"
-                        sx={{ marginBottom: `${connectionError && '2rem'}` }}
-                        disabled={!email || !password}
-                    >
-                        Login
-                    </LoadingButton>
+                <Link to="/teacher/resetPassword">
+                    Réinitialiser le mot de passe
+                </Link>
 
-                    <div className="error-text text-base">{connectionError}</div>
+                <Link to="/teacher/register">
+                    Créer un compte
+                </Link>
 
-                    <Link to="/teacher/register">
-                        <div>
-                            Register
-                        </div>
-                    </Link>
+            </div>
 
-                    <Link to="/teacher/resetPassword">
-                        <div>
-                            Reset Password
-                        </div>
-                    </Link>
-                </div>
-            </Paper>
-        </div>
+        </LoginContainer>
     );
 };
 

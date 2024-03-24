@@ -1,0 +1,23 @@
+.wait {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.wait .button {
+    padding: 10px;
+    display: flex;
+    
+    justify-content: center;
+    align-items: center;
+}
+
+.wait .students {
+    width: 100%;
+
+    padding: 10px;
+    box-sizing: border-box;
+
+    overflow: auto;
+}

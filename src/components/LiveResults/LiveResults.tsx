@@ -20,12 +20,14 @@ import {
     TableRow
 } from '@mui/material';
 import Latex from 'react-latex';
+import { UserType } from '../../Types/UserType';
 
 interface LiveResultsProps {
     socket: Socket | null;
     questions: QuestionType[];
     showSelectedQuestion: (index: number) => void;
     quizMode: 'teacher' | 'student';
+    students: UserType[]
 }
 
 interface Answer {
@@ -40,12 +42,24 @@ interface StudentResult {
     answers: Answer[];
 }
 
-const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion }) => {
+const LiveResults: React.FC<LiveResultsProps> = ({ socket, questions, showSelectedQuestion, students }) => {
     const [showUsernames, setShowUsernames] = useState<boolean>(false);
     const [showCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(false);
     const [studentResults, setStudentResults] = useState<StudentResult[]>([]);
 
     const maxQuestions = questions.length;
+
+    useEffect(() => {
+        // Set student list before starting
+        let newStudents:StudentResult[] = [];
+
+        for (const student of students as UserType[]) {
+            newStudents.push( { username: student.name, idUser: student.id, answers: [] } )
+        }
+
+        setStudentResults(newStudents);
+        
+    }, [])
 
     useEffect(() => {
         if (socket) {

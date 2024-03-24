@@ -1,16 +1,19 @@
-// JoinRoom.tsx
 import React, { useEffect, useState } from 'react';
+
 import { Socket } from 'socket.io-client';
 import { ENV_VARIABLES } from '../../../constants';
 
 import StudentModeQuiz from '../../../components/StudentModeQuiz/StudentModeQuiz';
 import TeacherModeQuiz from '../../../components/TeacherModeQuiz/TeacherModeQuiz';
 import webSocketService from '../../../services/WebsocketService';
+import DisconnectButton from '../../../components/DisconnectButton/DisconnectButton';
 
 import './joinRoom.css';
 import { QuestionType } from '../../../Types/QuestionType';
-import { Button, Paper, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
+
+import LoginContainer from '../../../components/LoginContainer/LoginContainer'
 
 const JoinRoom: React.FC = () => {
     const [roomName, setRoomName] = useState('');
@@ -38,20 +41,24 @@ const JoinRoom: React.FC = () => {
             console.log('Successfully joined the room.');
         });
         socket.on('next-question', (question: QuestionType) => {
+            console.log("NEXT MODE!")
             setQuizMode('teacher');
             setIsWaitingForTeacher(false);
             setQuestion(question);
         });
         socket.on('launch-student-mode', (questions: QuestionType[]) => {
+            console.log("STODENT MODE!")
             setQuizMode('student');
             setIsWaitingForTeacher(false);
             setQuestions(questions);
             setQuestion(questions[0]);
         });
         socket.on('end-quiz', () => {
+            console.log("END!")
             disconnect();
         });
         socket.on('join-failure', (message) => {
+            console.log("BIG FAIL!")
             console.log('Failed to join the room.');
             setConnectionError(`Erreur de connexion : ${message}`);
             setIsConnecting(false);
@@ -68,6 +75,7 @@ const JoinRoom: React.FC = () => {
             setIsConnecting(false);
             console.log('Connection Error:', error.message);
         });
+
         setSocket(socket);
     };
 
@@ -100,16 +108,24 @@ const JoinRoom: React.FC = () => {
 
     if (isWaitingForTeacher) {
         return (
-            <>
-                <div className="quit-btn">
-                    <Button variant="outlined" onClick={disconnect}>
-                        Déconnexion
-                    </Button>
+            <div className='room'>
+                <div className='roomHeader'>
+
+                    <DisconnectButton
+                        onReturn={disconnect}
+                        message={`Êtes-vous sûr de vouloir quitter?`} />
+
+                    <div className='centerTitle'>
+                        <div className='title'>Salle: {roomName}</div>
+                        <div className='userCount subtitle'>
+                            En attente que le professeur lance le questionnaire...
+                        </div>
+                    </div>
+
+                    <div className='dumb'></div>
+
                 </div>
-                <div className="waiting-text text-xl text-bold">
-                    En attente que le professeur lance le questionnaire...
-                </div>
-            </>
+            </div>
         );
     }
 
@@ -134,43 +150,40 @@ const JoinRoom: React.FC = () => {
             );
         default:
             return (
-                <div className="join-room-container">
-                    <h1 className="page-title mb-1">Rejoindre une salle</h1>
-                    <Paper>
-                        <div className="login-container">
-                            <img className="login-avatar" src="./people.svg" width={'20%'}></img>
-                            <TextField
-                                label="Nom d'utilisateur"
-                                variant="outlined"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                placeholder="Nom d'utilisateur"
-                                sx={{ marginBottom: '1rem' }}
-                                fullWidth
-                            />
-                            <TextField
-                                type="number"
-                                label="Numéro de la salle"
-                                variant="outlined"
-                                value={roomName}
-                                onChange={(e) => setRoomName(e.target.value)}
-                                placeholder="Nom de la salle"
-                                sx={{ marginBottom: '1rem' }}
-                                fullWidth
-                            />
-                            <LoadingButton
-                                loading={isConnecting}
-                                onClick={handleSocket}
-                                variant="contained"
-                                sx={{ marginBottom: `${connectionError && '2rem'}` }}
-                                disabled={!username || !roomName}
-                            >
-                                Rejoindre
-                            </LoadingButton>
-                            <div className="error-text text-base">{connectionError}</div>
-                        </div>
-                    </Paper>
-                </div>
+                <LoginContainer
+                    title='Rejoindre une salle'
+                    error={connectionError}>
+
+                    <TextField
+                        label="Nom d'utilisateur"
+                        variant="outlined"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Nom d'utilisateur"
+                        sx={{ marginBottom: '1rem' }}
+                        fullWidth
+                    />
+
+                    <TextField
+                        type="number"
+                        label="Numéro de la salle"
+                        variant="outlined"
+                        value={roomName}
+                        onChange={(e) => setRoomName(e.target.value)}
+                        placeholder="Nom de la salle"
+                        sx={{ marginBottom: '1rem' }}
+                        fullWidth
+                    />
+
+                    <LoadingButton
+                        loading={isConnecting}
+                        onClick={handleSocket}
+                        variant="contained"
+                        sx={{ marginBottom: `${connectionError && '2rem'}` }}
+                        disabled={!username || !roomName}
+                    >Rejoindre</LoadingButton>
+
+                </LoginContainer>
             );
     }
 };

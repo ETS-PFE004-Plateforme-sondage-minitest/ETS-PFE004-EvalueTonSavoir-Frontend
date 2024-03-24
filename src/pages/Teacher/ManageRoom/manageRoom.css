@@ -1,4 +1,48 @@
-.create-room-container {
+
+.room .roomHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: stretch
+}
+.room .roomHeader .returnButton {
+    flex-basis: 10%;
+
+    display: flex;
+    justify-content: center;
+}
+
+.room .roomHeader .centerTitle {
+    flex-basis: auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.room .roomHeader .dumb {
+    flex-basis: 10%;
+}
+
+.room .room {
+    width: 100%;
+    height: 70vh;
+    display: flex;
+
+    overflow: auto;
+    justify-content: center;
+    /* align-items: center; */
+}
+
+
+
+
+
+
+/* .create-room-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -138,4 +182,4 @@
     .flex-column-wrapper {
         height: 40vh;
     }
-}
+} */
