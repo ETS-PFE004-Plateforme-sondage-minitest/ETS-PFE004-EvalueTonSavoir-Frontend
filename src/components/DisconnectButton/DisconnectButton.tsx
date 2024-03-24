@@ -49,7 +49,7 @@ const DisconnectButton: React.FC<Props> = ({
                 color="primary"
                 sx={{ marginLeft: '-0.5rem', fontSize: 16 }}
             >
-                Déconnection
+                Quitter
             </Button>
             <ConfirmDialog
                 open={showDialog}
