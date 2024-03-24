@@ -126,9 +126,12 @@ const Dashboard: React.FC = () => {
 
     const handleRemoveQuiz = async (quiz: QuizType) => {
         try {
-            await ApiService.deleteQuiz(quiz._id);
-            const updatedQuizzes = quizzes.filter((q) => q._id !== quiz._id);
-            setQuizzes(updatedQuizzes);
+            const confirmed = window.confirm('Voulez-vous vraiment supprimer ce quiz?');
+            if (confirmed) {
+                await ApiService.deleteQuiz(quiz._id);
+                const updatedQuizzes = quizzes.filter((q) => q._id !== quiz._id);
+                setQuizzes(updatedQuizzes);
+            }
         } catch (error) {
             console.error('Error removing quiz:', error);
         }
