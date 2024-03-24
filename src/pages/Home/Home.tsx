@@ -8,6 +8,7 @@ const Home: React.FC = () => {
     return (
         <div className="page-container">
             <div className="btn-container">
+
                 <Link to="/student/join-room" className="student-btn">
                     <div className="big-title">
                         Espace
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
                         <img src="student.svg" />
                     </div>
                 </Link>
+
                 <Link to="/teacher/dashboard" className="teacher-btn">
                     <div>
                         <img src="teacher.svg" />
@@ -27,6 +29,7 @@ const Home: React.FC = () => {
                         enseignant
                     </div>
                 </Link>
+                
             </div>
         </div>
     );

@@ -4,13 +4,15 @@ import { io, Socket } from 'socket.io-client';
 class WebSocketService {
     private socket: Socket | null = null;
 
-    connect(backendUrl: String): Socket {
+    connect(backendUrl: string): Socket {
+        console.log(backendUrl);
         this.socket = io(`${backendUrl}`, {
             transports: ['websocket'],
             reconnectionAttempts: 1
         });
         return this.socket;
     }
+    
 
     disconnect() {
         if (this.socket) {

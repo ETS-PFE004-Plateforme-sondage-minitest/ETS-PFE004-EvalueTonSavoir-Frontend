@@ -1,6 +1,10 @@
 // QuizType.tsx
 export interface QuizType {
-    id: string;
+    _id: string;
+    folderId: string;
+    userId: string;
     title: string;
-    questions: string[];
+    content: string[];
+    created_at: Date;
+    updated_at: Date;
 }

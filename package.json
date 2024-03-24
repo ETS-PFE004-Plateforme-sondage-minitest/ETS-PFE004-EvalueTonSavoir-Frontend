@@ -12,15 +12,16 @@
         "test:watch": "jest --watch"
     },
     "dependencies": {
-        "@emotion/react": "^11.11.1",
+        "@emotion/react": "^11.11.3",
         "@emotion/styled": "^11.11.0",
         "@fortawesome/fontawesome-free": "^6.4.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@mui/icons-material": "^5.14.18",
         "@mui/lab": "^5.0.0-alpha.153",
-        "@mui/material": "^5.14.18",
+        "@mui/material": "^5.15.11",
         "@types/uuid": "^9.0.7",
+        "axios": "^1.6.7",
         "gift-pegjs": "^0.2.1",
         "jest-environment-jsdom": "^29.7.0",
         "katex": "^0.16.9",
