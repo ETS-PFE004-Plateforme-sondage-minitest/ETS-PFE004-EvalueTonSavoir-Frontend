@@ -502,10 +502,10 @@ const Dashboard: React.FC = () => {
                                 onClick={() => handleEditQuiz(quiz)}
                             > <Edit /> </IconButton>
 
-                            <IconButton
+                            {/* <IconButton
                                 color="primary"
                                 onClick={() => handleMoveQuiz(quiz)}
-                            > <DriveFileMove /> </IconButton>
+                            > <DriveFileMove /> </IconButton> */}
 
                             <IconButton
                                 color="primary"
