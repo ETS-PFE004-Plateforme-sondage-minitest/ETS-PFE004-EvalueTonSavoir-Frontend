@@ -9,9 +9,6 @@ class ApiService {
     private TTL: number;
 
     constructor() {
-<<<<<<< HEAD
-        this.BASE_URL = `http://10.196.10.69:4400`;
-=======
         this.BASE_URL = ENV_VARIABLES.VITE_BACKEND_URL;
         this.TTL = 3600000; // 1h
     }
@@ -32,7 +29,6 @@ class ApiService {
                 'Content-Type': 'application/json'
             };
         }
->>>>>>> aaa781853529b01e88632bd9d9280fdf468b0c10
     }
 
     // Helpers
