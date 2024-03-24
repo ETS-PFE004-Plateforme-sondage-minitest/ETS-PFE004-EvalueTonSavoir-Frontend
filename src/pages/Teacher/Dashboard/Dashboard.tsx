@@ -1,7 +1,6 @@
 // Dashboard.tsx
 import { useNavigate } from 'react-router-dom';
-import React, { useState, useEffect, useMemo, ChangeEventHandler } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
 import { parse } from 'gift-pegjs';
 
 import Template from '../../../components/GiftTemplate/templates';
@@ -19,18 +18,7 @@ import {
     IconButton,
     InputAdornment,
     Button,
-    Tooltip,
-    Checkbox,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Divider,
-    MenuItem,
-    NativeSelect,
-    InputLabel,
-    SelectChangeEvent
+    NativeSelect
 } from '@mui/material';
 import {
     Search,
@@ -43,8 +31,6 @@ import {
     Share,
     DriveFileMove
 } from '@mui/icons-material';
-import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
-import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
