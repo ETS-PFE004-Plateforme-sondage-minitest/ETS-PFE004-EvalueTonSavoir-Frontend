@@ -256,11 +256,6 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    const quizRemoveMessage =
-        quizIdsToRemove.length > 1
-            ? `Êtes-vous sûr de vouloir supprimer ${quizIdsToRemove.length} quiz?`
-            : `Êtes-vous sûr de vouloir supprimer le quiz ${quizTitleToRemove}?`;
-
     const handleCreateFolder = async () => {
         try {
             const folderTitle = prompt('Titre du dossier');
