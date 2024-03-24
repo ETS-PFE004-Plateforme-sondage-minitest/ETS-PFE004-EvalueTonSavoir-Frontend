@@ -40,7 +40,8 @@ import {
     Upload,
     ContentCopy,
     Edit,
-    Share
+    Share,
+    DriveFileMove
 } from '@mui/icons-material';
 import ConfirmDialog from '../../../components/ConfirmDialog/ConfirmDialog';
 import useCheckMobileScreen from '../../../services/useCheckMobileScreen';
@@ -489,10 +490,6 @@ const Dashboard: React.FC = () => {
                         color="primary"
                         onClick={() => handleOnImport()}
                     > <Upload /> </IconButton>
-                     {/* <IconButton
-                        color="primary"
-                        onClick={() => handleReceiveSharedQuiz()}
-                    > <Upload /> </IconButton> */}
 
                 </div>
 
@@ -518,6 +515,11 @@ const Dashboard: React.FC = () => {
                                 color="primary"
                                 onClick={() => handleEditQuiz(quiz)}
                             > <Edit /> </IconButton>
+
+                            <IconButton
+                                color="primary"
+                                onClick={() => handleMoveQuiz(quiz)}
+                            > <DriveFileMove /> </IconButton>
 
                             <IconButton
                                 color="primary"
