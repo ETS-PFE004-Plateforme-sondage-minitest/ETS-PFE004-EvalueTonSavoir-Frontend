@@ -29,7 +29,7 @@ import {
     ContentCopy,
     Edit,
     Share,
-    DriveFileMove
+    // DriveFileMove
 } from '@mui/icons-material';
 
 const Dashboard: React.FC = () => {
@@ -188,28 +188,29 @@ const Dashboard: React.FC = () => {
         return true;
     };
 
-    const handleMoveQuiz = async (quiz: QuizType, newFolderId: string) => {
-        try {
-            await ApiService.moveQuiz(quiz._id, newFolderId);
-            if (selectedFolder == '') {
-                const folders = await ApiService.getUserFolders();
-                var quizzes: QuizType[] = [];
+    // const handleMoveQuiz = async (quiz: QuizType, newFolderId: string) => {
+    //     try {
+    //         await ApiService.moveQuiz(quiz._id, newFolderId);
+    //         if (selectedFolder == '') {
+    //             const folders = await ApiService.getUserFolders();
+    //             var quizzes: QuizType[] = [];
 
-                for (const folder of folders as FolderType[]) {
-                    const folderQuizzes = await ApiService.getFolderContent(folder._id);
-                    quizzes = quizzes.concat(folderQuizzes as QuizType[])
-                }
+    //             for (const folder of folders as FolderType[]) {
+    //                 const folderQuizzes = await ApiService.getFolderContent(folder._id);
+    //                 quizzes = quizzes.concat(folderQuizzes as QuizType[])
+    //             }
 
-                setQuizzes(quizzes as QuizType[]);
-            }
-            else {
-                const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
-                setQuizzes(folderQuizzes as QuizType[]);
-            }
-        } catch (error) {
-            console.error('Error moving quiz:', error);
-        }
-    };
+    //             setQuizzes(quizzes as QuizType[]);
+    //         }
+    //         else {
+    //             const folderQuizzes = await ApiService.getFolderContent(selectedFolder);
+    //             setQuizzes(folderQuizzes as QuizType[]);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error moving quiz:', error);
+    //     }
+    // };
+
 
     const downloadTxtFile = async (quiz: QuizType) => {
 
@@ -380,7 +381,7 @@ const Dashboard: React.FC = () => {
                         value={selectedFolder}
                         onChange={handleSelectFolder}
                     >
-                        <option value=""> Tous... </option>
+                        <option value=""> Tous les dossiers... </option>
 
                         {folders.map((folder: FolderType) => (
                             <option value={folder._id} key={folder._id}> {folder.title} </option>
@@ -426,10 +427,15 @@ const Dashboard: React.FC = () => {
                     >
                         Ajouter un nouveau quiz
                     </Button>
-                    <IconButton
+
+                    <Button
+                        variant="outlined"
                         color="primary"
-                        onClick={() => handleOnImport()}
-                    > <Upload /> </IconButton>
+                        startIcon={<Upload />}
+                        onClick={handleOnImport}
+                    >
+                        Import
+                    </Button>
 
                 </div>
 
